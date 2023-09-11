@@ -40,7 +40,7 @@ class ConsentOption extends Model
     protected $keyType = 'integer';
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
         'key',
@@ -57,6 +57,9 @@ class ConsentOption extends Model
         'published_at',
     ];
 
+    /**
+     * @var string[]
+     */
     protected $casts = [
         'models' => 'array',
         'published_at' => 'datetime:Y-m-d H:i:s',
@@ -75,7 +78,9 @@ class ConsentOption extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @param $keys
+     *
+     * @return mixed
      */
     public static function findbykeys($keys)
     {
@@ -264,7 +269,7 @@ class ConsentOption extends Model
     }
 
     /**
-     * @return int
+     * @return $this
      */
     protected function disableAllVersions()
     {
