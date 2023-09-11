@@ -1,15 +1,15 @@
 {
-    "name": "visualbuilder/filament-user-consent",
-    "description": "This is my package filament-user-consent",
+    "name": "visualbuilder/user-consent",
+    "description": "This is my package user-consent",
     "keywords": [
         "Visual Builder",
         "laravel",
-        "filament-user-consent"
+        "user-consent"
     ],
-    "homepage": "https://github.com/visualbuilder/filament-user-consent",
+    "homepage": "https://github.com/visualbuilder/user-consent",
     "support": {
-        "issues": "https://github.com/visualbuilder/filament-user-consent/issues",
-        "source": "https://github.com/visualbuilder/filament-user-consent"
+        "issues": "https://github.com/visualbuilder/user-consent/issues",
+        "source": "https://github.com/visualbuilder/user-consent"
     },
     "license": "MIT",
     "authors": [

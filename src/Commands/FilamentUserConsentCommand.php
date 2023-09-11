@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 
 class FilamentUserConsentCommand extends Command
 {
-    public $signature = 'filament-user-consent';
+    public $signature = 'user-consent';
 
     public $description = 'My command';
 

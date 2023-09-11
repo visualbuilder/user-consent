@@ -23,7 +23,7 @@ class ConsentOptionFactory extends Factory
             'is_current'        => 1,
             'force_user_update' => 1,
             'enabled'           => 1,
-            'models'            => config('filament-user-consent.models'),
+            'models'            => config('user-consent.models'),
             'published_at'      => now(),
         ];
     }

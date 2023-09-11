@@ -20,7 +20,7 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'filament-user-consent';
 
-    public static string $viewNamespace = 'filament-user-consent';
+    public static string $viewNamespace = 'user-consent';
 
     public function configurePackage(Package $package): void
     {
@@ -36,7 +36,7 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
                     ->publishConfigFile()
                     ->publishMigrations()
                     ->askToRunMigrations()
-                    ->askToStarRepoOnGitHub('visualbuilder/filament-user-consent');
+                    ->askToStarRepoOnGitHub('visualbuilder/user-consent');
             });
 
         $configFileName = $package->shortName();
@@ -82,8 +82,8 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
         if (app()->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
-                    $file->getRealPath() => base_path("stubs/filament-user-consent/{$file->getFilename()}"),
-                ], 'filament-user-consent-stubs');
+                    $file->getRealPath() => base_path("stubs/user-consent/{$file->getFilename()}"),
+                ], 'user-consent-stubs');
             }
         }
 
@@ -93,7 +93,7 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
 
     protected function getAssetPackageName(): ?string
     {
-        return 'visualbuilder/filament-user-consent';
+        return 'visualbuilder/user-consent';
     }
 
     /**
@@ -102,9 +102,9 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
     protected function getAssets(): array
     {
         return [
-            // AlpineComponent::make('filament-user-consent', __DIR__ . '/../resources/dist/components/filament-user-consent.js'),
-            Css::make('filament-user-consent-styles', __DIR__ . '/../resources/dist/filament-user-consent.css'),
-            Js::make('filament-user-consent-scripts', __DIR__ . '/../resources/dist/filament-user-consent.js'),
+            // AlpineComponent::make('user-consent', __DIR__ . '/../resources/dist/components/user-consent.js'),
+//            Css::make('user-consent-styles', __DIR__ . '/../resources/dist/user-consent.css'),
+//            Js::make('user-consent-scripts', __DIR__ . '/../resources/dist/user-consent.js'),
         ];
     }
 
@@ -148,7 +148,7 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_filament-user-consent_table',
+            'create_user_consent_table','create_consentables_table'
         ];
     }
 }

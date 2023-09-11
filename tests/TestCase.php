@@ -56,9 +56,9 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_filament-user-consent_table.php.stub';
+
+        $migration = include __DIR__.'/../database/migrations/create_user_consent_table.php.stub';
         $migration->up();
-        */
+
     }
 }

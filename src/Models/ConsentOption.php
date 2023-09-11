@@ -3,7 +3,7 @@
 namespace Visualbuilder\FilamentUserConsent\Models;
 
 
-use Ekoukltd\LaraConsent\Traits\UserCount;
+use Visualbuilder\FilamentUserConsent\Traits\UserCount;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -105,7 +105,7 @@ class ConsentOption extends Model
      */
     public static function getAllUserTypes()
     {
-        $defaults = config('filament-user-consent.models');
+        $defaults = config('user-consent.models');
         $models = [];
         foreach ($defaults as $model) {
             $models[] = [
