@@ -78,8 +78,6 @@ class ConsentOption extends Model
     }
 
     /**
-     * @param $keys
-     *
      * @return mixed
      */
     public static function findbykeys($keys)
