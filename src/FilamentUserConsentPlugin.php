@@ -1,15 +1,15 @@
 <?php
 
-namespace VendorName\Skeleton;
+namespace visualbuilder\FilamentUserConsent;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
-class SkeletonPlugin implements Plugin
+class FilamentUserConsentPlugin implements Plugin
 {
     public function getId(): string
     {
-        return 'skeleton';
+        return 'filament-user-consent';
     }
 
     public function register(Panel $panel): void

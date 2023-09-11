@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace visualbuilder\FilamentUserConsent\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class FilamentUserConsentCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'filament-user-consent';
 
     public $description = 'My command';
 
