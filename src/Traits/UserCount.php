@@ -2,8 +2,6 @@
 
 namespace Visualbuilder\FilamentUserConsent\Traits;
 
-
-
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 
 /**
@@ -17,6 +15,4 @@ trait UserCount
             ->pluck('relation')
             ->toArray();
     }
-
-
 }

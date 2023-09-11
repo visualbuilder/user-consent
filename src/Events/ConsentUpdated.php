@@ -2,17 +2,18 @@
 
 namespace Visualbuilder\FilamentUserConsent\Events;
 
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 
 class ConsentUpdated
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public $consentOption;
-    public $accepted;
 
+    public $accepted;
 
     public function __construct(ConsentOption $consentOption, $accepted)
     {
