@@ -2,10 +2,9 @@
 
 namespace Visualbuilder\FilamentUserConsent\Traits;
 
+use Illuminate\Support\Facades\DB;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOptionUser;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Trait for adding to a user model
@@ -20,9 +19,6 @@ trait HasConsent
         return ConsentOption::findbykeys($this->requiredConsentKeys())->get();
     }
 
-    /**
-     * @return array
-     */
     public function requiredConsentKeys(): array
     {
         return ConsentOption::getAllActiveKeysbyUserClass(class_basename($this));
@@ -33,8 +29,9 @@ trait HasConsent
         $consents = $this->outstandingConsents();
         $validationArray = [];
         foreach ($consents as $consent) {
-            $validationArray[ 'consent_option.'.$consent->id ] = 'boolean|'.($consent->is_mandatory ? 'accepted' : 'required');
+            $validationArray['consent_option.' . $consent->id] = 'boolean|' . ($consent->is_mandatory ? 'accepted' : 'required');
         }
+
         return $validationArray;
     }
 
@@ -45,9 +42,10 @@ trait HasConsent
     {
         return ConsentOption::findbykeys($this->requiredConsentKeys())
             ->whereNotIn(
-                'id', $this->consents()
-                ->pluck('consent_options.id')
-                ->toArray()
+                'id',
+                $this->consents()
+                    ->pluck('consent_options.id')
+                    ->toArray()
             )
             ->orderBy('sort_order')
             ->get();
@@ -68,14 +66,13 @@ trait HasConsent
 
     public function lastConsentByKey($key)
     {
-        return $this->consents()->where('consentables.key',$key)->latest()->first();
+        return $this->consents()->where('consentables.key', $key)->latest()->first();
     }
 
     public function hasPreviousConsents($key)
     {
-        return $this->consents()->where('consentables.key',$key)->count();
+        return $this->consents()->where('consentables.key', $key)->count();
     }
-
 
     /**
      * @return mixed
@@ -85,15 +82,15 @@ trait HasConsent
 
         $usersSeenConsents = DB::table('consentables')
             ->selectRaw('max(consent_option_id) as id')
-            ->where('consentable_id',$this->id)
-            ->where('consentable_type',get_class($this))
+            ->where('consentable_id', $this->id)
+            ->where('consentable_type', get_class($this))
             ->groupBy('key')
             ->pluck('id')
             ->toArray();
 
-        return  $this->consents()
+        return $this->consents()
             ->wherePivotIn('consent_option_id', $usersSeenConsents)
-            ->withPivot(['accepted','id']);
+            ->withPivot(['accepted', 'id']);
     }
 
     /**
@@ -103,25 +100,27 @@ trait HasConsent
     {
         // Query for required consent IDs directly, instead of getting keys first
         $requiredConsentIdsQuery = ConsentOption::query()
-                                                ->whereIn('key', ConsentOption::where('models','like',"%".class_basename($this)."%")
-                                                                              ->where('is_current',true)
-                                                                              ->where('enabled', true)
-                                                                              ->where('published_at','<=',now())
-                                                                              ->pluck('key')
-                                                )
-                                                ->where('force_user_update',true)
-                                                ->where('is_current', true)
-                                                ->where('enabled', true)
-                                                ->whereDate('published_at', '<=', now())
-                                                ->select('id');  // select 'id' for the subquery
+            ->whereIn(
+                'key',
+                ConsentOption::where('models', 'like', '%' . class_basename($this) . '%')
+                    ->where('is_current', true)
+                    ->where('enabled', true)
+                    ->where('published_at', '<=', now())
+                    ->pluck('key')
+            )
+            ->where('force_user_update', true)
+            ->where('is_current', true)
+            ->where('enabled', true)
+            ->whereDate('published_at', '<=', now())
+            ->select('id');  // select 'id' for the subquery
 
         // Use exists() in a subquery for performance
-        return !$this->consents()
-                     ->whereNotExists(function ($query) use ($requiredConsentIdsQuery) {
-                         $query->select(DB::raw(1))
-                               ->from(DB::raw("({$requiredConsentIdsQuery->toSql()}) as sub"))
-                               ->whereIn('sub.id', $this->consents()->pluck('consent_options.id'))
-                               ->mergeBindings($requiredConsentIdsQuery->getQuery());
-                     })->exists();
+        return ! $this->consents()
+            ->whereNotExists(function ($query) use ($requiredConsentIdsQuery) {
+                $query->select(DB::raw(1))
+                    ->from(DB::raw("({$requiredConsentIdsQuery->toSql()}) as sub"))
+                    ->whereIn('sub.id', $this->consents()->pluck('consent_options.id'))
+                    ->mergeBindings($requiredConsentIdsQuery->getQuery());
+            })->exists();
     }
 }

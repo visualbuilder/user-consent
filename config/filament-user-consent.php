@@ -3,7 +3,7 @@
 return [
 
     //To which authenticatable models consents should be applied?
-    'models'     => [
+    'models' => [
         'App\Models\User',
         //'App\Models\AdminUser',
     ],
