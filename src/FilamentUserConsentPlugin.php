@@ -4,8 +4,6 @@ namespace Visualbuilder\FilamentUserConsent;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use Visualbuilder\EmailTemplates\Resources\EmailTemplateResource;
-use Visualbuilder\EmailTemplates\Resources\EmailTemplateThemeResource;
 
 class FilamentUserConsentPlugin implements Plugin
 {

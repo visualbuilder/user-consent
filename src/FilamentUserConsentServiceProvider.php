@@ -103,8 +103,8 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
     {
         return [
             // AlpineComponent::make('user-consent', __DIR__ . '/../resources/dist/components/user-consent.js'),
-//            Css::make('user-consent-styles', __DIR__ . '/../resources/dist/user-consent.css'),
-//            Js::make('user-consent-scripts', __DIR__ . '/../resources/dist/user-consent.js'),
+            //            Css::make('user-consent-styles', __DIR__ . '/../resources/dist/user-consent.css'),
+            //            Js::make('user-consent-scripts', __DIR__ . '/../resources/dist/user-consent.js'),
         ];
     }
 
@@ -148,7 +148,7 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_user_consent_table','create_consentables_table'
+            'create_user_consent_table', 'create_consentables_table',
         ];
     }
 }
