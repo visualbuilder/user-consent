@@ -1,6 +1,6 @@
 <?php
 
-namespace visualbuilder\FilamentUserConsent;
+namespace Visualbuilder\FilamentUserConsent;
 
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
@@ -13,8 +13,8 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use visualbuilder\FilamentUserConsent\Commands\FilamentUserConsentCommand;
-use visualbuilder\FilamentUserConsent\Testing\TestsFilamentUserConsent;
+use Visualbuilder\FilamentUserConsent\Commands\FilamentUserConsentCommand;
+use Visualbuilder\FilamentUserConsent\Testing\TestsFilamentUserConsent;
 
 class FilamentUserConsentServiceProvider extends PackageServiceProvider
 {
@@ -36,7 +36,7 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
                     ->publishConfigFile()
                     ->publishMigrations()
                     ->askToRunMigrations()
-                    ->askToStarRepoOnGitHub('visual-builder/filament-user-consent');
+                    ->askToStarRepoOnGitHub('visualbuilder/filament-user-consent');
             });
 
         $configFileName = $package->shortName();
@@ -93,7 +93,7 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
 
     protected function getAssetPackageName(): ?string
     {
-        return 'visual-builder/filament-user-consent';
+        return 'visualbuilder/filament-user-consent';
     }
 
     /**

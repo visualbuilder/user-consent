@@ -1,6 +1,6 @@
 <?php
 
-namespace visualbuilder\FilamentUserConsent\Tests;
+namespace Visualbuilder\FilamentUserConsent\Tests;
 
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
-use visualbuilder\FilamentUserConsent\FilamentUserConsentServiceProvider;
+use Visualbuilder\FilamentUserConsent\FilamentUserConsentServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -27,7 +27,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'visualbuilder\\FilamentUserConsent\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn (string $modelName) => 'Visualbuilder\\FilamentUserConsent\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
         );
     }
 

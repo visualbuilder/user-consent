@@ -1,16 +1,16 @@
 <?php
 
-namespace visualbuilder\FilamentUserConsent\Facades;
+namespace Visualbuilder\FilamentUserConsent\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \visualbuilder\FilamentUserConsent\FilamentUserConsent
+ * @see \Visualbuilder\FilamentUserConsent\FilamentUserConsent
  */
 class FilamentUserConsent extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return \visualbuilder\FilamentUserConsent\FilamentUserConsent::class;
+        return \Visualbuilder\FilamentUserConsent\FilamentUserConsent::class;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace visualbuilder\FilamentUserConsent;
+namespace Visualbuilder\FilamentUserConsent;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;

@@ -1,20 +1,26 @@
-# This is my package filament-user-consent
+# Provides User Consent options for Filament applications
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/visual-builder/filament-user-consent.svg?style=flat-square)](https://packagist.org/packages/visual-builder/filament-user-consent)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/visual-builder/filament-user-consent/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/visual-builder/filament-user-consent/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/visual-builder/filament-user-consent/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/visual-builder/filament-user-consent/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/visual-builder/filament-user-consent.svg?style=flat-square)](https://packagist.org/packages/visual-builder/filament-user-consent)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/visualbuilder/filament-user-consent.svg?style=flat-square)](https://packagist.org/packages/visualbuilder/filament-user-consent)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/visualbuilder/filament-user-consent/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/visualbuilder/filament-user-consent/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/visualbuilder/filament-user-consent/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/visualbuilder/filament-user-consent/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/visualbuilder/filament-user-consent.svg?style=flat-square)](https://packagist.org/packages/visualbuilder/filament-user-consent)
 
 
+- Create and edit consent options
+- Apply them to user models
+- Include a consent form during registration
+- Email a copy of the consents to the user
+- Users already accepted can be asked to accept the updated consent
+- Provide users with My Consents page allowing review of their given consents
+- Provide admin panel users with a list of consents provided by all users
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require visual-builder/filament-user-consent
+composer require visualbuilder/filament-user-consent
 ```
 
 You can publish and run the migrations with:
@@ -46,8 +52,8 @@ return [
 ## Usage
 
 ```php
-$filamentUserConsent = new visualbuilder\FilamentUserConsent();
-echo $filamentUserConsent->echoPhrase('Hello, visualbuilder!');
+$filamentUserConsent = new Visualbuilder\FilamentUserConsent();
+echo $filamentUserConsent->echoPhrase('Hello, Visualbuilder!');
 ```
 
 ## Testing

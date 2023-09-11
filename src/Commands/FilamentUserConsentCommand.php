@@ -1,6 +1,6 @@
 <?php
 
-namespace visualbuilder\FilamentUserConsent\Commands;
+namespace Visualbuilder\FilamentUserConsent\Commands;
 
 use Illuminate\Console\Command;
 

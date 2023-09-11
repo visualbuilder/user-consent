@@ -1,6 +1,6 @@
 <?php
 
-namespace visualbuilder\FilamentUserConsent;
+namespace Visualbuilder\FilamentUserConsent;
 
 class FilamentUserConsent
 {

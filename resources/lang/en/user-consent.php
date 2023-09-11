@@ -1,6 +1,6 @@
 <?php
 
-// translations for visualbuilder/FilamentUserConsent
+// translations for Visualbuilder/FilamentUserConsent
 return [
     //
 ];

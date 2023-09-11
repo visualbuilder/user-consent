@@ -1,6 +1,6 @@
 <?php
 
-namespace visualbuilder\FilamentUserConsent\Testing;
+namespace Visualbuilder\FilamentUserConsent\Testing;
 
 use Livewire\Features\SupportTesting\Testable;
 
