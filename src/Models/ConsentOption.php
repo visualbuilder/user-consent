@@ -305,7 +305,7 @@ class ConsentOption extends Model
      */
     public function getCanPublishAttribute()
     {
-        return $this->published_at?$this->published_at->lt(Carbon::now()->addMinute()):false;
+        return $this->published_at ? $this->published_at->lt(Carbon::now()->addMinute()) : false;
     }
 
     /**
