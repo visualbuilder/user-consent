@@ -23,9 +23,9 @@ use Visualbuilder\FilamentUserConsent\Traits\UserCount;
  * @property bool $force_user_update
  * @property int $sort_order
  * @property array $models
- * @property string $created_at
- * @property string $updated_at
- * @property string $published_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $published_at
  */
 class ConsentOption extends Model
 {
@@ -58,7 +58,7 @@ class ConsentOption extends Model
     ];
 
     /**
-     * @var string[]
+     * @var array
      */
     protected $casts = [
         'models' => 'array',
@@ -305,10 +305,7 @@ class ConsentOption extends Model
      */
     public function getCanPublishAttribute()
     {
-        return $this->published_at->lt(
-            Carbon::now()
-                ->addMinute()
-        );
+        return $this->published_at?$this->published_at->lt(Carbon::now()->addMinute()):false;
     }
 
     /**
