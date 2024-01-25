@@ -121,6 +121,7 @@ class ConsentOption extends Model
                 'relation' => strtolower(Str::plural(self::modelBasename($model))),
             ]);
         }
+
         return $models;
     }
 

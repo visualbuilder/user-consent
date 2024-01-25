@@ -2,15 +2,11 @@
 
 namespace Visualbuilder\FilamentUserConsent\Resources;
 
-use App\Filament\Resources\ConsentOptionResource\RelationManagers;
-use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;

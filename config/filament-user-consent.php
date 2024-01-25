@@ -5,6 +5,6 @@ return [
     //To which authenticatable models consents should be applied?
     'models' => [
         'App\Models\EndUser',
-        'App\Models\Admin'
+        'App\Models\Admin',
     ],
 ];

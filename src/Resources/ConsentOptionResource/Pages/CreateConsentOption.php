@@ -2,9 +2,8 @@
 
 namespace Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages;
 
-use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
 
 class CreateConsentOption extends CreateRecord
 {

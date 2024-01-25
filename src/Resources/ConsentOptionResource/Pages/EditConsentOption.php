@@ -2,9 +2,9 @@
 
 namespace Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages;
 
-use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
 
 class EditConsentOption extends EditRecord
 {

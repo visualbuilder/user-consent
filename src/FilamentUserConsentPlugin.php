@@ -21,7 +21,7 @@ class FilamentUserConsentPlugin implements Plugin
     public function register(Panel $panel): void
     {
         $panel->resources([
-            ConsentOptionResource::class
+            ConsentOptionResource::class,
         ]);
 
     }
