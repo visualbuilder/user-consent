@@ -4,16 +4,23 @@ namespace Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Page
 
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
 
 class EditConsentOption extends EditRecord
 {
     protected static string $resource = ConsentOptionResource::class;
 
+
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()->hidden(),
         ];
+    }
+
+    public function getTitle(): string
+    {
+        return "Edit {$this->record->title} version {$this->record->version}";
     }
 }

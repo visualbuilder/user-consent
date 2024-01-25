@@ -6,6 +6,9 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Section;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
@@ -21,7 +24,39 @@ class ConsentOptionResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Section::make('')->schema([
+                    Forms\Components\TextInput::make('title')
+                        ->required(),
+                    Forms\Components\TextInput::make('label')
+                        ->hint('(For checkbox)')
+                        ->required(),
+                    Forms\Components\TextInput::make('sort_order')
+                        ->numeric()
+                        ->required(),
+                    Forms\Components\Toggle::make('enabled')
+                        ->label('Enable this contract')
+                        ->required(),
+                    Forms\Components\Toggle::make('is_mandatory')
+                        ->required(),
+                    Forms\Components\Toggle::make('force_user_update')
+                        ->label('Require all users to re-confirm after this update')
+                        ->required(),
+                    Group::make()->schema([
+                        Forms\Components\DateTimePicker::make('published_at')
+                            ->hint('(Will not be active until this date)')
+                            ->native(false)
+                            ->required(),
+                        Forms\Components\Select::make('models')
+                            ->options(config('filament-user-consent.options'))
+                            ->multiple()
+                            ->searchable()
+                            ->required()
+                    ])->columns(2)->columnSpanFull(),
+                    Forms\Components\RichEditor::make('text')
+                        ->label('Contract text')
+                        ->required()
+                        ->columnSpanFull()
+                ])->columns(3)
             ]);
     }
 
