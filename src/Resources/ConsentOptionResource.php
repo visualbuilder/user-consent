@@ -2,13 +2,13 @@
 
 namespace Visualbuilder\FilamentUserConsent\Resources;
 
+use Filament\Forms;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Forms;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Section;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
@@ -50,13 +50,13 @@ class ConsentOptionResource extends Resource
                             ->options(config('filament-user-consent.options'))
                             ->multiple()
                             ->searchable()
-                            ->required()
+                            ->required(),
                     ])->columns(2)->columnSpanFull(),
                     Forms\Components\RichEditor::make('text')
                         ->label('Contract text')
                         ->required()
-                        ->columnSpanFull()
-                ])->columns(3)
+                        ->columnSpanFull(),
+                ])->columns(3),
             ]);
     }
 

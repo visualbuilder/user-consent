@@ -4,13 +4,11 @@ namespace Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Page
 
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Contracts\Support\Htmlable;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
 
 class EditConsentOption extends EditRecord
 {
     protected static string $resource = ConsentOptionResource::class;
-
 
     protected function getHeaderActions(): array
     {
