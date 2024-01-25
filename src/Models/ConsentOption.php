@@ -30,7 +30,7 @@ use Visualbuilder\FilamentUserConsent\Traits\UserCount;
 class ConsentOption extends Model
 {
     use HasFactory;
-    use UserCount;
+    // use UserCount;
 
     /**
      * The "type" of the auto-incrementing ID.
@@ -112,17 +112,16 @@ class ConsentOption extends Model
      */
     public static function getAllUserTypes()
     {
-        $defaults = config('user-consent.models');
-        $models = [];
+        $defaults = config('filament-user-consent.models');
+        $models = collect([]);
         foreach ($defaults as $model) {
-            $models[] = [
+            $models->push([
                 'id' => $model,
                 'name' => self::modelBasename($model),
                 'relation' => strtolower(Str::plural(self::modelBasename($model))),
-            ];
+            ]);
         }
-
-        return json_decode(json_encode($models));
+        return $models;
     }
 
     /**

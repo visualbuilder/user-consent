@@ -4,6 +4,7 @@ namespace Visualbuilder\FilamentUserConsent;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
 
 class FilamentUserConsentPlugin implements Plugin
 {
@@ -20,7 +21,7 @@ class FilamentUserConsentPlugin implements Plugin
     public function register(Panel $panel): void
     {
         $panel->resources([
-
+            ConsentOptionResource::class
         ]);
 
     }
