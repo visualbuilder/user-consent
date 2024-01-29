@@ -11,10 +11,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
-use Visualbuilder\FilamentUserConsent\Tables\Columns\ConsentDetails;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;
+use Visualbuilder\FilamentUserConsent\Tables\Columns\ConsentDetails;
 
 class ConsentOptionResource extends Resource
 {
@@ -67,11 +67,11 @@ class ConsentOptionResource extends Resource
         return $table
             ->columns([
                 ConsentDetails::make('title')->label('Given Consents')
-                ->searchable(isIndividual: true)
-                ->searchable(query: function (Builder $query, string $search): Builder {
-                    return $query
-                        ->where('title', 'like', "%{$search}%");
-                }),
+                    ->searchable(isIndividual: true)
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query
+                            ->where('title', 'like', "%{$search}%");
+                    }),
             ])
             ->searchPlaceholder('Search (Title)')
             ->filters([
