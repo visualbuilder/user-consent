@@ -9,7 +9,9 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
+use Visualbuilder\FilamentUserConsent\Tables\Columns\ConsentDetails;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;
@@ -64,24 +66,23 @@ class ConsentOptionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('key'),
-                Tables\Columns\TextColumn::make('version'),
-                Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\IconColumn::make('is_mandatory'),
-                Tables\Columns\IconColumn::make('is_current'),
-                Tables\Columns\IconColumn::make('enabled'),
-                Tables\Columns\IconColumn::make('force_user_update'),
-                Tables\Columns\TextColumn::make('published_at'),
+                ConsentDetails::make('title')->label('Given Consents')
+                ->searchable(isIndividual: true)
+                ->searchable(query: function (Builder $query, string $search): Builder {
+                    return $query
+                        ->where('title', 'like', "%{$search}%");
+                }),
             ])
+            ->searchPlaceholder('Search (Title)')
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
