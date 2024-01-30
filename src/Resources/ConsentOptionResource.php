@@ -6,10 +6,10 @@ use Filament\Forms;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
@@ -66,23 +66,43 @@ class ConsentOptionResource extends Resource
     {
         return $table
             ->columns([
-                ConsentDetails::make('title')->label('Given Consents')
-                    ->searchable(isIndividual: true)
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query
-                            ->where('title', 'like', "%{$search}%");
-                    }),
+                Tables\Columns\TextColumn::make('title')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('version')
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('is_mandatory')
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('is_current')
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('enabled')
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('force_user_update')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('usersAcceptedTotal')
+                    ->label('Accepted Users'),
+                Tables\Columns\TextColumn::make('usersDeclinedTotal')
+                    ->label('Declined Users'),
+                Tables\Columns\TextColumn::make('published_at')
+                    ->sortable(),
             ])
-            ->searchPlaceholder('Search (Title)')
             ->filters([
                 //
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('Accept')
+                    ->requiresConfirmation()
+                    ->modalDescription(fn (ConsentOption $record) => $record->label)
+                    ->button()
+                    ->color('success')
+                    ->icon('heroicon-m-hand-thumb-up')
+                    ->action(fn (ConsentOption $record) => Notification::make()
+                        ->title('Accepted successfully')
+                        ->success()
+                        ->send()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
+                    
                 ]),
             ]);
     }
