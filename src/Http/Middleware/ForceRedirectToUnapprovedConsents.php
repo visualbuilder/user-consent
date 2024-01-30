@@ -18,17 +18,18 @@ class ForceRedirectToUnapprovedConsents
             //have the trait installed
             && method_exists(Auth::user(), 'hasRequiredConsents')
             //Not be a consent route
-            && !$isConsentRoute
+            && ! $isConsentRoute
             //Not an ajax call
-            && !$request->ajax()
+            && ! $request->ajax()
             //Not have required consents signed
-            && !Auth::user()->hasRequiredConsents()
+            && ! Auth::user()->hasRequiredConsents()
         ) {
             //Save current request URL
             // $request->session()->put('url.saved', $request->fullUrl());
             //Redirect user to ask for consent
             return redirect()->route('consent-option-request');
         }
+
         return $next($request);
     }
 }

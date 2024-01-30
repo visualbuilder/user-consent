@@ -8,7 +8,7 @@ return [
         'App\Models\Admin',
     ],
 
-    'routes'     => [
-        'prefix'     => 'consent-options',
+    'routes' => [
+        'prefix' => 'consent-options',
     ],
 ];
