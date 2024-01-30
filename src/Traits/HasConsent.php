@@ -95,7 +95,9 @@ trait HasConsent
 
     /**
      * @return bool
+     * 
      */
+    /* 
     public function hasRequiredConsents()
     {
         // Query for required consent IDs directly, instead of getting keys first
@@ -113,7 +115,7 @@ trait HasConsent
             ->where('enabled', true)
             ->whereDate('published_at', '<=', now())
             ->select('id');  // select 'id' for the subquery
-
+        
         // Use exists() in a subquery for performance
         return ! $this->consents()
             ->whereNotExists(function ($query) use ($requiredConsentIdsQuery) {
@@ -122,5 +124,21 @@ trait HasConsent
                     ->whereIn('sub.id', $this->consents()->pluck('consent_options.id'))
                     ->mergeBindings($requiredConsentIdsQuery->getQuery());
             })->exists();
+    }
+    */
+
+    /**
+     * @return bool
+     */
+    public function hasRequiredConsents()
+    {
+        $requiredConsents = ConsentOption::findbykeys($this->requiredConsentKeys())
+            ->where('force_user_update',true)
+            ->pluck('id')
+            ->toArray();
+        $givenConsents    = $this->consents()
+            ->pluck('consent_options.id')
+            ->toArray();
+        return !array_diff($requiredConsents, $givenConsents);
     }
 }

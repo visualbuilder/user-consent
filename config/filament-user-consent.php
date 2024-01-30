@@ -7,4 +7,8 @@ return [
         'App\Models\EndUser',
         'App\Models\Admin',
     ],
+
+    'routes'     => [
+        'prefix'     => 'consent-options',
+    ],
 ];
