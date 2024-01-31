@@ -41,7 +41,7 @@ class ConsentOptionRequset extends SimplePage
         }
     }
 
-    protected static string $view = 'livewire.consent-option-requset';
+    protected static string $view = 'vendor.user-consent.livewire.consent-option-requset';
 
     public function getMaxWidth(): MaxWidth | string | null
     {
