@@ -3,19 +3,19 @@
 namespace Visualbuilder\FilamentUserConsent\Livewire;
 
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Collection;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 
 class ConsentOptionRequset extends SimplePage
@@ -31,7 +31,7 @@ class ConsentOptionRequset extends SimplePage
     {
         $this->user = Auth::guard('admin')->user();
 
-        if (!$this->user) {
+        if (! $this->user) {
             abort(403, 'Only authenticated users can set consent options');
         }
 
@@ -53,7 +53,7 @@ class ConsentOptionRequset extends SimplePage
         return $infolist
             ->record($this->user)
             ->schema([
-                Section::make("User Info")
+                Section::make('User Info')
                     ->schema([
                         TextEntry::make('fullName'),
                         TextEntry::make('email'),
@@ -69,6 +69,7 @@ class ConsentOptionRequset extends SimplePage
                                 if ($suffix) {
                                     $mandatory .= " - ( $suffix )";
                                 }
+
                                 return $mandatory;
                             })
                             ->icon(fn (ConsentOption $record) => $record->is_mandatory ? 'heroicon-o-check-badge' : 'heroicon-o-question-mark-circle')
@@ -89,7 +90,7 @@ class ConsentOptionRequset extends SimplePage
                                                     $record,
                                                     [
                                                         'accepted' => $record->id,
-                                                        'key'      => $record->key
+                                                        'key' => $record->key,
                                                     ]
                                                 );
                                             Notification::make()
@@ -101,11 +102,11 @@ class ConsentOptionRequset extends SimplePage
                                             // event(new ConsentUpdated($consentOption, $request->consent_option[$consentOption->id]));
                                             // event(new ConsentsUpdatedComplete($outstandingConsents, $user));
                                         }),
-                                ])
-                            ])
+                                ]),
+                            ]),
                     ])
                     ->columns(2)
-                    ->columnSpanFull()
+                    ->columnSpanFull(),
             ])->columns(3);
     }
 
@@ -114,7 +115,8 @@ class ConsentOptionRequset extends SimplePage
         $user = Auth::guard('admin')->user();
         if ($user->hasPreviousConsents($key)) {
             $lastViewed = $user->lastConsentByKey($key);
-            return "Our consent statement has been updated since you last " . $lastViewed->pivot->accepted ? 'accepted' : 'viewed' . " " . $lastViewed->pivot->created_at->diffForHumans();
+
+            return 'Our consent statement has been updated since you last ' . $lastViewed->pivot->accepted ? 'accepted' : 'viewed' . ' ' . $lastViewed->pivot->created_at->diffForHumans();
         }
     }
 }
