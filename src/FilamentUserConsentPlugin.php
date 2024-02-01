@@ -4,6 +4,7 @@ namespace Visualbuilder\FilamentUserConsent;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionRequset;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
 
 class FilamentUserConsentPlugin implements Plugin
@@ -22,6 +23,9 @@ class FilamentUserConsentPlugin implements Plugin
     {
         $panel->resources([
             ConsentOptionResource::class,
+        ]);
+        $panel->widgets([
+            ConsentOptionRequset::class,
         ]);
 
     }
