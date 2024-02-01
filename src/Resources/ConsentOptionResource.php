@@ -19,7 +19,17 @@ class ConsentOptionResource extends Resource
 {
     protected static ?string $model = ConsentOption::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return config('filament-user-consent.navigation.group');
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return config('filament-user-consent.navigation.sort');
+    }
 
     public static function form(Form $form): Form
     {
