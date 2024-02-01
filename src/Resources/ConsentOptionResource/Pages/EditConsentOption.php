@@ -32,7 +32,7 @@ class EditConsentOption extends EditRecord
             $data['key'] = $record->key;
             $record = ConsentOption::create($data);
         } else {
-            $record->update($data);  
+            $record->update($data);
         }
         if ($record->canPublish) {
             $record->setCurrentVersion();
