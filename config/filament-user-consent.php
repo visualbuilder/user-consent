@@ -6,7 +6,7 @@ return [
     'models' => [
         App\Models\Admin::class,
         App\Models\Practitioner::class,
-        App\Models\EndUser::class
+        App\Models\EndUser::class,
     ],
 
     'options' => [
