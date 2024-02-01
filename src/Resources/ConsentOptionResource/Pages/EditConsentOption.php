@@ -4,6 +4,8 @@ namespace Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Page
 
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
+use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
 
 class EditConsentOption extends EditRecord
@@ -20,5 +22,22 @@ class EditConsentOption extends EditRecord
     public function getTitle(): string
     {
         return "Edit {$this->record->title} version {$this->record->version}";
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        if ($requiresNewVersion = $record->usersViewedThisVersion) {
+            //create a new version
+            $data['version'] = $record->nextVersionNumber;
+            $data['key'] = $record->key;
+            $record = ConsentOption::create($data);
+        } else {
+            $record->update($data);  
+        }
+        if ($record->canPublish) {
+            $record->setCurrentVersion();
+        }
+
+        return $record;
     }
 }
