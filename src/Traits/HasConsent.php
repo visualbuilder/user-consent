@@ -36,6 +36,27 @@ trait HasConsent
     }
 
     /**
+     * @param array $acceptedConsents
+     * @return bool
+     */
+    public function requiredOutstandingConsentsValidate($acceptedConsents): bool
+    {
+        $acceptedConsents = array_map('intval', $acceptedConsents);
+        $requiredConsents = [];
+        $isValid = true;
+        foreach ($this->outstandingConsents() as $key => $consent) {
+            if($consent->is_mandatory) {
+                $requiredConsents[] = $consent->id;
+                if(!in_array($consent->id, $acceptedConsents)) {
+                    $isValid = false;
+                    break;
+                }
+            }
+        }
+        return $isValid;
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function outstandingConsents()
