@@ -12,9 +12,9 @@ class ForceRedirectToUnapprovedConsents
     {
         if (Auth::guard('admin')->check()) {
             $guard = 'admin';
-        } else if (Auth::guard('enduser')->check()) {
+        } elseif (Auth::guard('enduser')->check()) {
             $guard = 'enduser';
-        } else if (Auth::guard('practitioner')->check()) {
+        } elseif (Auth::guard('practitioner')->check()) {
             $guard = 'practitioner';
         }
 
@@ -33,6 +33,7 @@ class ForceRedirectToUnapprovedConsents
         ) {
             //Save current request URL
             $request->session()->put('url.saved', $request->fullUrl());
+
             //Redirect user to ask for consent
             return redirect()->route('consent-option-request');
         }

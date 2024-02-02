@@ -38,7 +38,7 @@ return [
         ],
         //Event triggered after all consents updated
         ConsentsUpdatedComplete::class => [
-            NotifyConsentsUpdated::class
+            NotifyConsentsUpdated::class,
         ],
     ],
 

@@ -10,11 +10,11 @@ class LogConsentUpdated
 {
     public function handle(ConsentUpdated $event)
     {
-        if (($event->consentOption->is_mandatory&&config('laraconsent.logging.mandatory'))
-            ||(!$event->consentOption->is_mandatory&&config('laraconsent.logging.optional'))
-        ){
-            $status = $event->accepted?'accepted':'refused';
-            Log::info("Consent: ".$event->consentOption->key." $status by ".Auth::user()->email);
+        if (($event->consentOption->is_mandatory && config('laraconsent.logging.mandatory'))
+            || (! $event->consentOption->is_mandatory && config('laraconsent.logging.optional'))
+        ) {
+            $status = $event->accepted ? 'accepted' : 'refused';
+            Log::info('Consent: ' . $event->consentOption->key . " $status by " . Auth::user()->email);
         }
     }
 }

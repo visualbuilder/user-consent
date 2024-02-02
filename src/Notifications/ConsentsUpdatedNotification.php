@@ -3,11 +3,8 @@
 namespace Visualbuilder\FilamentUserConsent\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Visualbuilder\FilamentUserConsent\Mail\ConsentsUpdatedMail;
-
-use function url;
 
 class ConsentsUpdatedNotification extends Notification
 {
@@ -42,7 +39,7 @@ class ConsentsUpdatedNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new ConsentsUpdatedMail($notifiable));
+        return new ConsentsUpdatedMail($notifiable);
     }
 
     /**

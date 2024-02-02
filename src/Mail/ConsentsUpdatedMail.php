@@ -8,9 +8,9 @@ use Illuminate\Queue\SerializesModels;
 
 class ConsentsUpdatedMail extends Mailable
 {
-    use Queueable, SerializesModels;
-    
-    
+    use Queueable;
+    use SerializesModels;
+
     protected $user;
 
     /**
@@ -30,6 +30,6 @@ class ConsentsUpdatedMail extends Mailable
      */
     public function build()
     {
-        
+
     }
 }
