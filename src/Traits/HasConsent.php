@@ -36,8 +36,7 @@ trait HasConsent
     }
 
     /**
-     * @param array $acceptedConsents
-     * @return bool
+     * @param  array  $acceptedConsents
      */
     public function requiredOutstandingConsentsValidate($acceptedConsents): bool
     {
@@ -45,14 +44,16 @@ trait HasConsent
         $requiredConsents = [];
         $isValid = true;
         foreach ($this->outstandingConsents() as $key => $consent) {
-            if($consent->is_mandatory) {
+            if ($consent->is_mandatory) {
                 $requiredConsents[] = $consent->id;
-                if(!in_array($consent->id, $acceptedConsents)) {
+                if (! in_array($consent->id, $acceptedConsents)) {
                     $isValid = false;
+
                     break;
                 }
             }
         }
+
         return $isValid;
     }
 

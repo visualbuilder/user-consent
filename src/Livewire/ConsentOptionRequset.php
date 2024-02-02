@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
-use Illuminate\Support\Facades\Validator;
 
 class ConsentOptionRequset extends SimplePage
 {
@@ -36,14 +35,13 @@ class ConsentOptionRequset extends SimplePage
     {
         if (Auth::guard('admin')->check()) {
             $this->user = Auth::guard('admin')->user();
-        } else if (Auth::guard('enduser')->check()) {
+        } elseif (Auth::guard('enduser')->check()) {
             $this->user = Auth::guard('enduser')->user();
-        } else if (Auth::guard('practitioner')->check()) {
+        } elseif (Auth::guard('practitioner')->check()) {
             $this->user = Auth::guard('practitioner')->user();
         }
 
-
-        if (!$this->user) {
+        if (! $this->user) {
             abort(403, 'Only authenticated users can set consent options');
         }
 
@@ -103,8 +101,8 @@ class ConsentOptionRequset extends SimplePage
                                     ViewEntry::make('acceptConsent')
                                         ->label('')
                                         ->view('vendor.user-consent.infolists.components.consent-option-checkbox'),
-                                    TextEntry::make('updated_at')->label('Last Updated')
-                                ])->columns(2)
+                                    TextEntry::make('updated_at')->label('Last Updated'),
+                                ])->columns(2),
                             ]),
                     ])
                     ->columns(2)
@@ -133,7 +131,7 @@ class ConsentOptionRequset extends SimplePage
     {
         $validateMandatoryConsents = $this->user->requiredOutstandingConsentsValidate($this->acceptConsents);
 
-        if (!$validateMandatoryConsents) {
+        if (! $validateMandatoryConsents) {
             Notification::make()
                 ->title('Please confirm.!')
                 ->body('Please accept all required consent options.')
@@ -149,7 +147,7 @@ class ConsentOptionRequset extends SimplePage
                         $consentOption,
                         [
                             'accepted' => in_array($consentOption->id, $this->acceptConsents),
-                            'key'      => $consentOption->key
+                            'key' => $consentOption->key,
                         ]
                     );
                 // event(new ConsentUpdated($consentOption, $request->consent_option[ $consentOption->id ]));
