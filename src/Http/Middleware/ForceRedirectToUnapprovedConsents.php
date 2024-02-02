@@ -10,22 +10,29 @@ class ForceRedirectToUnapprovedConsents
 {
     public function handle(Request $request, Closure $next)
     {
-        $isConsentRoute = str_contains($request->route()->getName(), 'consent-options');
+        if (Auth::guard('admin')->check()) {
+            $guard = 'admin';
+        } else if (Auth::guard('enduser')->check()) {
+            $guard = 'enduser';
+        } else if (Auth::guard('practitioner')->check()) {
+            $guard = 'practitioner';
+        }
 
+        $isConsentRoute = str_contains($request->route()->getName(), 'consent-options');
         if (
             //must be logged in
-            Auth::user()
+            Auth::guard($guard)->user()
             //have the trait installed
-            && method_exists(Auth::user(), 'hasRequiredConsents')
+            && method_exists(Auth::guard($guard)->user(), 'hasRequiredConsents')
             //Not be a consent route
             && ! $isConsentRoute
             //Not an ajax call
             && ! $request->ajax()
             //Not have required consents signed
-            && ! Auth::user()->hasRequiredConsents()
+            && ! Auth::guard($guard)->user()->hasRequiredConsents()
         ) {
             //Save current request URL
-            // $request->session()->put('url.saved', $request->fullUrl());
+            $request->session()->put('url.saved', $request->fullUrl());
             //Redirect user to ask for consent
             return redirect()->route('consent-option-request');
         }
