@@ -16,6 +16,8 @@ class ForceRedirectToUnapprovedConsents
             $guard = 'enduser';
         } elseif (Auth::guard('practitioner')->check()) {
             $guard = 'practitioner';
+        } else {
+            return $next($request);
         }
 
         $isConsentRoute = str_contains($request->route()->getName(), 'consent-options');
