@@ -41,9 +41,9 @@ class ConsentsUpdatedMail extends Mailable
             ->subject(__('Your consent'))
             ->to($this->user->email)
             ->with([
-                'content'       => $content,
+                'content' => $content,
                 'preHeaderText' => __('Your Consent Agreement'),
-                'title'         => __('Your Consent Agreement'),
+                'title' => __('Your Consent Agreement'),
             ]);
     }
 }

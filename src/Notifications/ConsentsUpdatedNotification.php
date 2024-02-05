@@ -35,7 +35,6 @@ class ConsentsUpdatedNotification extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return ConsentsUpdatedMail
      */
     public function toMail($notifiable): ConsentsUpdatedMail
     {

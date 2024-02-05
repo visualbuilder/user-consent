@@ -14,7 +14,6 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Visualbuilder\FilamentUserConsent\Commands\FilamentUserConsentCommand;
-use Visualbuilder\FilamentUserConsent\Providers\EventServiceProvider;
 use Visualbuilder\FilamentUserConsent\Testing\TestsFilamentUserConsent;
 
 class FilamentUserConsentServiceProvider extends PackageServiceProvider
