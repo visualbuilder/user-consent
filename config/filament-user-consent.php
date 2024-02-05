@@ -45,5 +45,5 @@ return [
     //send user an email with a copy of the consent after saving.
     'notify' => ['mail'],
 
-    'email-template' => 'vendor.ekoukltd.laraconsent.layouts.email',
+    'email-template' => 'vendor.user-consent.layouts.email',
 ];

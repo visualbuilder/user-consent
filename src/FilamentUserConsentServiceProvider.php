@@ -57,8 +57,6 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
         if (file_exists($package->basePath('/../resources/views'))) {
             $package->hasViews(static::$viewNamespace);
         }
-
-        $this->app->register(EventServiceProvider::class);
     }
 
     public function packageRegistered(): void

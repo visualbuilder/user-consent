@@ -19,9 +19,8 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Visualbuilder\FilamentUserConsent\Events\ConsentsUpdatedComplete;
-use Visualbuilder\FilamentUserConsent\Events\ConsentUpdated;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
+use Visualbuilder\FilamentUserConsent\Notifications\ConsentsUpdatedNotification;
 
 class ConsentOptionRequset extends SimplePage
 {
@@ -162,7 +161,6 @@ class ConsentOptionRequset extends SimplePage
                         'key' => $consentOption->key,
                     ]
                 );
-            event(new ConsentUpdated($consentOption, in_array($consentOption->id, $this->acceptConsents)));
         }
         Notification::make()
             ->title('Welcome.!')
@@ -171,7 +169,7 @@ class ConsentOptionRequset extends SimplePage
             ->color('success')
             ->send();
 
-        event(new ConsentsUpdatedComplete($outstandingConsents, $this->user));
+        $this->user->notify(new ConsentsUpdatedNotification());
 
         return redirect(request()->session()->get('url.saved'));
     }

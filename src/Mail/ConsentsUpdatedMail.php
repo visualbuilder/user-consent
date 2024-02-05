@@ -30,6 +30,20 @@ class ConsentsUpdatedMail extends Mailable
      */
     public function build()
     {
+        $consentOptions = $this->user->activeConsents()->get();
 
+        $content = view('vendor.user-consent.mails.accept-notification', ['consentOptions' => $consentOptions])->render();
+
+        return $this->from(
+            config('mail.from.address'),
+            config('mail.from.name')
+        )->view(config('filament-user-consent.email-template'))
+            ->subject(__('Your consent'))
+            ->to($this->user->email)
+            ->with([
+                'content'       => $content,
+                'preHeaderText' => __('Your Consent Agreement'),
+                'title'         => __('Your Consent Agreement'),
+            ]);
     }
 }

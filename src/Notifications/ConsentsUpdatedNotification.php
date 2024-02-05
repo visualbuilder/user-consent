@@ -28,16 +28,16 @@ class ConsentsUpdatedNotification extends Notification
      */
     public function via($notifiable)
     {
-        return [config('filament-user-consent.notify')];
+        return config('filament-user-consent.notify');
     }
 
     /**
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return ConsentsUpdatedMail
      */
-    public function toMail($notifiable)
+    public function toMail($notifiable): ConsentsUpdatedMail
     {
         return new ConsentsUpdatedMail($notifiable);
     }
