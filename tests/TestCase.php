@@ -59,6 +59,7 @@ class TestCase extends Orchestra
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,
             FilamentUserConsentServiceProvider::class,
+            AdminPanelProvider::class,
         ];
     }
 
