@@ -25,7 +25,7 @@ return new class extends Migration
                $table->boolean('enabled')->default(0);
                $table->boolean('force_user_update')->default(0);
                $table->integer('sort_order')->default(0);
-               $table->json('models')->default(null);
+               $table->json('models')->nullable()->default(null);
                $table->dateTime('published_at')->default(null);
                $table->timestamps();
            });
