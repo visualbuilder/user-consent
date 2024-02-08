@@ -67,8 +67,13 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        $migration = include __DIR__ . '/../database/migrations/create_user_consent_table.php.stub';
-        $migration->up();
+        $migrations = [
+            include __DIR__ . '/../database/migrations/create_user_consent_table.php.stub',
+            include __DIR__ . '/../database/migrations/create_consentables_table.php.stub',
+        ];
+        foreach($migrations as $migration) {
+            $migration->up();
+        }
     }
 
     protected function defineDatabaseMigrations()
