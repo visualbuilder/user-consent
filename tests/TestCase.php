@@ -71,7 +71,7 @@ class TestCase extends Orchestra
             include __DIR__ . '/../database/migrations/create_user_consent_table.php.stub',
             include __DIR__ . '/../database/migrations/create_consentables_table.php.stub',
         ];
-        foreach($migrations as $migration) {
+        foreach ($migrations as $migration) {
             $migration->up();
         }
     }
