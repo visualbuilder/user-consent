@@ -68,6 +68,11 @@ class TestCase extends Orchestra
 
         $migration = include __DIR__ . '/../database/migrations/create_user_consent_table.php.stub';
         $migration->up();
+    }
 
+    protected function defineDatabaseMigrations()
+    {
+        $this->loadLaravelMigrations();
+        $this->loadMigrationsFrom(__DIR__ . '/migrations');
     }
 }
