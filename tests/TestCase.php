@@ -19,12 +19,22 @@ use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use Visualbuilder\FilamentUserConsent\FilamentUserConsentServiceProvider;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Visualbuilder\FilamentUserConsent\Tests\Models\User;
 
 class TestCase extends Orchestra
 {
+    use RefreshDatabase;
+
+    protected User $adminUser;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->actingAs(
+            User::create(['email' => 'admin@domain.com', 'name' => 'Admin', 'password' => 'password'])
+        );
 
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Visualbuilder\\FilamentUserConsent\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
