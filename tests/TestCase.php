@@ -15,11 +15,11 @@ use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use Visualbuilder\FilamentUserConsent\FilamentUserConsentServiceProvider;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Visualbuilder\FilamentUserConsent\Tests\Models\User;
 
 class TestCase extends Orchestra
