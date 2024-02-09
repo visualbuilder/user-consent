@@ -2,10 +2,9 @@
 
 namespace Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages;
 
-use DB;
 use Filament\Actions;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
 
@@ -30,7 +29,7 @@ class EditConsentOption extends EditRecord
         if ($requiresNewVersion = $record->usersViewedThisVersion) {
             //create a new version
             $data['version'] = $record->nextVersionNumber;
-            $data['key'] = $record->key."-".$record->nextVersionNumber;
+            $data['key'] = $record->key . '-' . $record->nextVersionNumber;
             $record = ConsentOption::create($data);
         } else {
             $record->update($data);
