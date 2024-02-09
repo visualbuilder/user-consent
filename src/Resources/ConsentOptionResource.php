@@ -14,6 +14,8 @@ use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;
+use Filament\Forms\Set;
+use Illuminate\Support\Str;
 
 class ConsentOptionResource extends Resource
 {
@@ -36,14 +38,25 @@ class ConsentOptionResource extends Resource
         return $form
             ->schema([
                 Section::make('')->schema([
-                    Forms\Components\TextInput::make('title')
-                        ->required(),
-                    Forms\Components\TextInput::make('label')
-                        ->hint('(For checkbox)')
-                        ->required(),
-                    Forms\Components\TextInput::make('sort_order')
-                        ->numeric()
-                        ->required(),
+
+                    Group::make()->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->live()
+                            ->afterStateUpdated(
+                                fn (Set $set, ?string $state) => $set('key', Str::slug($state))
+                            )
+                            ->required(),
+                        Forms\Components\TextInput::make('key')
+                            ->unique(ignorable: fn ($record) => $record)
+                            ->required(),
+                        Forms\Components\TextInput::make('label')
+                            ->hint('(For checkbox)')
+                            ->required(),
+                        Forms\Components\TextInput::make('sort_order')
+                            ->numeric()
+                            ->required(),
+                    ])->columns(2)->columnSpanFull(),
+
                     Forms\Components\Toggle::make('enabled')
                         ->label('Enable this contract')
                         ->required(),
@@ -52,6 +65,7 @@ class ConsentOptionResource extends Resource
                     Forms\Components\Toggle::make('force_user_update')
                         ->label('Require all users to re-confirm after this update')
                         ->required(),
+
                     Group::make()->schema([
                         Forms\Components\DateTimePicker::make('published_at')
                             ->hint('(Will not be active until this date)')
@@ -63,6 +77,7 @@ class ConsentOptionResource extends Resource
                             ->searchable()
                             ->required(),
                     ])->columns(2)->columnSpanFull(),
+
                     Forms\Components\RichEditor::make('text')
                         ->label('Contract text')
                         ->required()
