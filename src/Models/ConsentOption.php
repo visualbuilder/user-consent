@@ -65,10 +65,10 @@ class ConsentOption extends Model
     protected $casts = [
         'models' => 'array',
         'published_at' => 'datetime:Y-m-d H:i:s',
-        'enabled' => 'boolean',
-        'is_current' => 'boolean',
-        'force_user_update' => 'boolean',
-        'is_mandatory' => 'boolean',
+        // 'enabled' => 'boolean',
+        // 'is_current' => 'boolean',
+        // 'force_user_update' => 'boolean',
+        // 'is_mandatory' => 'boolean',
     ];
 
     /**
@@ -322,7 +322,7 @@ class ConsentOption extends Model
     public function getHighestVersionNumberAttribute()
     {
         return (int) self::query()
-            ->where('key', 'like', $this->key)
+            ->where('key', 'like', $this->key.'%')
             ->max(
                 'version'
             );
