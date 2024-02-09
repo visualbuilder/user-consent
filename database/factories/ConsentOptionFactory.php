@@ -13,6 +13,7 @@ class ConsentOptionFactory extends Factory
     public function definition(): array
     {
         $title = $this->faker->words(3, true);
+
         return [
             'key' => Str::slug($title),
             'version' => $this->faker->randomNumber(),
