@@ -12,17 +12,18 @@ class ConsentOptionFactory extends Factory
 
     public function definition(): array
     {
+        $title = $this->faker->words(3, true);
         return [
-            'key' => Str::slug($this->faker->slug(4)),
+            'key' => Str::slug($title),
             'version' => $this->faker->randomNumber(),
-            'title' => $this->faker->words(3, true),
+            'title' => $title,
             'label' => 'Tick here to accept the terms',
             'text' => $this->faker->paragraph,
             'is_mandatory' => 1,
             'is_current' => 1,
             'force_user_update' => 1,
             'enabled' => 1,
-            'models' => config('user-consent.models'),
+            'models' => config('filament-user-consent.models'),
             'published_at' => now(),
         ];
     }

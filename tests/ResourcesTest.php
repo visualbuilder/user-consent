@@ -27,22 +27,8 @@ it('can access user consent create page', function () {
 
 it('can create user consent', function () {
     $newData = ConsentOption::factory()->make();
-    livewire(CreateConsentOption::class)
-        ->fillForm([
-            'title' => $newData->title,
-            'label' => $newData->label,
-            'sort_order' => 1,
-            'enabled' => $newData->enabled,
-            'is_mandatory' => $newData->is_mandatory,
-            'force_user_update' => $newData->force_user_update,
-            'published_at' => $newData->published_at,
-            'models' => $newData->models,
-            'text' => $newData->text,
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    $this->assertDatabaseHas(ConsentOption::class, [
+    $formData = [
+        'key' => $newData->key,
         'title' => $newData->title,
         'label' => $newData->label,
         'sort_order' => 1,
@@ -52,5 +38,12 @@ it('can create user consent', function () {
         'published_at' => $newData->published_at,
         'models' => $newData->models,
         'text' => $newData->text,
-    ]);
+    ];
+
+    livewire(CreateConsentOption::class)
+        ->fillForm($formData)
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    $this->assertDatabaseHas(ConsentOption::class, $formData);
 });
