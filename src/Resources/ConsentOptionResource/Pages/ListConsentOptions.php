@@ -13,7 +13,7 @@ class ListConsentOptions extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->hidden(),
+            Actions\CreateAction::make(),
         ];
     }
 }
