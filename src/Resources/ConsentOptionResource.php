@@ -95,12 +95,16 @@ class ConsentOptionResource extends Resource
                 Tables\Columns\TextColumn::make('version')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_mandatory')
+                    ->boolean()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_current')
+                    ->boolean()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('enabled')
+                    ->boolean()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('force_user_update')
+                    ->boolean()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('usersAcceptedTotal')
                     ->label('Accepted Users'),
