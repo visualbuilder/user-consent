@@ -1,12 +1,13 @@
 <?php
 
-use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
-use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
-use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
-use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;
-
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
+use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
+use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
+
+use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
+use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;
+use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 
 it('can access user consent list page', function () {
     get(ConsentOptionResource::getUrl('index'))
@@ -45,5 +46,40 @@ it('can create user consent', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
+    $formData['models'] = json_encode($newData->models);
+    $this->assertDatabaseHas(ConsentOption::class, $formData);
+});
+
+it('can access user consent edit page', function () {
+    get(ConsentOptionResource::getUrl('edit', [
+        'record' => ConsentOption::factory()->create(),
+    ]))->assertSuccessful();
+});
+
+it('can update user consent', function () {
+    $data = ConsentOption::factory()->create();
+    $newData = ConsentOption::factory()->make();
+
+    $formData = [
+        'key' => $newData->key,
+        'title' => $newData->title,
+        'label' => $newData->label,
+        'sort_order' => 1,
+        'enabled' => $newData->enabled,
+        'is_mandatory' => $newData->is_mandatory,
+        'force_user_update' => $newData->force_user_update,
+        'published_at' => $newData->published_at,
+        'models' => $newData->models,
+        'text' => $newData->text,
+    ];
+
+    livewire(EditConsentOption::class, [
+        'record' => $data->getRouteKey(),
+    ])
+        ->fillForm($formData)
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $formData['models'] = json_encode($newData->models);
     $this->assertDatabaseHas(ConsentOption::class, $formData);
 });
