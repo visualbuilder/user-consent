@@ -15,7 +15,6 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -55,7 +54,7 @@ class ConsentOptionRequest extends SimplePage
         }
     }
 
-    public static ?string $title = "Your consent is required";
+    public static ?string $title = 'Your consent is required';
 
     protected static string $view = 'vendor.user-consent.livewire.consent-option-request';
 
@@ -79,12 +78,12 @@ class ConsentOptionRequest extends SimplePage
         return $infolist
             ->record($this->user)
             ->schema([
-//                Fieldset::make('User Info')
-//
-//                    ->schema([
-//
-//                    ])
-//                    ->columns(1),
+                //                Fieldset::make('User Info')
+                //
+                //                    ->schema([
+                //
+                //                    ])
+                //                    ->columns(1),
                 Fieldset::make('Your Consent is required')->schema([
 
                     TextEntry::make('info')
@@ -119,8 +118,8 @@ class ConsentOptionRequest extends SimplePage
                                             ->alignEnd()
                                             ->html()
                                             ->state(function (ConsentOption $record): string {
-                                                return new HtmlString('<strong>Last Updated</strong>: '.$record->updated_at->format('d M Y'));
-                                        })
+                                                return new HtmlString('<strong>Last Updated</strong>: ' . $record->updated_at->format('d M Y'));
+                                            }),
                                     ])->columns(2),
                                 ]),
                         ])
