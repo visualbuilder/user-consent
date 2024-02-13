@@ -110,18 +110,18 @@ class ConsentOptionRequest extends SimplePage
                                 ->schema([
                                     TextEntry::make('text')->label('')
                                         ->markdown(),
-                                    Group::make()->schema([
-                                        ViewEntry::make('acceptConsent')
-                                            ->label('')
-                                            ->view('vendor.user-consent.infolists.components.consent-option-checkbox'),
-                                        TextEntry::make('updated_at')
-                                            ->label('')
-                                            ->alignEnd()
-                                            ->html()
-                                            ->state(function (ConsentOption $record): string {
-                                                return new HtmlString('<strong>Last Updated</strong>: '.$record->updated_at->format('d M Y'));
+
+                                    ViewEntry::make('acceptConsent')
+                                        ->label('')
+                                        ->view('vendor.user-consent.infolists.components.consent-option-checkbox'),
+                                    TextEntry::make('updated_at')
+                                        ->label('')
+                                        ->alignEnd()
+                                        ->html()
+                                        ->state(function (ConsentOption $record): string {
+                                            return new HtmlString('<strong>Last Updated</strong>: '.$record->updated_at->format('d M Y'));
                                         })
-                                    ])->columns(2),
+
                                 ]),
                         ])
                         ->columns(2)
