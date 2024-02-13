@@ -19,10 +19,11 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\HtmlString;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Notifications\ConsentsUpdatedNotification;
 
-class ConsentOptionRequset extends SimplePage
+class ConsentOptionRequest extends SimplePage
 {
     use InteractsWithFormActions;
     use InteractsWithForms;
@@ -53,7 +54,11 @@ class ConsentOptionRequset extends SimplePage
         }
     }
 
-    protected static string $view = 'vendor.user-consent.livewire.consent-option-requset';
+
+
+    public static ?string $title = 'Your consent is required';
+
+    protected static string $view = 'vendor.user-consent.livewire.consent-option-request';
 
     public function getMaxWidth(): MaxWidth | string | null
     {
@@ -75,17 +80,17 @@ class ConsentOptionRequset extends SimplePage
         return $infolist
             ->record($this->user)
             ->schema([
-                Fieldset::make('User Info')
-                    ->schema([
-                        TextEntry::make('fullName'),
-                        TextEntry::make('email'),
-                    ])
-                    ->columns(2),
-                Fieldset::make('Your Consent is required')->schema([
+
+                Fieldset::make('Your consent is required')->schema([
+                    TextEntry::make('info')
+                        ->label('')
+                        ->size(TextEntry\TextEntrySize::Medium)
+                        ->default(new HtmlString("Hi {$this->user->fullName}, please read these terms and conditions carefully, we will email a copy to {$this->user->email}")),
+
                     RepeatableEntry::make('collections')
                         ->label('')
                         ->schema([
-                            Section::make(fn (ConsentOption $record) => "{$record->title} V{$record->version}")
+                            Section::make(fn (ConsentOption $record) => "{$record->title} v{$record->version}")
                                 ->description(function (ConsentOption $record) {
                                     $suffix = $this->previousConsents($record->key);
                                     $mandatory = $record->is_mandatory ? 'Mandatory' : 'Optional';
@@ -100,12 +105,16 @@ class ConsentOptionRequset extends SimplePage
                                 ->schema([
                                     TextEntry::make('text')->label('')
                                         ->markdown(),
-                                    Group::make()->schema([
-                                        ViewEntry::make('acceptConsent')
-                                            ->label('')
-                                            ->view('vendor.user-consent.infolists.components.consent-option-checkbox'),
-                                        TextEntry::make('updated_at')->label('Last Updated'),
-                                    ])->columns(2),
+                                    ViewEntry::make('acceptConsent')
+                                        ->label('')
+                                        ->view('vendor.user-consent.infolists.components.consent-option-checkbox'),
+                                    TextEntry::make('updated_at')
+                                        ->label('')
+                                        ->alignEnd()
+                                        ->html()
+                                        ->state(function (ConsentOption $record): string {
+                                            return new HtmlString('<strong>Last Updated</strong>: '.$record->updated_at->format('d M Y'));
+                                        })
                                 ]),
                         ])
                         ->columns(2)
@@ -120,8 +129,8 @@ class ConsentOptionRequset extends SimplePage
                             ->action(function (array $data) {
                                 $this->acceptConsent();
                             }),
-                    ]),
-                ]),
+                    ])->alignEnd(),
+                ])->columns(1),
             ])->columns(3);
     }
 
