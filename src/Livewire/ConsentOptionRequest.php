@@ -28,7 +28,7 @@ class ConsentOptionRequest extends SimplePage
     use InteractsWithFormActions;
     use InteractsWithForms;
 
-    public Model $user;
+    public $user;
 
     public Collection $collection;
 
@@ -36,25 +36,14 @@ class ConsentOptionRequest extends SimplePage
 
     public function mount(): void
     {
-        if (Auth::guard('admin')->check()) {
-            $this->user = Auth::guard('admin')->user();
-        } elseif (Auth::guard('enduser')->check()) {
-            $this->user = Auth::guard('enduser')->user();
-        } elseif (Auth::guard('practitioner')->check()) {
-            $this->user = Auth::guard('practitioner')->user();
-        }
-
-        if (! $this->user) {
-            abort(403, 'Only authenticated users can set consent options');
-        }
+        $this->user = auth()->user();
 
         $this->user->collections = $this->user->outstandingConsents();
+
         if ($this->user->collections->count() < 1) {
             abort(403, 'No required consent');
         }
     }
-
-
 
     public static ?string $title = 'Your consent is required';
 
@@ -172,8 +161,8 @@ class ConsentOptionRequest extends SimplePage
                 );
         }
         Notification::make()
-            ->title('Welcome.!')
-            ->body('Your submitted all consent options are saved.')
+            ->title('Success')
+            ->body('Your consent preferences have been saved.')
             ->icon('heroicon-o-check-circle')
             ->color('success')
             ->send();

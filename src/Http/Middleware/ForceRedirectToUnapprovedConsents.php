@@ -10,36 +10,28 @@ class ForceRedirectToUnapprovedConsents
 {
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::guard('admin')->check()) {
-            $guard = 'admin';
-        } elseif (Auth::guard('enduser')->check()) {
-            $guard = 'enduser';
-        } elseif (Auth::guard('practitioner')->check()) {
-            $guard = 'practitioner';
-        } else {
+        // Get the currently authenticated user across all guards
+        $user = Auth::user();
+
+        // If no user is authenticated, proceed with the request
+        if (!$user) {
             return $next($request);
         }
 
-        $isConsentRoute = str_contains($request->route()->getName(), 'consent-options');
-        if (
-            //must be logged in
-            Auth::guard($guard)->user()
-            //have the trait installed
-            && method_exists(Auth::guard($guard)->user(), 'hasRequiredConsents')
-            //Not be a consent route
-            && ! $isConsentRoute
-            //Not an ajax call
-            && ! $request->ajax()
-            //Not have required consents signed
-            && ! Auth::guard($guard)->user()->hasRequiredConsents()
-        ) {
-            //Save current request URL
+        // Determine if the current route is exempt (a consent route or ends with '.logout')
+        $route = $request->route()->getName();
+        $isExemptRoute = str_contains($route, 'consent-options') || str_ends_with($route, '.logout');
+
+        // Check for required consents if user is authenticated and not on an exempt or logout route
+        if (!$isExemptRoute && !$request->ajax() && method_exists($user, 'hasRequiredConsents') && !$user->hasRequiredConsents()) {
+            // Save the current request URL
             $request->session()->put('url.saved', $request->fullUrl());
 
-            //Redirect user to ask for consent
+            // Redirect user to ask for consent
             return redirect()->route('consent-option-request');
         }
 
         return $next($request);
     }
+
 }
