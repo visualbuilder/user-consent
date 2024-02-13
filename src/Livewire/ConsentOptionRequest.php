@@ -55,7 +55,7 @@ class ConsentOptionRequest extends SimplePage
         }
     }
 
-    public static ?string $title = "Your consent is required";
+    public static ?string $title = "Terms and Conditions";
 
     protected static string $view = 'vendor.user-consent.livewire.consent-option-request';
 
@@ -85,7 +85,7 @@ class ConsentOptionRequest extends SimplePage
 //
 //                    ])
 //                    ->columns(1),
-                Fieldset::make('Your Consent is required')->schema([
+                Fieldset::make('Your consent is required')->schema([
 
                     TextEntry::make('info')
                         ->label('')
@@ -95,7 +95,7 @@ class ConsentOptionRequest extends SimplePage
                     RepeatableEntry::make('collections')
                         ->label('')
                         ->schema([
-                            Section::make(fn (ConsentOption $record) => "{$record->title} V{$record->version}")
+                            Section::make(fn (ConsentOption $record) => "{$record->title} v{$record->version}")
                                 ->description(function (ConsentOption $record) {
                                     $suffix = $this->previousConsents($record->key);
                                     $mandatory = $record->is_mandatory ? 'Mandatory' : 'Optional';
