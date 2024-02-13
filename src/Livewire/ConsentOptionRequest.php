@@ -70,11 +70,12 @@ class ConsentOptionRequest extends SimplePage
             ->record($this->user)
             ->schema([
 
-                Fieldset::make('Your consent is required')->schema([
+
                     TextEntry::make('info')
-                        ->label('')
+                        ->label("")
                         ->size(TextEntry\TextEntrySize::Medium)
-                        ->default(new HtmlString("Hi {$this->user->fullName}, please read these terms and conditions carefully, we will email a copy to {$this->user->email}")),
+                        ->default(new HtmlString("Hi {$this->user->firstname}, <br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))
+                        ->extraAttributes(['class'=>'mb-4']),
 
                     RepeatableEntry::make('collections')
                         ->label('')
@@ -104,8 +105,18 @@ class ConsentOptionRequest extends SimplePage
                                         ->state(function (ConsentOption $record): string {
                                             return new HtmlString('<strong>Last Updated</strong>: '.$record->updated_at->format('d M Y'));
                                         })
-                                ]),
+                                ])
+                                ->collapsible()
+                                ->collapsed(function(ConsentOption $record){
+                                    $first = $this->user->collections->first();
+                                    return  !($first->id === $record->id);
+
+                                })
+                                ->persistCollapsed()
+                                ->id(fn (ConsentOption $record) => "consent-option-{$record->id}")
+                            ,
                         ])
+                        ->contained(false)
                         ->columns(2)
                         ->columnSpanFull(),
                     Actions::make([
@@ -119,8 +130,8 @@ class ConsentOptionRequest extends SimplePage
                                 $this->acceptConsent();
                             }),
                     ])->alignEnd(),
-                ])->columns(1),
-            ])->columns(3);
+
+            ])->columns(1);
     }
 
     public function previousConsents($key)
