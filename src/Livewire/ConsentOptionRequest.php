@@ -15,7 +15,6 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -55,7 +54,9 @@ class ConsentOptionRequest extends SimplePage
         }
     }
 
-    public static ?string $title = "Terms and Conditions";
+
+
+    public static ?string $title = 'Your consent is required';
 
     protected static string $view = 'vendor.user-consent.livewire.consent-option-request';
 
@@ -79,14 +80,8 @@ class ConsentOptionRequest extends SimplePage
         return $infolist
             ->record($this->user)
             ->schema([
-//                Fieldset::make('User Info')
-//
-//                    ->schema([
-//
-//                    ])
-//                    ->columns(1),
-                Fieldset::make('Your consent is required')->schema([
 
+                Fieldset::make('Your consent is required')->schema([
                     TextEntry::make('info')
                         ->label('')
                         ->size(TextEntry\TextEntrySize::Medium)
@@ -110,7 +105,6 @@ class ConsentOptionRequest extends SimplePage
                                 ->schema([
                                     TextEntry::make('text')->label('')
                                         ->markdown(),
-
                                     ViewEntry::make('acceptConsent')
                                         ->label('')
                                         ->view('vendor.user-consent.infolists.components.consent-option-checkbox'),
@@ -121,7 +115,6 @@ class ConsentOptionRequest extends SimplePage
                                         ->state(function (ConsentOption $record): string {
                                             return new HtmlString('<strong>Last Updated</strong>: '.$record->updated_at->format('d M Y'));
                                         })
-
                                 ]),
                         ])
                         ->columns(2)
