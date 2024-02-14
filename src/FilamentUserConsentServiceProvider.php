@@ -56,10 +56,17 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
         if (file_exists($package->basePath('/../resources/views'))) {
             $package->hasViews(static::$viewNamespace);
         }
+
+        $this->registerRoutes();
     }
 
     public function packageRegistered(): void
     {
+    }
+    protected function registerRoutes()
+    {
+        
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
     }
 
     public function packageBooted(): void
