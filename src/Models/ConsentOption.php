@@ -322,7 +322,7 @@ class ConsentOption extends Model
     public function getHighestVersionNumberAttribute()
     {
         return (int) self::query()
-            ->where('key', 'like', $this->key . '%')
+            ->where('key', 'like', $this->key.'%')
             ->max(
                 'version'
             );
