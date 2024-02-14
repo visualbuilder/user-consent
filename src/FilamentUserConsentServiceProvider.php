@@ -9,13 +9,17 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Route;
 use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Visualbuilder\FilamentUserConsent\Commands\FilamentUserConsentCommand;
 use Visualbuilder\FilamentUserConsent\Testing\TestsFilamentUserConsent;
-
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
 class FilamentUserConsentServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'filament-user-consent';
@@ -30,6 +34,7 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package->name(static::$name)
+            ->hasRoute('web')
             ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
@@ -57,7 +62,15 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
             $package->hasViews(static::$viewNamespace);
         }
 
-        $this->registerRoutes();
+        Route::middleware([
+            EncryptCookies::class,
+            StartSession::class,
+            VerifyCsrfToken::class,
+            AuthenticateSession::class,
+            'admin,practitioner,enduser'
+        ])->group(function () {
+            $this->registerRoutes();
+        });
     }
 
     public function packageRegistered(): void
@@ -65,7 +78,6 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
     }
     protected function registerRoutes()
     {
-        
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
     }
 
@@ -92,6 +104,7 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
                     $file->getRealPath() => base_path("stubs/user-consent/{$file->getFilename()}"),
                 ], 'user-consent-stubs');
             }
+            $this->publishResources();
         }
 
         // Testing
@@ -157,5 +170,12 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
         return [
             'create_user_consent_table', 'create_consentables_table',
         ];
+    }
+
+    protected function publishResources()
+    {
+        $this->publishes([
+                             __DIR__.'/../resources/views' => resource_path('views/vendor/user-consent'),
+                         ], 'filament-user-consent-assets');
     }
 }

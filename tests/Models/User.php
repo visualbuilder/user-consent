@@ -7,15 +7,16 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Orchestra\Testbench\Factories\UserFactory;
+use Visualbuilder\FilamentUserConsent\Traits\HasConsent;
 
 /**
  * @property string $email
  * @property string $name
  * @property string $password
  */
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser 
 {
-    use HasFactory;
+    use HasFactory, HasConsent;
 
     protected $guarded = [];
 
