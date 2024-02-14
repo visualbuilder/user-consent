@@ -38,6 +38,10 @@ class ConsentOptionRequest extends SimplePage
     {
         $this->user = auth()->user();
 
+        if(!$this->user) {
+            abort(403, 'Forbidden User');
+        }
+
         $this->user->collections = $this->user->outstandingConsents();
 
         if ($this->user->collections->count() < 1) {
@@ -47,7 +51,7 @@ class ConsentOptionRequest extends SimplePage
 
     public static ?string $title = 'Your consent is required';
 
-    protected static string $view = 'vendor.user-consent.livewire.consent-option-request';
+    protected static string $view = 'user-consent::livewire.consent-option-request';
 
     public function getMaxWidth(): MaxWidth | string | null
     {
@@ -69,8 +73,6 @@ class ConsentOptionRequest extends SimplePage
         return $infolist
             ->record($this->user)
             ->schema([
-
-
                     TextEntry::make('info')
                         ->label("")
                         ->size(TextEntry\TextEntrySize::Medium)
@@ -97,7 +99,7 @@ class ConsentOptionRequest extends SimplePage
                                         ->markdown(),
                                     ViewEntry::make('acceptConsent')
                                         ->label('')
-                                        ->view('vendor.user-consent.infolists.components.consent-option-checkbox'),
+                                        ->view('user-consent::infolists.components.consent-option-checkbox'),
                                     TextEntry::make('updated_at')
                                         ->label('')
                                         ->alignEnd()
