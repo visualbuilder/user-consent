@@ -28,7 +28,7 @@ class ConsentOptionRequest extends SimplePage
     use InteractsWithFormActions;
     use InteractsWithForms;
 
-    public Model $user;
+    public $user;
 
     public Collection $collection;
 
@@ -36,25 +36,14 @@ class ConsentOptionRequest extends SimplePage
 
     public function mount(): void
     {
-        if (Auth::guard('admin')->check()) {
-            $this->user = Auth::guard('admin')->user();
-        } elseif (Auth::guard('enduser')->check()) {
-            $this->user = Auth::guard('enduser')->user();
-        } elseif (Auth::guard('practitioner')->check()) {
-            $this->user = Auth::guard('practitioner')->user();
-        }
-
-        if (! $this->user) {
-            abort(403, 'Only authenticated users can set consent options');
-        }
+        $this->user = auth()->user();
 
         $this->user->collections = $this->user->outstandingConsents();
+
         if ($this->user->collections->count() < 1) {
             abort(403, 'No required consent');
         }
     }
-
-
 
     public static ?string $title = 'Your consent is required';
 
@@ -81,11 +70,12 @@ class ConsentOptionRequest extends SimplePage
             ->record($this->user)
             ->schema([
 
-                Fieldset::make('Your consent is required')->schema([
+
                     TextEntry::make('info')
-                        ->label('')
+                        ->label("")
                         ->size(TextEntry\TextEntrySize::Medium)
-                        ->default(new HtmlString("Hi {$this->user->fullName}, please read these terms and conditions carefully, we will email a copy to {$this->user->email}")),
+                        ->default(new HtmlString("Hi {$this->user->firstname}, <br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))
+                        ->extraAttributes(['class'=>'mb-4']),
 
                     RepeatableEntry::make('collections')
                         ->label('')
@@ -115,8 +105,18 @@ class ConsentOptionRequest extends SimplePage
                                         ->state(function (ConsentOption $record): string {
                                             return new HtmlString('<strong>Last Updated</strong>: '.$record->updated_at->format('d M Y'));
                                         })
-                                ]),
+                                ])
+                                ->collapsible()
+                                ->collapsed(function(ConsentOption $record){
+                                    $first = $this->user->collections->first();
+                                    return  !($first->id === $record->id);
+
+                                })
+                                ->persistCollapsed()
+                                ->id(fn (ConsentOption $record) => "consent-option-{$record->id}")
+                            ,
                         ])
+                        ->contained(false)
                         ->columns(2)
                         ->columnSpanFull(),
                     Actions::make([
@@ -130,8 +130,8 @@ class ConsentOptionRequest extends SimplePage
                                 $this->acceptConsent();
                             }),
                     ])->alignEnd(),
-                ])->columns(1),
-            ])->columns(3);
+
+            ])->columns(1);
     }
 
     public function previousConsents($key)
@@ -172,8 +172,8 @@ class ConsentOptionRequest extends SimplePage
                 );
         }
         Notification::make()
-            ->title('Welcome.!')
-            ->body('Your submitted all consent options are saved.')
+            ->title('Success')
+            ->body('Your consent preferences have been saved.')
             ->icon('heroicon-o-check-circle')
             ->color('success')
             ->send();
