@@ -76,7 +76,7 @@ class ConsentOptionRequest extends SimplePage
                     TextEntry::make('info')
                         ->label("")
                         ->size(TextEntry\TextEntrySize::Medium)
-                        ->default(new HtmlString("Hi {$this->user->firstname}, <br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))
+                        ->default(new HtmlString("Hi {$this->user->firstname},<br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))
                         ->extraAttributes(['class'=>'mb-4']),
 
                     RepeatableEntry::make('collections')
@@ -112,9 +112,8 @@ class ConsentOptionRequest extends SimplePage
                                 ->collapsed(function(ConsentOption $record){
                                     $first = $this->user->collections->first();
                                     return  !($first->id === $record->id);
-
                                 })
-                                ->persistCollapsed()
+//                                ->persistCollapsed()
                                 ->id(fn (ConsentOption $record) => "consent-option-{$record->id}")
                             ,
                         ])
