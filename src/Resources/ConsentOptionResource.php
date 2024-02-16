@@ -2,15 +2,19 @@
 
 namespace Visualbuilder\FilamentUserConsent\Resources;
 
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
@@ -46,7 +50,7 @@ class ConsentOptionResource extends Resource
                             )
                             ->required(),
                         Forms\Components\TextInput::make('key')
-                            // ->unique(ignorable: fn ($record) => $record)
+                            ->unique(ignorable: fn ($record) => $record)
                             ->required(),
                         Forms\Components\TextInput::make('label')
                             ->hint('(For checkbox)')
@@ -54,7 +58,6 @@ class ConsentOptionResource extends Resource
                         Forms\Components\TextInput::make('sort_order')
                             ->numeric()
                             ->required(),
-
 
                         Forms\Components\Toggle::make('enabled')
                             ->label('Enable this contract')
@@ -85,7 +88,40 @@ class ConsentOptionResource extends Resource
                         ->label('Contract text')
                         ->required()
                         ->columnSpanFull(),
+
+                    Forms\Components\Toggle::make('additional_info')
+                        ->label('Do you want to demand additional info from user?')
+                        ->required()
+                        ->live()
+                        ->columnSpanFull(),
                 ])->columns(3),
+                Section::make('Additional Info')->schema([
+                    Repeater::make('fields')->label('')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')->required(),
+                        Forms\Components\Select::make('type')
+                            ->options([
+                                'text' => 'Text Input',
+                                'email' => 'Email Input',
+                                'number' => 'Number Input',
+                                'date' => 'Date Picker',
+                                'datetime' => 'Date & Time Picker',
+                                'textarea' => 'Text area',                            
+                                'select' => 'Select dropdown',
+                                'radio' => 'Radio dropdown',
+                                'check' => 'Checkbox',
+                            ])
+                            ->required(),
+                        Forms\Components\TextInput::make('label')->required(),
+                        Forms\Components\TagsInput::make('options')->separator(',')->splitKeys(['Tab', ' ']),
+                        Forms\Components\TagsInput::make('rules')->separator(',')->splitKeys(['Tab', ' ']),
+                        Forms\Components\Toggle::make('required')->inline(false)->required(),
+                    ])
+                    ->defaultItems(1)
+                    ->columns(3)
+                    ->addActionLabel('Add Field')
+                    ->collapsed()
+                ])->visible(fn(Get $get) => (bool)$get('additional_info'))
             ]);
     }
 
