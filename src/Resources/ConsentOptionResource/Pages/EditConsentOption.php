@@ -26,7 +26,7 @@ class EditConsentOption extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        if ($requiresNewVersion = $record->usersViewedThisVersion) {
+        if ((bool)$data['increment_version']) { //$record->usersViewedThisVersion
             //create a new version
             $data['version'] = $record->nextVersionNumber;
             $data['key'] = $record->key;

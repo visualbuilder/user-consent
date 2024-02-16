@@ -38,7 +38,6 @@ class ConsentOptionResource extends Resource
         return $form
             ->schema([
                 Section::make('')->schema([
-
                     Group::make()->schema([
                         Forms\Components\TextInput::make('title')
                             ->live()
@@ -47,7 +46,7 @@ class ConsentOptionResource extends Resource
                             )
                             ->required(),
                         Forms\Components\TextInput::make('key')
-                            ->unique(ignorable: fn ($record) => $record)
+                            // ->unique(ignorable: fn ($record) => $record)
                             ->required(),
                         Forms\Components\TextInput::make('label')
                             ->hint('(For checkbox)')
@@ -55,18 +54,22 @@ class ConsentOptionResource extends Resource
                         Forms\Components\TextInput::make('sort_order')
                             ->numeric()
                             ->required(),
-                    ])->columns(2)->columnSpanFull(),
 
-                    Forms\Components\Toggle::make('enabled')
-                        ->label('Enable this contract')
-                        ->required(),
-                    Forms\Components\Toggle::make('is_mandatory')
-                        ->required(),
-                    Forms\Components\Toggle::make('force_user_update')
-                        ->label('Require all users to re-confirm after this update')
-                        ->required(),
 
-                    Group::make()->schema([
+                        Forms\Components\Toggle::make('enabled')
+                            ->label('Enable this contract')
+                            ->required(),
+                        Forms\Components\Toggle::make('is_mandatory')
+                            ->required(),
+
+                        Forms\Components\Toggle::make('force_user_update')
+                            ->label('Require all users to re-confirm after this update')
+                            ->required(),
+
+                        Forms\Components\Toggle::make('increment_version')
+                            ->label('Do you want to upgrade to next version?')
+                            ->required(),
+
                         Forms\Components\DateTimePicker::make('published_at')
                             ->hint('(Will not be active until this date)')
                             ->native(false)
@@ -118,21 +121,10 @@ class ConsentOptionResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
-                Tables\Actions\Action::make('Accept')
-                    ->requiresConfirmation()
-                    ->modalDescription(fn (ConsentOption $record) => $record->label)
-                    ->button()
-                    ->color('success')
-                    ->icon('heroicon-m-hand-thumb-up')
-                    ->action(fn (ConsentOption $record) => Notification::make()
-                        ->title('Accepted successfully')
-                        ->success()
-                        ->send()),
+        
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-
-                ]),
+                Tables\Actions\BulkActionGroup::make([]),
             ]);
     }
 
