@@ -20,6 +20,15 @@ class ConsentOptionUser extends MorphPivot
 
     protected $table = 'consentables';
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'fields' => 'array'
+    ];
+
     public static function getAllSavedUserTypes(): array
     {
         return self::query()->select('consentable_type')->distinct()->pluck('consentable_type')->toArray();
