@@ -98,7 +98,9 @@ class ConsentOptionResource extends Resource
                 Section::make('Additional Info')->schema([
                     Repeater::make('fields')->label('')
                     ->schema([
-                        Forms\Components\TextInput::make('name')->required(),
+                        Forms\Components\TextInput::make('name')
+                        ->regex('/^[a-z_]+$/')
+                        ->required(),
                         Forms\Components\Select::make('type')
                             ->options([
                                 'text' => 'Text Input',

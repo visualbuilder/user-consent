@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
+use Visualbuilder\FilamentUserConsent\Infolists\Components\ConsentAcceptForm;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Notifications\ConsentsUpdatedNotification;
 
@@ -100,6 +101,7 @@ class ConsentOptionRequest extends SimplePage
                                     ViewEntry::make('acceptConsent')
                                         ->label('')
                                         ->view('user-consent::infolists.components.consent-option-checkbox'),
+                                    // ConsentAcceptForm::make('Agreement Info'),
                                     TextEntry::make('updated_at')
                                         ->label('')
                                         ->alignEnd()
@@ -146,9 +148,25 @@ class ConsentOptionRequest extends SimplePage
 
     public function validateConsents($action)
     {
-        $validateMandatoryConsents = $this->user->requiredOutstandingConsentsValidate($this->acceptConsents);
+        $conentIds = [];
+        $errorBags = [];
+        foreach($this->acceptConsents as $key => $value) {            
+            if((bool)$value['accepted']) {
+                $conentIds[] = $key;
+            }
+            $consentOption = ConsentOption::find($key);
+            if((bool)$consentOption->additional_info) {
+                foreach ($consentOption->fields as $field) {
+                    if((bool)$field['required'] &&  (!isset($value[$field['name']]) || $value[$field['name']] == "")) {
+                        $errorBags[$key][$field['name']] = $field['name']." field is required";
+                    }
+                }
+            }
+        }
 
-        if (! $validateMandatoryConsents) {
+        $validateMandatoryConsents = $this->user->requiredOutstandingConsentsValidate($conentIds);
+
+        if (! $validateMandatoryConsents || count($errorBags) > 0) {
             Notification::make()
                 ->title('Please confirm.!')
                 ->body('Please accept all required consent options.')
@@ -161,14 +179,22 @@ class ConsentOptionRequest extends SimplePage
 
     public function acceptConsent()
     {
+        $conentIds = [];
+        foreach($this->acceptConsents as $key => $value) {            
+            if((bool)$value['accepted']) {
+                $conentIds[] = $key;
+            }
+        }
+
         $outstandingConsents = $this->user->outstandingConsents();
         foreach ($outstandingConsents as $consentOption) {
             $this->user->consents()
                 ->save(
                     $consentOption,
                     [
-                        'accepted' => in_array($consentOption->id, $this->acceptConsents),
+                        'accepted' => in_array($consentOption->id, $conentIds),
                         'key' => $consentOption->key,
+                        'fields' => (bool)$consentOption->additional_info ? $this->acceptConsents[$consentOption->id] : []
                     ]
                 );
         }
