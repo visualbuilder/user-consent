@@ -1,7 +1,7 @@
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     <label>
         <x-filament::input.checkbox value="{{ $getRecord()->id }}"
-            wire:model="acceptConsents.{{ $getRecord()->id }}.accepted" />
+            wire:model="acceptConsents.{{ $getRecord()->id }}.accept" />
         <span class="mx-3">
             {{ $getRecord()->label }}
         </span>
@@ -16,21 +16,25 @@
             </x-slot>
             <div class="grid grid-cols-3 gap-4">
                 @foreach ($fields as $key => $field)
-                    @php
-                        $required = (bool) $field['required'] === true ? '<span class="text-red-600 font-extrabold">*</span>' : '';
-                        $formLabel = '<label class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-200" for="' . $field['name'] . '">' . $field['label'] . ' ' . $required . '</label>';
-                    @endphp
                     @if ($field['type'] == 'text')
                         <div class="mb-4">
-                            {!! $formLabel !!}
+                            <label
+                                class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-200 @if ((bool) $field['required'] === true) required @endif"
+                                for="{{ $field['name'] }}">
+                                {{ $field['label'] }}
+                            </label>
                             <x-filament::input.wrapper>
                                 <x-filament::input type="text"
                                     wire:model="acceptConsents.{{ $getRecord()->id }}.{{ $field['name'] }}" />
                             </x-filament::input.wrapper>
+                            {{-- @if ($errorsBag[$getRecord()->id][$field['name']]) <span class="error">{{ $errorsBag[$getRecord()->id][$field['name']] }}</span> @endif --}}
                         </div>
                     @elseif($field['type'] == 'email')
                         <div class="mb-4">
-                            {!! $formLabel !!}
+                            <label class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-200"
+                                for="{{ $field['name'] }}">
+                                {{ $field['label'] }}
+                            </label>
                             <x-filament::input.wrapper>
                                 <x-filament::input type="email"
                                     wire:model="acceptConsents.{{ $getRecord()->id }}.{{ $field['name'] }}" />
@@ -38,7 +42,10 @@
                         </div>
                     @elseif($field['type'] == 'email')
                         <div class="mb-4">
-                            {!! $formLabel !!}
+                            <label class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-200"
+                                for="{{ $field['name'] }}">
+                                {{ $field['label'] }}
+                            </label>
                             <x-filament::input.wrapper>
                                 <x-filament::input type="email"
                                     wire:model="acceptConsents.{{ $getRecord()->id }}.{{ $field['name'] }}" />
@@ -46,7 +53,10 @@
                         </div>
                     @elseif($field['type'] == 'select')
                         <div class="mb-4">
-                            {!! $formLabel !!}
+                            <label class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-200"
+                                for="{{ $field['name'] }}">
+                                {{ $field['label'] }}
+                            </label>
                             <x-filament::input.wrapper>
                                 <x-filament::input.select
                                     wire:model="acceptConsents.{{ $getRecord()->id }}.{{ $field['name'] }}">
@@ -59,7 +69,10 @@
                         </div>
                     @elseif($field['type'] == 'textarea')
                         <div class="mb-4">
-                            {!! $formLabel !!}
+                            <label class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-200"
+                                for="{{ $field['name'] }}">
+                                {{ $field['label'] }}
+                            </label>
                             <textarea
                                 class="bg-gray-200 appearance-none rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white bg-white/5 border-gray-300  dark:border-white/10 dark:bg-white/5"
                                 wire:model="acceptConsents.{{ $getRecord()->id }}.{{ $field['name'] }}">
@@ -67,7 +80,10 @@
                         </div>
                     @elseif($field['type'] == 'number')
                         <div class="my-4">
-                            {!! $formLabel !!}
+                            <label class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-200"
+                                for="{{ $field['name'] }}">
+                                {{ $field['label'] }}
+                            </label>
                             <x-filament::input.wrapper>
                                 <x-filament::input
                                     wire:model="acceptConsents.{{ $getRecord()->id }}.{{ $field['name'] }}">
@@ -76,7 +92,10 @@
                         </div>
                     @elseif($field['type'] == 'check')
                         <div class="mb-4">
-                            {!! $formLabel !!}
+                            <label class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-200"
+                                for="{{ $field['name'] }}">
+                                {{ $field['label'] }}
+                            </label>
                             <label>
                                 <x-filament::input.checkbox value="1"
                                     wire:model="acceptConsents.{{ $getRecord()->id }}.{{ $field['name'] }}" />
@@ -87,7 +106,10 @@
                         </div>
                     @elseif($field['type'] == 'radio')
                         <div class="mb-4">
-                            {!! $formLabel !!}
+                            <label class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-200"
+                                for="{{ $field['name'] }}">
+                                {{ $field['label'] }}
+                            </label>
                             @foreach (explode(',', $field['options']) as $option)
                                 <label>
                                     <input type="radio" value="{{ $option }}"
@@ -97,10 +119,16 @@
                                     </span>
                                 </label>
                             @endforeach
+                            </label>
                         </div>
                     @endif
                 @endforeach
             </div>
         </x-filament::section>
     @endif
+
+    <x-filament::button wire:click="submit">
+        New user
+    </x-filament::button>
+
 </x-dynamic-component>
