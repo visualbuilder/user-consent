@@ -50,7 +50,6 @@ class ConsentOptionResource extends Resource
                             )
                             ->required(),
                         Forms\Components\TextInput::make('key')
-                            ->unique(ignorable: fn ($record) => $record)
                             ->required(),
                         Forms\Components\TextInput::make('label')
                             ->hint('(For checkbox)')
