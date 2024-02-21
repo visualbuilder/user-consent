@@ -35,6 +35,8 @@ class ConsentOptionRequest extends SimplePage
 
     public $acceptConsents = [];
 
+    public $errorBags = [];
+
     public function mount(): void
     {
         $this->user = auth()->user();
@@ -163,6 +165,8 @@ class ConsentOptionRequest extends SimplePage
                 }
             }
         }
+
+        $this->errorBags = $errorBags;
 
         $validateMandatoryConsents = $this->user->requiredOutstandingConsentsValidate($conentIds);
 

@@ -16,10 +16,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Visualbuilder\FilamentUserConsent\Commands\FilamentUserConsentCommand;
 use Visualbuilder\FilamentUserConsent\Testing\TestsFilamentUserConsent;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
+
 class FilamentUserConsentServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'filament-user-consent';
@@ -62,15 +59,7 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
             $package->hasViews(static::$viewNamespace);
         }
 
-        Route::middleware([
-            EncryptCookies::class,
-            StartSession::class,
-            VerifyCsrfToken::class,
-            AuthenticateSession::class,
-            'admin,practitioner,enduser'
-        ])->group(function () {
-            $this->registerRoutes();
-        });
+        $this->registerRoutes();
     }
 
     public function packageRegistered(): void
