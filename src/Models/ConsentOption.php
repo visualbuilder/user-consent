@@ -53,6 +53,7 @@ class ConsentOption extends Model
         'force_user_update',
         'is_current',
         'additional_info',
+        'additional_info_title',
         'enabled',
         'sort_order',
         'models',

@@ -95,6 +95,8 @@ class ConsentOptionResource extends Resource
                         ->columnSpanFull(),
                 ])->columns(3),
                 Section::make('Additional Info')->schema([
+                    Forms\Components\TextInput::make('additional_info_title')
+                        ->required(),
                     Repeater::make('fields')->label('')
                     ->schema([
                         Forms\Components\TextInput::make('name')
