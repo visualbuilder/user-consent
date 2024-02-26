@@ -12,7 +12,7 @@
     @if ($getRecord()->additional_info && ($fields = $getRecord()->fields))
         <x-filament::section>
             <x-slot name="heading">
-                Additional Info
+                {{$getRecord()->additional_info_title}}
             </x-slot>
             <div class="grid grid-cols-3 gap-4">
                 @foreach ($fields as $key => $field)
