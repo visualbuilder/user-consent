@@ -36,9 +36,15 @@ class ConsentsUpdatedNotification extends Notification
      *
      * @param  mixed  $notifiable
      */
-    public function toMail($notifiable): ConsentsUpdatedMail
+    public function toMail($notifiable)
     {
-        return new ConsentsUpdatedMail($notifiable);
+        // Retrieve the class name from the package configuration
+        $mailableClass = config('filament-user-consent.mailable');
+
+        // Dynamically instantiate the Mailable class with the $notifiable data
+        $mailable = new $mailableClass($notifiable);
+
+        return $mailable;
     }
 
     /**
