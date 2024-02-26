@@ -112,7 +112,7 @@ trait HasConsent
 
         return $this->consents()
             ->wherePivotIn('consent_option_id', $usersSeenConsents)
-            ->withPivot(['accepted', 'id']);
+            ->withPivot(['accepted', 'id','fields']);
     }
 
     /**
