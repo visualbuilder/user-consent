@@ -117,7 +117,6 @@ class ConsentOptionResource extends Resource
                             ->required(),
                         Forms\Components\TextInput::make('label')->required(),
                         Forms\Components\TagsInput::make('options')->separator(',')->splitKeys(['Tab', ' ']),
-                        Forms\Components\TagsInput::make('rules')->separator(',')->splitKeys(['Tab', ' ']),
                         Forms\Components\Toggle::make('required')->inline(false)->required(),
                     ])
                     ->defaultItems(1)
