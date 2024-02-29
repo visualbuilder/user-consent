@@ -77,17 +77,21 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                 $additionInfo = [];
                 foreach ($consentOption->fields as $field) {
                     $fieldName = "consents_info.$consentOption->id.{$field['name']}";
+                    $fieldLabel = $field['label'] ?? '';
+                    $columnSpan = $field['column_span'] ?? 1;
                     $options = array_combine(explode(',',$field['options']), explode(',',$field['options']));
+                    
+
                     $additionInfo[] = match ($field['type']) {
-                        'text' => Forms\Components\TextInput::make($fieldName)->label($field['label'])->required((bool)$field['required']),
-                        'email' => Forms\Components\TextInput::make($fieldName)->label($field['label'])->email()->required((bool)$field['required']),
-                        'select' => Forms\Components\Select::make($fieldName)->label($field['label'])->options($options)->required((bool)$field['required']),
-                        'textarea' => Forms\Components\Textarea::make($fieldName)->label($field['label'])->required((bool)$field['required']),
-                        'number' => Forms\Components\TextInput::make($fieldName)->label($field['label'])->numeric()->required((bool)$field['required']),
-                        'check' => Forms\Components\Checkbox::make($fieldName)->label($field['label'])->required((bool)$field['required']),
-                        'radio' => Forms\Components\Radio::make($fieldName)->label($field['label'])->options($options)->required((bool)$field['required']),
-                        'date' => Forms\Components\DatePicker::make($fieldName)->label($field['label'])->required((bool)$field['required']),
-                        'datetime' => Forms\Components\DateTimePicker::make($fieldName)->label($field['label'])->required((bool)$field['required']),
+                        'text' => $this->prepareField(Forms\Components\TextInput::make($fieldName)->label($fieldLabel)->columnSpan($columnSpan), $field, $consentOption),
+                        'email' => $this->prepareField(Forms\Components\TextInput::make($fieldName)->label($fieldLabel)->email()->columnSpan($columnSpan), $field, $consentOption),
+                        'select' => $this->prepareField(Forms\Components\Select::make($fieldName)->label($fieldLabel)->options($options)->columnSpan($columnSpan), $field, $consentOption),
+                        'textarea' => $this->prepareField(Forms\Components\Textarea::make($fieldName)->label($fieldLabel)->columnSpan($columnSpan), $field, $consentOption),
+                        'number' => $this->prepareField(Forms\Components\TextInput::make($fieldName)->label($fieldLabel)->numeric()->columnSpan($columnSpan), $field, $consentOption),
+                        'check' => $this->prepareField(Forms\Components\Checkbox::make($fieldName)->label($fieldLabel)->columnSpan($columnSpan), $field, $consentOption),
+                        'radio' => $this->prepareField(Forms\Components\Radio::make($fieldName)->label($fieldLabel)->options($options)->columnSpan($columnSpan), $field, $consentOption),
+                        'date' => $this->prepareField(Forms\Components\DatePicker::make($fieldName)->label($fieldLabel)->columnSpan($columnSpan), $field, $consentOption),
+                        'datetime' => $this->prepareField(Forms\Components\DateTimePicker::make($fieldName)->label($fieldLabel)->columnSpan($columnSpan), $field, $consentOption),
                     };
                 }
 
@@ -122,7 +126,6 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
     public function submit(): void 
     {
         $formData = $this->form->getState();
-        $consentInfo = $formData['consents_info'];
         
         $conentIds = [];
         foreach($formData['consents'] as $key => $value) {
@@ -139,7 +142,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     [
                         'accepted' => in_array($consentOption->id, $conentIds),
                         'key' => $consentOption->key,
-                        'fields' => (bool)$consentOption->additional_info ? $consentInfo[$consentOption->id] : []
+                        'fields' => ((bool)$consentOption->additional_info && isset($formData['consents_info'])) ? $formData['consents_info'][$consentOption->id] : []
                     ]
                 );
         }
@@ -155,4 +158,19 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
         $this->redirect(request()->session()->get('url.saved'));
     } 
+
+    public function prepareField($component, $fieldOption, $consentOption)
+    {
+        if(isset($fieldOption['custom_rules']) && (bool)$fieldOption['custom_rules']) {
+
+            foreach ($fieldOption['rules'] as $key => $value) {
+            
+                if($value['rule_type'] == "require_if_another_field") {
+                    $anotherField = "consents_info.$consentOption->id.{$value['another_field']}";   
+                    $component->requiredIf($anotherField, $fieldOption['value_equals']);
+                }  
+            }
+        }
+        return $component->required((bool)$fieldOption['required']);
+    }
 }
