@@ -1,7 +1,7 @@
 <?php
- 
+
 namespace Visualbuilder\FilamentUserConsent\Livewire;
- 
+
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -13,9 +13,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Visualbuilder\FilamentUserConsent\Notifications\ConsentsUpdatedNotification;
 
-class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\HasForms 
+class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\HasForms
 {
-    use InteractsWithForms, InteractsWithFormActions; 
+    use InteractsWithForms, InteractsWithFormActions;
 
     public static ?string $title = 'Your consent is required';
 
@@ -50,7 +50,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
             abort(403, 'Forbidden User');
         }
 
-        $this->user->collections = $this->user->outstandingConsents(); 
+        $this->user->collections = $this->user->outstandingConsents();
 
         if ($this->user->collections->count() < 1) {
             abort(403, 'No required consent');
@@ -58,7 +58,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
     }
 
 
-    protected function getFormSchema(): array 
+    protected function getFormSchema(): array
     {
         if(!$this->user->collections) {
             $this->user->collections = $this->user->outstandingConsents();
@@ -73,7 +73,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
             ];
 
             if((int)$consentOption->additional_info === 1) {
-                
+
                 $additionInfo = [];
                 foreach ($consentOption->fields as $field) {
                     $fieldName = "consents_info.$consentOption->id.{$field['name']}";
@@ -113,7 +113,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         }
 
         return $formFields;
-    } 
+    }
 
     public function previousConsents($key)
     {
@@ -123,7 +123,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         }
     }
 
-    public function submit(): void 
+    public function submit(): void
     {
         $formData = $this->form->getState();
         
@@ -146,7 +146,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     ]
                 );
         }
-        
+
         Notification::make()
             ->title('Success')
             ->body('Your consent preferences have been saved.')
