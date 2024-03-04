@@ -18,6 +18,8 @@ class ForceRedirectToUnapprovedConsents
             return $next($request);
         }
 
+        
+
         // Determine if the current route is exempt (a consent route or ends with '.logout')
         $route = $request->route()->getName();
         $isExemptRoute = str_contains($route, 'consent-options') || str_ends_with($route, '.logout');

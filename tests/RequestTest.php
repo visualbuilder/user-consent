@@ -1,5 +1,6 @@
 <?php
 
+use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Tests\Seeders\ConsentOptionSeeder;
 
 use function Pest\Laravel\get;

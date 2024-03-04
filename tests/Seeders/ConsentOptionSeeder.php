@@ -114,6 +114,34 @@ class ConsentOptionSeeder extends Seeder
 </p>',
           'is_mandatory' => true,
           'is_current'   => true,
+          'additional_info' => true,
+          'additional_info_title' => "Contract additiona info",
+          'fields' => [
+            [
+              "name" => "name",
+              "type" => "text",
+              "label" => "Emergency Contact Name",
+              "rules" => "",
+              "options" => "",
+              "required" => true
+            ],
+            [
+              "name" => "position",
+              "type" => "text",
+              "label" => "Emergency Contact Position",
+              "rules" => "",
+              "options" => "",
+              "required" => false
+            ],
+            [
+              "name" => "phone",
+              "type" => "text",
+              "label" => "Emergency Contact Telephone",
+              "rules" => "",
+              "options" => "",
+              "required" => true
+            ]
+          ],
           'models'       => [
             [
               'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
@@ -152,6 +180,7 @@ class ConsentOptionSeeder extends Seeder
 </ol>',
           'is_mandatory' => true,
           'is_current'   => true,
+          'additional_info' => false,
           'models'       => [
             [
               'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
