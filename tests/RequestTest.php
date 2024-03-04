@@ -1,11 +1,13 @@
 <?php
 
+use Carbon\Carbon;
 use Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionFormBuilder;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Tests\Seeders\ConsentOptionSeeder;
 
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
+use Illuminate\Support\Arr;
 
 
 it('can access user consent list page', function () {
@@ -51,7 +53,7 @@ it('validate mandatory user consents', function() {
 
     livewire(ConsentOptionFormBuilder::class)
         ->call('submit')
-        ->assertHasFormErrors()
+        ->fillForm([])
         ->assertHasFormErrors($fieldValidation);
 });
 
@@ -59,22 +61,35 @@ it('validate mandatory user consents', function() {
 it('can fill and save consents', function() {
     $this->seed(ConsentOptionSeeder::class);
     $collections = auth()->user()->outstandingConsents();
-    $fieldValidation = [];
-    foreach($collections as $consentOption){
+    $fillForm = [];
+    foreach($collections as $consentOption) {
         if($consentOption->is_mandatory) {
-            $fieldValidation["consents.$consentOption->id"] = 'required';
+            $fillForm["consents.$consentOption->id"] = true;
         }
         if((int)$consentOption->additional_info === 1) {
             foreach ($consentOption->fields as $field) {
                 if((bool)$field['required']) {
-                    $fieldValidation["consents_info.$consentOption->id.{$field['name']}"] = "required";    
+                    $fieldValue = match ($field['type']) {
+                        'text' => fake()->name(),
+                        'email' => fake()->email(),
+                        'number' => fake()->phoneNumber(),
+                        'select' => Arr::random(explode(',', $field['options'])),
+                        'textarea' => fake()->sentence(),
+                        'check' => fake()->boolean(),
+                        'radio' => Arr::random(explode(',', $field['options'])),
+                        'date' => Carbon::now()->subDays(rand(0, 10))->format('Y-m-d'),
+                        'datetime' => Carbon::now()->subDays(rand(0, 10))->format('Y-m-d H:i:s'),
+                    };
+                    $fillForm["consents_info.$consentOption->id.{$field['name']}"] = $fieldValue;  
                 }
             }
         }
     }
 
     livewire(ConsentOptionFormBuilder::class)
+        ->fillForm($fillForm)
         ->call('submit')
-        ->assertHasFormErrors()
-        ->assertHasFormErrors($fieldValidation);
+        ->assertHasNoFormErrors();
+
+    get(route('consent-option-request'))->assertForbidden();
 });

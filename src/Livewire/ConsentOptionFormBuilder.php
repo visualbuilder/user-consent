@@ -10,6 +10,7 @@ use Filament\Pages\SimplePage;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\HtmlString;
 use Visualbuilder\FilamentUserConsent\Notifications\ConsentsUpdatedNotification;
 
@@ -155,8 +156,10 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
             ->send();
 
         // $this->user->notify(new ConsentsUpdatedNotification());
-
-        $this->redirect(request()->session()->get('url.saved'));
+        
+        if(Session::has('url.saved')) {
+            $this->redirect(request()->session()->get('url.saved'));
+        }
     } 
 
     public function prepareField($component, $fieldOption, $consentOption)
