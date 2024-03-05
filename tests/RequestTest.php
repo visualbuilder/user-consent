@@ -72,7 +72,7 @@ it('can fill and save consents', function() {
                     $fieldValue = match ($field['type']) {
                         'text' => fake()->name(),
                         'email' => fake()->email(),
-                        'number' => fake()->phoneNumber(),
+                        'number' => rand(100, 10000000),
                         'select' => Arr::random(explode(',', $field['options'])),
                         'textarea' => fake()->sentence(),
                         'check' => fake()->boolean(),

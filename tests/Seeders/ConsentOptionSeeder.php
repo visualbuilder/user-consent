@@ -32,14 +32,79 @@ class ConsentOptionSeeder extends Seeder
 </ul>',
           'is_mandatory' => true,
           'is_current'   => true,
+          'additional_info' => true,
+          'additional_info_title' => "Contract additional info",
+          'fields' => [
+            [
+              "name" => "name",
+              "type" => "text",
+              "label" => "Emergency Contact Name",
+              "rules" => "",
+              "options" => "",
+              "required" => true,
+              "column_span" => 1
+            ],
+            [
+              "name" => "position",
+              "type" => "email",
+              "label" => "Emergency Contact email",
+              "rules" => "",
+              "options" => "",
+              "required" => false,
+              "column_span" => 1
+            ],
+            [
+              "name" => "phone",
+              "type" => "number",
+              "label" => "Emergency Contact Telephone",
+              "rules" => "",
+              "options" => "",
+              "required" => true,
+              "column_span" => 1
+            ],
+            [
+              "name" => "addres",
+              "type" => "textarea",
+              "label" => "Address",
+              "rules" => "",
+              "options" => "",
+              "required" => true,
+              "column_span" => 1
+            ],
+            [
+              "name" => "language",
+              "type" => "select",
+              "label" => "Language",
+              "rules" => "",
+              "options" => "en,fr,tk",
+              "required" => true,
+              "column_span" => 1
+            ],
+            [
+              "name" => "gender",
+              "type" => "radio",
+              "label" => "Gender",
+              "rules" => "",
+              "options" => "Male,Female,Others",
+              "required" => true,
+              "column_span" => 1
+            ],
+            [
+              "name" => "dob",
+              "type" => "date",
+              "label" => "Date of Birth",
+              "rules" => "",
+              "options" => "",
+              "required" => true,
+              "column_span" => 1
+            ],
+          ],
           'models'       => [
             [
               'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
             ]
           ]
         ],
-
-
         [
           'key'          => 'data-sharing',
           'version'      => 1,
@@ -52,6 +117,8 @@ class ConsentOptionSeeder extends Seeder
 <p>Before we can submit your report to your employer, we require your consent to do so. Please tick the box below, to provide your consent.</p>',
           'is_mandatory' => false,
           'is_current'   => true,
+          'additional_info' => false,
+          'fields' => [],
           'models'       => [
             [
               'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
@@ -115,7 +182,7 @@ class ConsentOptionSeeder extends Seeder
           'is_mandatory' => true,
           'is_current'   => true,
           'additional_info' => true,
-          'additional_info_title' => "Contract additiona info",
+          'additional_info_title' => "Contract additional info",
           'fields' => [
             [
               "name" => "name",
@@ -123,7 +190,8 @@ class ConsentOptionSeeder extends Seeder
               "label" => "Emergency Contact Name",
               "rules" => "",
               "options" => "",
-              "required" => true
+              "required" => true,
+              "column_span" => 1
             ],
             [
               "name" => "position",
@@ -131,7 +199,8 @@ class ConsentOptionSeeder extends Seeder
               "label" => "Emergency Contact Position",
               "rules" => "",
               "options" => "",
-              "required" => false
+              "required" => false,
+              "column_span" => 1
             ],
             [
               "name" => "phone",
@@ -139,7 +208,8 @@ class ConsentOptionSeeder extends Seeder
               "label" => "Emergency Contact Telephone",
               "rules" => "",
               "options" => "",
-              "required" => true
+              "required" => true,
+              "column_span" => 1
             ]
           ],
           'models'       => [
@@ -181,6 +251,7 @@ class ConsentOptionSeeder extends Seeder
           'is_mandatory' => true,
           'is_current'   => true,
           'additional_info' => false,
+          'fields' => [],
           'models'       => [
             [
               'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
