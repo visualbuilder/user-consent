@@ -65,29 +65,33 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         }
         $formFields = [Forms\Components\Placeholder::make('welcome')->label('')->content(new HtmlString("Hi {$this->user->firstname},<br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))];
         foreach($this->user->collections as $consentOption){
+
+            
             $fields = [
                 Forms\Components\Placeholder::make('text')->label('')->content(new HtmlString($consentOption->text)),
                 Forms\Components\Checkbox::make("consents.$consentOption->id")
                 ->label($consentOption->label)
-                ->required($consentOption->is_mandatory)
+                ->required($consentOption->is_survey && $consentOption->is_mandatory)
             ];
 
             if((int)$consentOption->additional_info === 1) {
 
                 $additionInfo = [];
                 foreach ($consentOption->fields as $field) {
-                    $fieldName = "consents_info.$consentOption->id.{$field['name']}";
-                    $options = array_combine(explode(',',$field['options']), explode(',',$field['options']));
-                    $additionInfo[] = match ($field['type']) {
-                        'text' => Forms\Components\TextInput::make($fieldName)->label($field['label'])->required((bool)$field['required']),
-                        'email' => Forms\Components\TextInput::make($fieldName)->label($field['label'])->email()->required((bool)$field['required']),
-                        'select' => Forms\Components\Select::make($fieldName)->label($field['label'])->options($options)->required((bool)$field['required']),
-                        'textarea' => Forms\Components\Textarea::make($fieldName)->label($field['label'])->required((bool)$field['required']),
-                        'number' => Forms\Components\TextInput::make($fieldName)->label($field['label'])->numeric()->required((bool)$field['required']),
-                        'check' => Forms\Components\Checkbox::make($fieldName)->label($field['label'])->required((bool)$field['required']),
-                        'radio' => Forms\Components\Radio::make($fieldName)->label($field['label'])->options($options)->required((bool)$field['required']),
-                        'date' => Forms\Components\DatePicker::make($fieldName)->label($field['label'])->required((bool)$field['required']),
-                        'datetime' => Forms\Components\DateTimePicker::make($fieldName)->label($field['label'])->required((bool)$field['required']),
+                    $fieldName = "consents_info.$consentOption->id.{$field['name']}";                    
+                    $options = $field['options'];
+                    $additionInfo[] = match ($field['component']) {
+                        'placeholder' => Forms\Components\Placeholder::make($fieldName)->label('')->content(new HtmlString($field['content']))->columnSpanFull(),
+                        'likert' => Forms\Components\Radio::make($fieldName)->label($field['label'] ?? '')->options($options)->inline(true)->inlineLabel(false)->required((bool)$field['required']),
+                        'text' => Forms\Components\TextInput::make($fieldName)->label($field['label'] ?? '')->required((bool)$field['required']),
+                        'email' => Forms\Components\TextInput::make($fieldName)->label($field['label'] ?? '')->email()->required((bool)$field['required']),
+                        'select' => Forms\Components\Select::make($fieldName)->label($field['label'] ?? '')->options($options)->required((bool)$field['required']),
+                        'textarea' => Forms\Components\Textarea::make($fieldName)->label($field['label'] ?? '')->required((bool)$field['required']),
+                        'number' => Forms\Components\TextInput::make($fieldName)->label($field['label'] ?? '')->numeric()->required((bool)$field['required']),
+                        'check' => Forms\Components\Checkbox::make($fieldName)->label($field['label'] ?? '')->required((bool)$field['required']),
+                        'radio' => Forms\Components\Radio::make($fieldName)->label($field['label'] ?? '')->options($options)->required((bool)$field['required']),
+                        'date' => Forms\Components\DatePicker::make($fieldName)->label($field['label'] ?? '')->required((bool)$field['required']),
+                        'datetime' => Forms\Components\DateTimePicker::make($fieldName)->label($field['label'] ?? '')->required((bool)$field['required']),
                     };
                 }
 

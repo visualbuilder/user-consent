@@ -48,5 +48,19 @@ return [
     'email-template' => 'vendor.user-consent.layouts.email',
 
     //The mailable class to use for sending consent notification
-    'mailable' => \Visualbuilder\FilamentUserConsent\Mail\ConsentsUpdatedMail::class
+    'mailable' => \Visualbuilder\FilamentUserConsent\Mail\ConsentsUpdatedMail::class,
+
+    'components' => [
+        'placeholder' => 'Placeholder',
+        'likert' => 'Likert Slider',
+        'text' => 'Free Text Input',
+        'email' => 'Email Input',
+        'number' => 'Number Input',
+        'textarea' => 'Text area',
+        'select' => 'Select dropdown',
+        'radio' => 'Radio options',
+        'check' => 'Checkbox',
+        'date' => 'Date Picker',
+        'datetime' => 'Date & Time Picker',
+    ]
 ];

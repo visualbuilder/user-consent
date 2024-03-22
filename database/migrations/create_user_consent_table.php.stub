@@ -17,9 +17,10 @@ return new class extends Migration
                $table->id();
                $table->string('key');
                $table->unsignedBigInteger('version')->nullable()->default(1);
-               $table->string('title')->nullable()->default(null);
-               $table->string('label')->nullable()->default(null);
-               $table->text('text')->nullable()->default(null);
+               $table->string('title')->nullable();
+               $table->string('label')->nullable();
+               $table->text('text')->nullable();
+               $table->boolean('is_survey')->default(false);
                $table->boolean('additional_info')->default(0);
                $table->string('additional_info_title')->nullable();
                $table->json('fields')->nullable();
@@ -28,8 +29,8 @@ return new class extends Migration
                $table->boolean('enabled')->default(0);
                $table->boolean('force_user_update')->default(0);
                $table->integer('sort_order')->default(0);
-               $table->json('models')->nullable()->default(null);
-               $table->dateTime('published_at')->default(null);
+               $table->json('models')->nullable();
+               $table->dateTime('published_at')->nullable();
                $table->timestamps();
            });
        }

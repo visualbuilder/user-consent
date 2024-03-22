@@ -61,6 +61,9 @@ class ConsentOptionResource extends Resource
                         Forms\Components\Toggle::make('enabled')
                             ->label('Enable this contract')
                             ->required(),
+                        Forms\Components\Toggle::make('is_survey')
+                            ->label('Is this survey consent?')
+                            ->required(),
                         Forms\Components\Toggle::make('is_mandatory')
                             ->required(),
 
@@ -102,25 +105,31 @@ class ConsentOptionResource extends Resource
                         Forms\Components\TextInput::make('name')
                         ->regex('/^[a-z_]+$/')
                         ->required(),
-                        Forms\Components\Select::make('type')
-                            ->options([
-                                'text' => 'Text Input',
-                                'email' => 'Email Input',
-                                'number' => 'Number Input',
-                                'date' => 'Date Picker',
-                                'datetime' => 'Date & Time Picker',
-                                'textarea' => 'Text area',                            
-                                'select' => 'Select dropdown',
-                                'radio' => 'Radio dropdown',
-                                'check' => 'Checkbox',
-                            ])
+                        Forms\Components\Select::make('component')
+                            ->options(config('filament-user-consent.components'))
+                            ->searchable()
+                            ->live()
                             ->required(),
-                        Forms\Components\TextInput::make('label')->required(),
-                        Forms\Components\TagsInput::make('options')->separator(',')->splitKeys(['Tab', ' ']),
-                        Forms\Components\Toggle::make('required')->inline(false)->required(),
+                        Forms\Components\TextInput::make('label')
+                            ->visible(fn(Get $get) => $get('component') !== 'placeholder'),
+                        Forms\Components\Toggle::make('required')
+                            ->inline(false)
+                            ->required(fn(Get $get) => $get('component') !== 'placeholder')
+                            ->visible(fn(Get $get) => $get('component') !== 'placeholder'),
+                        Forms\Components\RichEditor::make('content')
+                            ->required(fn(Get $get) => $get('component') === 'placeholder')
+                            ->visible(fn(Get $get) => $get('component') === 'placeholder')
+                            ->columnSpanFull(),
+                        Forms\Components\KeyValue::make('options')
+                            ->addActionLabel('Add Option')
+                            ->keyLabel('Value')
+                            ->valueLabel('Label')
+                            ->columnSpanFull()
+                            ->required(fn(Get $get) => in_array($get('component'), ['select', 'radio', 'likert']))
+                            ->visible(fn(Get $get) => in_array($get('component'), ['select', 'radio', 'likert'])),
                     ])
                     ->defaultItems(1)
-                    ->columns(3)
+                    ->columns(2)
                     ->addActionLabel('Add Field')
                     ->collapsed()
                 ])->visible(fn(Get $get) => (bool)$get('additional_info'))

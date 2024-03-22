@@ -14,7 +14,6 @@ Route::middleware([
     StartSession::class,
     VerifyCsrfToken::class,
     AuthenticateSession::class,
-    Authenticate::class,
     'auth:admin,practitioner,enduser'
 ])->group(function () {
     Route::get('consent-option-request', ConsentOptionFormBuilder::class)->name('consent-option-request');

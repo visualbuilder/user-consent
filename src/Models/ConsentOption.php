@@ -5,6 +5,7 @@ namespace Visualbuilder\FilamentUserConsent\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Visualbuilder\FilamentUserConsent\Database\Factories\ConsentOptionFactory;
@@ -48,6 +49,7 @@ class ConsentOption extends Model
         'title',
         'label',
         'text',
+        'is_survey',
         'fields',
         'is_mandatory',
         'force_user_update',
@@ -73,7 +75,7 @@ class ConsentOption extends Model
         // 'is_current' => 'boolean',
         // 'force_user_update' => 'boolean',
         // 'is_mandatory' => 'boolean',
-    ];
+    ];    
 
     /**
      * @return string
