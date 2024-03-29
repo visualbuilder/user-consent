@@ -14,12 +14,14 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;
+use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\RelationManagers\ConsentOptionQuestionsRelationManager;
 
 class ConsentOptionResource extends Resource
 {
@@ -84,22 +86,19 @@ class ConsentOptionResource extends Resource
                             ->multiple()
                             ->searchable()
                             ->required(),
+                        Forms\Components\TextInput::make('additional_info_title')
+                            ->nullable()
+                            ->maxLength(150),
                     ])->columns(2)->columnSpanFull(),
 
-                    Forms\Components\RichEditor::make('text')
+                    TiptapEditor::make('text')
                         ->label('Contract text')
                         ->required()
                         ->columnSpanFull(),
-
-                    Forms\Components\Toggle::make('additional_info')
-                        ->label('Do you want to demand additional info from user?')
-                        ->required()
-                        ->live()
-                        ->columnSpanFull(),
+                    
                 ])->columns(3),
                 Section::make('Additional Info')->schema([
-                    Forms\Components\TextInput::make('additional_info_title')
-                        ->required(),
+                    
                     Repeater::make('fields')->label('')
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -178,7 +177,7 @@ class ConsentOptionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ConsentOptionQuestionsRelationManager::class
         ];
     }
 

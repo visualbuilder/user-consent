@@ -5,6 +5,7 @@ namespace Visualbuilder\FilamentUserConsent\Livewire;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Get;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Filament\Support\Enums\MaxWidth;
@@ -74,25 +75,38 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                 ->required($consentOption->is_survey && $consentOption->is_mandatory)
             ];
 
-            if((int)$consentOption->additional_info === 1) {
+            if($consentOption->questions->count() > 0) {
 
                 $additionInfo = [];
-                foreach ($consentOption->fields as $field) {
-                    $fieldName = "consents_info.$consentOption->id.{$field['name']}";                    
-                    $options = $field['options'];
-                    $additionInfo[] = match ($field['component']) {
-                        'placeholder' => Forms\Components\Placeholder::make($fieldName)->label('')->content(new HtmlString($field['content']))->columnSpanFull(),
-                        'likert' => Forms\Components\Radio::make($fieldName)->label($field['label'] ?? '')->options($options)->inline(true)->inlineLabel(false)->required((bool)$field['required']),
-                        'text' => Forms\Components\TextInput::make($fieldName)->label($field['label'] ?? '')->required((bool)$field['required']),
-                        'email' => Forms\Components\TextInput::make($fieldName)->label($field['label'] ?? '')->email()->required((bool)$field['required']),
-                        'select' => Forms\Components\Select::make($fieldName)->label($field['label'] ?? '')->options($options)->required((bool)$field['required']),
-                        'textarea' => Forms\Components\Textarea::make($fieldName)->label($field['label'] ?? '')->required((bool)$field['required']),
-                        'number' => Forms\Components\TextInput::make($fieldName)->label($field['label'] ?? '')->numeric()->required((bool)$field['required']),
-                        'check' => Forms\Components\Checkbox::make($fieldName)->label($field['label'] ?? '')->required((bool)$field['required']),
-                        'radio' => Forms\Components\Radio::make($fieldName)->label($field['label'] ?? '')->options($options)->required((bool)$field['required']),
-                        'date' => Forms\Components\DatePicker::make($fieldName)->label($field['label'] ?? '')->required((bool)$field['required']),
-                        'datetime' => Forms\Components\DateTimePicker::make($fieldName)->label($field['label'] ?? '')->required((bool)$field['required']),
+                foreach ($consentOption->questions as $question) {
+                    $fieldName = "consents_info.$consentOption->id.{$question->name}";
+                    $options = $question->options;
+                    $options = $question->options ? $question->options->pluck('text', 'id') : [];
+                    $additionalInfo = null;
+                    if ($options) {
+                        $additionalInfo = $question->options->where('additional_info', true)->first();
+                    }
+                    $additionInfo[] = match ($question->component) {
+                        'placeholder' => Forms\Components\Placeholder::make($fieldName)->label('')->content(new HtmlString($question->content))->columnSpanFull(),
+                        'likert' => Forms\Components\Radio::make($fieldName)->label($question->label ?? '')->options($options)->inline(true)->live()->inlineLabel(false)->required($question->required),
+                        'text' => Forms\Components\TextInput::make($fieldName)->label($question->label ?? '')->required($question->required),
+                        'email' => Forms\Components\TextInput::make($fieldName)->label($question->label ?? '')->email()->required($question->required),
+                        'select' => Forms\Components\Select::make($fieldName)->label($question->label ?? '')->options($options)->live()->required($question->required),
+                        'textarea' => Forms\Components\Textarea::make($fieldName)->label($question->label ?? '')->required($question->required),
+                        'number' => Forms\Components\TextInput::make($fieldName)->label($question->label ?? '')->numeric()->required($question->required),
+                        'check' => Forms\Components\Checkbox::make($fieldName)->label($question->label ?? '')->required($question->required),
+                        'radio' => Forms\Components\Radio::make($fieldName)->label($question->label ?? '')->options($options)->live()->columnSpanFull()->required($question->required),
+                        'date' => Forms\Components\DatePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
+                        'datetime' => Forms\Components\DateTimePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
                     };
+
+                    if ($additionalInfo && in_array($question->component, ['radio', 'select', 'likert'])) {
+                        $formInputs[] = Forms\Components\Textarea::make("consents_info.{$consentOption->id}.additional_info")
+                            ->label($additionalInfo->additional_info_label ?? 'Additional info')
+                            ->visible(fn (Get $get) => $get("consents_info.{$question->id}.{$question->name}") == $additionalInfo->id)
+                            ->required(fn (Get $get) => $get("consents_info.{$question->id}.{$question->name}") == $additionalInfo->id);
+                    }
+
                 }
 
                 $fields[] = Section::make($consentOption->additional_info_title)->schema($additionInfo)->columns(3);

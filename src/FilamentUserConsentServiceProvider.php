@@ -157,7 +157,13 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_user_consent_table', 'create_consentables_table', 'create_product_consent_option_table', 'create_product_category_consent_option_table', 'create_organisation_consent_option_table'
+            'create_user_consent_table', 
+            'create_consentables_table', 
+            'create_user_consent_questions_table',
+            'create_user_consent_question_options_table',
+            'create_product_consent_option_table', 
+            'create_product_category_consent_option_table', 
+            'create_organisation_consent_option_table'
         ];
     }
 
