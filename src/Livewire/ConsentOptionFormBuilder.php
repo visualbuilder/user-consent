@@ -79,7 +79,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
                 $additionInfo = [];
                 foreach ($consentOption->questions as $question) {
-                    $fieldName = "consents_info.$consentOption->id.{$question->name}";
+                    $fieldName = "consents_info.$consentOption->id.$question->id.$question->name";
                     $options = $question->options;
                     $options = $question->options ? $question->options->pluck('text', 'id') : [];
                     $additionalInfo = null;
@@ -101,14 +101,12 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     };
 
                     if ($additionalInfo && in_array($question->component, ['radio', 'select', 'likert'])) {
-                        $formInputs[] = Forms\Components\Textarea::make("consents_info.{$consentOption->id}.additional_info")
+                        $formInputs[] = Forms\Components\Textarea::make("consents_info.$consentOption->id.$question->id.additional_info")
                             ->label($additionalInfo->additional_info_label ?? 'Additional info')
-                            ->visible(fn (Get $get) => $get("consents_info.{$question->id}.{$question->name}") == $additionalInfo->id)
-                            ->required(fn (Get $get) => $get("consents_info.{$question->id}.{$question->name}") == $additionalInfo->id);
+                            ->visible(fn (Get $get) => $get("consents_info.$consentOption->id.$question->id.$question->name") == $additionalInfo->id)
+                            ->required(fn (Get $get) => $get("consents_info.$consentOption->id.$question->id.$question->name") == $additionalInfo->id);
                     }
-
                 }
-
                 $fields[] = Section::make($consentOption->additional_info_title)->schema($additionInfo)->columns(3);
             }
 

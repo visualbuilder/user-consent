@@ -22,7 +22,6 @@ return new class extends Migration
                $table->text('text')->nullable();
                $table->boolean('is_survey')->default(false);
                $table->string('additional_info_title')->nullable();
-               $table->json('fields')->nullable();
                $table->boolean('is_mandatory')->default(0);
                $table->boolean('is_current')->default(0);
                $table->boolean('enabled')->default(0);
