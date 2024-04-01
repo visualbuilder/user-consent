@@ -22,8 +22,6 @@ class ConsentOptionFactory extends Factory
             'text'              => $this->faker->paragraph,
             'is_mandatory'      => 1,
             'is_current'        => 1,
-            'additional_info'   => false,
-            'fields'            => [],
             'force_user_update' => 1,
             'enabled'           => 1,
             'models'            => config('filament-user-consent.models'),

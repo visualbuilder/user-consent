@@ -13,6 +13,8 @@ return [
         App\Models\EndUser::class,
     ],
 
+    'auth-guards' => 'web',
+
     'options' => [
         'App\Models\Admin' => 'Admin',
         'App\Models\Practitioner' => 'Practitioner',

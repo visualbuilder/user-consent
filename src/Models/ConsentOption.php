@@ -19,6 +19,9 @@ use Visualbuilder\FilamentUserConsent\Traits\UserCount;
  * @property string $text
  * @property bool $is_mandatory
  * @property bool $is_current
+ * @property string $additional_info
+ * @property string $additional_info_title
+ * @property array $fields
  * @property bool $enabled
  * @property bool $force_user_update
  * @property int $sort_order
@@ -48,12 +51,12 @@ class ConsentOption extends Model
         'title',
         'label',
         'text',
-        'fields',
         'is_mandatory',
         'force_user_update',
         'is_current',
         'additional_info',
         'additional_info_title',
+        'fields',
         'enabled',
         'sort_order',
         'models',
@@ -68,7 +71,8 @@ class ConsentOption extends Model
     protected $casts = [
         'models' => 'array',
         'published_at' => 'datetime:Y-m-d H:i:s',
-        'fields' => 'array'
+        'fields' => 'array',
+        'additional_info' => 'boolean'
         // 'enabled' => 'boolean',
         // 'is_current' => 'boolean',
         // 'force_user_update' => 'boolean',

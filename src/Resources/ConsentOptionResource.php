@@ -100,6 +100,7 @@ class ConsentOptionResource extends Resource
                     Repeater::make('fields')->label('')
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                        ->hint('(Ex: some_name)')
                         ->regex('/^[a-z_]+$/')
                         ->required(),
                         Forms\Components\Select::make('type')
@@ -107,17 +108,41 @@ class ConsentOptionResource extends Resource
                                 'text' => 'Text Input',
                                 'email' => 'Email Input',
                                 'number' => 'Number Input',
+                                'textarea' => 'Text area',
+                                'select' => 'Select dropdown',
+                                'radio' => 'Radio options',
+                                'check' => 'Checkbox',
                                 'date' => 'Date Picker',
                                 'datetime' => 'Date & Time Picker',
-                                'textarea' => 'Text area',                            
-                                'select' => 'Select dropdown',
-                                'radio' => 'Radio dropdown',
-                                'check' => 'Checkbox',
                             ])
                             ->required(),
-                        Forms\Components\TextInput::make('label')->required(),
-                        Forms\Components\TagsInput::make('options')->separator(',')->splitKeys(['Tab', ' ']),
+                        Forms\Components\TextInput::make('label'),
+                        Forms\Components\TagsInput::make('options')->separator(',')->splitKeys(['Tab']),
+                        Forms\Components\Select::make('column_span')
+                            ->label('Field\'s Column span')
+                            ->options([
+                                1 => '1 Column',
+                                2 => '2 Columns',
+                                3 => '3 Columns',
+                            ])
+                            ->default(1)
+                            ->required(),
                         Forms\Components\Toggle::make('required')->inline(false)->required(),
+                        Forms\Components\Toggle::make('custom_rules')->inline(false)->live(),
+                        Repeater::make('rules')->label('')->schema([
+                            Forms\Components\Select::make('rule_type')
+                                ->options([
+                                    'require_if_another_field' => 'Required If another field matches',
+                                ]),
+                            Forms\Components\TextInput::make('another_field')->regex('/^[a-z_]+$/')
+                                ->label('Another field name')
+                                ->hint('("Name" of parent)'),
+                            Forms\Components\TextInput::make('value_equals')->label('Value equals'),
+                        ])
+                        ->visible(fn(Get $get) => (bool)$get('custom_rules'))
+                        ->addActionLabel('Add Rule')
+                        ->columnSpanFull()
+                        ->columns(3)
                     ])
                     ->defaultItems(1)
                     ->columns(3)

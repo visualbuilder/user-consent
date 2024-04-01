@@ -27,6 +27,16 @@
             <clover outputFile="build/logs/clover.xml"/>
         </report>
     </coverage>
+    <php>
+        <env name="APP_KEY" value="base64:NDNkbDNneml1Y2IxbTgwZnFnM3J4b3czMGhrZG0xdXo="/>
+        <env name="APP_ENV" value="testing"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_DRIVER" value="array"/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="TELESCOPE_ENABLED" value="false"/>
+    </php>
     <logging>
         <junit outputFile="build/report.junit.xml"/>
     </logging>
