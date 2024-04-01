@@ -13,13 +13,14 @@ return new class extends Migration
          */
         public function up()
         {
-            Schema::create('consentables', function (Blueprint $table) {
+            Schema::create('consentable_responses', function (Blueprint $table) {
                 $table->id('id');
+                $table->foreignId('consentable_id'); //`consentables` table primary key
                 $table->foreignId('consent_option_id');
-                $table->unsignedBigInteger('consentable_id');
-                $table->string('consentable_type');
-                $table->string('key')->default(NULL)->nullable();
-                $table->boolean('accepted')->default(0);
+                $table->foreignId('consent_option_question_id');
+                $table->string('question_field_name')->nullable();
+                $table->string('response')->nullable();
+                $table->string('additional_info')->nullable();
                 $table->timestamps();
             });
         }

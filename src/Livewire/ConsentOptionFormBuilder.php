@@ -11,7 +11,12 @@ use Filament\Pages\SimplePage;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
+use Visualbuilder\FilamentUserConsent\Models\ConsentableResponse;
+use Visualbuilder\FilamentUserConsent\Models\ConsentOptionQuestion;
+use Visualbuilder\FilamentUserConsent\Models\ConsentOptionQuestionOption;
+use Visualbuilder\FilamentUserConsent\Models\ConsentOptionUser;
 use Visualbuilder\FilamentUserConsent\Notifications\ConsentsUpdatedNotification;
 
 class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\HasForms
@@ -72,7 +77,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                 Forms\Components\Placeholder::make('text')->label('')->content(new HtmlString($consentOption->text)),
                 Forms\Components\Checkbox::make("consents.$consentOption->id")
                 ->label($consentOption->label)
-                ->required($consentOption->is_survey && $consentOption->is_mandatory)
+                ->required($consentOption->is_mandatory)
             ];
 
             if($consentOption->questions->count() > 0) {
@@ -155,9 +160,40 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     [
                         'accepted' => in_array($consentOption->id, $conentIds),
                         'key' => $consentOption->key,
-                        'fields' => (bool)$consentOption->additional_info ? $consentInfo[$consentOption->id] : []
                     ]
-                );
+                );            
+
+            if($consentOption->questions->count() > 0) {
+                $consentable = $this->user->consents()->where('consent_option_id', $consentOption->id)->first();
+                $consentable = $consentable->pivot;
+                $consentable = ConsentOptionUser::where('consentable_type', $consentable->consentable_type)
+                    ->where('consentable_id', $consentable->consentable_id)
+                    ->where('consent_option_id', $consentable->consent_option_id)
+                    ->where('accepted', $consentable->accepted)
+                    ->first();
+                
+                foreach ($consentInfo[$consentOption->id] as $id => $question) {
+                    $key = array_keys($question);
+                    $fieldName = $key[0];
+                    $question = ConsentOptionQuestion::find($id);
+                    $questionOption = null;
+                    $additionalInfoQuestion = null;
+                    if ($question->options->count() > 0) {
+                        $questionOption = ConsentOptionQuestionOption::find($question[$fieldName]);
+                        $additionalInfoQuestion = $question->options->where('additional_info', true)->first();
+                    }
+
+                    ConsentableResponse::create([
+                        'consentable_id' => $consentable->id,
+                        'consent_option_id' => $consentOption->id,
+                        'consent_option_question_id' => $id,
+                        'question_field_name' => $fieldName,
+                        'response' => $question->options?->count() === 0 ? $question[$fieldName] : $questionOption?->value,
+                        'additional_info' => ($additionalInfoQuestion && isset($question['additional_info'])) ? $question['additional_info'] : null,
+                    ]);
+                }
+            }
+            
         }
 
         Notification::make()
