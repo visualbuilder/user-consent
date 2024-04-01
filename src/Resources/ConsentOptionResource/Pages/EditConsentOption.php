@@ -30,7 +30,9 @@ class EditConsentOption extends EditRecord
             //create a new version
             $data['version'] = $record->nextVersionNumber;
             $data['key'] = $record->key;
+            
             $record = ConsentOption::create($data);
+            
         } else {
             $record->update($data);
         }

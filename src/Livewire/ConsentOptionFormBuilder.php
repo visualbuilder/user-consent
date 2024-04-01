@@ -71,7 +71,6 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         }
         $formFields = [Forms\Components\Placeholder::make('welcome')->label('')->content(new HtmlString("Hi {$this->user->firstname},<br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))];
         foreach($this->user->collections as $consentOption){
-
             
             $fields = [
                 Forms\Components\Placeholder::make('text')->label('')->content(new HtmlString($consentOption->text)),
@@ -82,16 +81,16 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
             if($consentOption->questions->count() > 0) {
 
-                $additionInfo = [];
+                $formComponents = [];
                 foreach ($consentOption->questions as $question) {
                     $fieldName = "consents_info.$consentOption->id.$question->id.$question->name";
                     $options = $question->options;
                     $options = $question->options ? $question->options->pluck('text', 'id') : [];
-                    $additionalInfo = null;
+                    $additionalInfoField = null;
                     if ($options) {
-                        $additionalInfo = $question->options->where('additional_info', true)->first();
+                        $additionalInfoField = $question->options->where('additional_info', true)->first();
                     }
-                    $additionInfo[] = match ($question->component) {
+                    $formComponents[] = match ($question->component) {
                         'placeholder' => Forms\Components\Placeholder::make($fieldName)->label('')->content(new HtmlString($question->content))->columnSpanFull(),
                         'likert' => Forms\Components\Radio::make($fieldName)->label($question->label ?? '')->options($options)->inline(true)->live()->inlineLabel(false)->required($question->required),
                         'text' => Forms\Components\TextInput::make($fieldName)->label($question->label ?? '')->required($question->required),
@@ -104,15 +103,18 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                         'date' => Forms\Components\DatePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
                         'datetime' => Forms\Components\DateTimePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
                     };
-
-                    if ($additionalInfo && in_array($question->component, ['radio', 'select', 'likert'])) {
-                        $formInputs[] = Forms\Components\Textarea::make("consents_info.$consentOption->id.$question->id.additional_info")
-                            ->label($additionalInfo->additional_info_label ?? 'Additional info')
-                            ->visible(fn (Get $get) => $get("consents_info.$consentOption->id.$question->id.$question->name") == $additionalInfo->id)
-                            ->required(fn (Get $get) => $get("consents_info.$consentOption->id.$question->id.$question->name") == $additionalInfo->id);
+    
+                    if ($additionalInfoField && in_array($question->component, ['radio', 'select', 'likert'])) {
+                        $formComponents[] = Forms\Components\Textarea::make("consents_info.$consentOption->id.$question->id.additional_info")
+                            ->label($additionalInfoField->additional_info_label ?? 'Additional info')
+                            ->visible(function (Get $get) use($fieldName, $additionalInfoField) {
+                                // dump($get($fieldName), $additionalInfo->id);
+                                return $get($fieldName) == $additionalInfoField->id;
+                            })
+                            ->required(fn (Get $get) => $get($fieldName) == $additionalInfoField->id);
                     }
                 }
-                $fields[] = Section::make($consentOption->additional_info_title)->schema($additionInfo)->columns(3);
+                $fields[] = Section::make($consentOption->additional_info_title)->schema($formComponents)->columns(3);
             }
 
             $formFields[] = Section::make("{$consentOption->title} v{$consentOption->version}")
@@ -193,7 +195,6 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     ]);
                 }
             }
-            
         }
 
         Notification::make()
