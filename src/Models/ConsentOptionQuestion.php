@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Visualbuilder\FilamentUserConsent\Database\Factories\ConsentOptionQuestionFactory;
 
 class ConsentOptionQuestion extends Model
 {
@@ -38,6 +39,14 @@ class ConsentOptionQuestion extends Model
         'consent_option_id' => 'integer',
         'required' => 'boolean'
     ];
+
+    /**
+     * @return ConsentOptionQuestionFactory
+     */
+    protected static function newFactory(): ConsentOptionQuestionFactory
+    {
+        return ConsentOptionQuestionFactory::new();
+    }
 
     public function options(): HasMany
     {
