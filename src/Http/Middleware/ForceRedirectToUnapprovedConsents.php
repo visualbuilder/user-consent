@@ -23,7 +23,6 @@ class ForceRedirectToUnapprovedConsents
         // Determine if the current route is exempt (a consent route or ends with '.logout')
         $route = $request->route()->getName();
         $isExemptRoute = str_contains($route, 'consent-options') || str_ends_with($route, '.logout');
-
         // Check for required consents if user is authenticated and not on an exempt or logout route
         if (!$isExemptRoute && !$request->ajax() && method_exists($user, 'hasRequiredConsents') && !$user->hasRequiredConsents()) {
             // Save the current request URL

@@ -20,6 +20,8 @@ class ConsentOptionFactory extends Factory
             'title'             => $title,
             'label'             => 'Tick here to accept the terms',
             'text'              => $this->faker->paragraph,
+            'is_survey'         => $this->faker->boolean(),
+            'additional_info_title' => $this->faker->title(),
             'is_mandatory'      => 1,
             'is_current'        => 1,
             'force_user_update' => 1,

@@ -14,12 +14,14 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;
+use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\RelationManagers\ConsentOptionQuestionsRelationManager;
 
 class ConsentOptionResource extends Resource
 {
@@ -61,6 +63,9 @@ class ConsentOptionResource extends Resource
                         Forms\Components\Toggle::make('enabled')
                             ->label('Enable this contract')
                             ->required(),
+                        Forms\Components\Toggle::make('is_survey')
+                            ->label('Is this survey consent?')
+                            ->required(),
                         Forms\Components\Toggle::make('is_mandatory')
                             ->required(),
 
@@ -81,71 +86,49 @@ class ConsentOptionResource extends Resource
                             ->multiple()
                             ->searchable()
                             ->required(),
+                        Forms\Components\TextInput::make('additional_info_title')
+                            ->nullable()
+                            ->maxLength(150),
                     ])->columns(2)->columnSpanFull(),
 
-                    Forms\Components\RichEditor::make('text')
+                    TiptapEditor::make('text')
                         ->label('Contract text')
                         ->required()
                         ->columnSpanFull(),
-
-                    Forms\Components\Toggle::make('additional_info')
-                        ->label('Do you want to demand additional info from user?')
-                        ->required()
-                        ->live()
-                        ->columnSpanFull(),
+                    
                 ])->columns(3),
                 Section::make('Additional Info')->schema([
-                    Forms\Components\TextInput::make('additional_info_title')
-                        ->required(),
+                    
                     Repeater::make('fields')->label('')
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                        ->hint('(Ex: some_name)')
                         ->regex('/^[a-z_]+$/')
                         ->required(),
-                        Forms\Components\Select::make('type')
-                            ->options([
-                                'text' => 'Text Input',
-                                'email' => 'Email Input',
-                                'number' => 'Number Input',
-                                'textarea' => 'Text area',
-                                'select' => 'Select dropdown',
-                                'radio' => 'Radio options',
-                                'check' => 'Checkbox',
-                                'date' => 'Date Picker',
-                                'datetime' => 'Date & Time Picker',
-                            ])
+                        Forms\Components\Select::make('component')
+                            ->options(config('filament-user-consent.components'))
+                            ->searchable()
+                            ->live()
                             ->required(),
-                        Forms\Components\TextInput::make('label'),
-                        Forms\Components\TagsInput::make('options')->separator(',')->splitKeys(['Tab']),
-                        Forms\Components\Select::make('column_span')
-                            ->label('Field\'s Column span')
-                            ->options([
-                                1 => '1 Column',
-                                2 => '2 Columns',
-                                3 => '3 Columns',
-                            ])
-                            ->default(1)
-                            ->required(),
-                        Forms\Components\Toggle::make('required')->inline(false)->required(),
-                        Forms\Components\Toggle::make('custom_rules')->inline(false)->live(),
-                        Repeater::make('rules')->label('')->schema([
-                            Forms\Components\Select::make('rule_type')
-                                ->options([
-                                    'require_if_another_field' => 'Required If another field matches',
-                                ]),
-                            Forms\Components\TextInput::make('another_field')->regex('/^[a-z_]+$/')
-                                ->label('Another field name')
-                                ->hint('("Name" of parent)'),
-                            Forms\Components\TextInput::make('value_equals')->label('Value equals'),
-                        ])
-                        ->visible(fn(Get $get) => (bool)$get('custom_rules'))
-                        ->addActionLabel('Add Rule')
-                        ->columnSpanFull()
-                        ->columns(3)
+                        Forms\Components\TextInput::make('label')
+                            ->visible(fn(Get $get) => $get('component') !== 'placeholder'),
+                        Forms\Components\Toggle::make('required')
+                            ->inline(false)
+                            ->required(fn(Get $get) => $get('component') !== 'placeholder')
+                            ->visible(fn(Get $get) => $get('component') !== 'placeholder'),
+                        Forms\Components\RichEditor::make('content')
+                            ->required(fn(Get $get) => $get('component') === 'placeholder')
+                            ->visible(fn(Get $get) => $get('component') === 'placeholder')
+                            ->columnSpanFull(),
+                        Forms\Components\KeyValue::make('options')
+                            ->addActionLabel('Add Option')
+                            ->keyLabel('Value')
+                            ->valueLabel('Label')
+                            ->columnSpanFull()
+                            ->required(fn(Get $get) => in_array($get('component'), ['select', 'radio', 'likert']))
+                            ->visible(fn(Get $get) => in_array($get('component'), ['select', 'radio', 'likert'])),
                     ])
                     ->defaultItems(1)
-                    ->columns(3)
+                    ->columns(2)
                     ->addActionLabel('Add Field')
                     ->collapsed()
                 ])->visible(fn(Get $get) => (bool)$get('additional_info'))
@@ -194,7 +177,7 @@ class ConsentOptionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ConsentOptionQuestionsRelationManager::class
         ];
     }
 

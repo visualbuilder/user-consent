@@ -16,7 +16,7 @@ Route::middleware([
     ShareErrorsFromSession::class,
     VerifyCsrfToken::class,
     AuthenticateSession::class,
-    'auth:'.config('filament-user-consent.auth-gurads'),
+    'auth:'.config('filament-user-consent.auth-guards'),
 ])->group(function () {
     Route::get('consent-option-request', ConsentOptionFormBuilder::class)->name('consent-option-request');
 });

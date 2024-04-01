@@ -2,6 +2,7 @@
 
 namespace Visualbuilder\FilamentUserConsent\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
 /**
@@ -20,15 +21,6 @@ class ConsentOptionUser extends MorphPivot
 
     protected $table = 'consentables';
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'fields' => 'array'
-    ];
-
     public static function getAllSavedUserTypes(): array
     {
         return self::query()->select('consentable_type')->distinct()->pluck('consentable_type')->toArray();
@@ -37,6 +29,12 @@ class ConsentOptionUser extends MorphPivot
     public function consentOption()
     {
         return $this->belongsTo(ConsentOption::class, 'consent_option_id', 'id');
+    }
+
+
+    public function responses(): HasMany
+    {
+        return $this->hasMany(ConsentableResponse::class);
     }
 
     /**

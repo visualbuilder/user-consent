@@ -5,13 +5,18 @@ namespace Visualbuilder\FilamentUserConsent\Livewire;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Get;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
+use Visualbuilder\FilamentUserConsent\Models\ConsentableResponse;
+use Visualbuilder\FilamentUserConsent\Models\ConsentOptionQuestion;
+use Visualbuilder\FilamentUserConsent\Models\ConsentOptionQuestionOption;
+use Visualbuilder\FilamentUserConsent\Models\ConsentOptionUser;
 use Visualbuilder\FilamentUserConsent\Notifications\ConsentsUpdatedNotification;
 
 class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\HasForms
@@ -66,6 +71,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         }
         $formFields = [Forms\Components\Placeholder::make('welcome')->label('')->content(new HtmlString("Hi {$this->user->firstname},<br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))];
         foreach($this->user->collections as $consentOption){
+            
             $fields = [
                 Forms\Components\Placeholder::make('text')->label('')->content(new HtmlString($consentOption->text)),
                 Forms\Components\Checkbox::make("consents.$consentOption->id")
@@ -73,30 +79,42 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                 ->required($consentOption->is_mandatory)
             ];
 
-            if((int)$consentOption->additional_info === 1) {
+            if($consentOption->questions->count() > 0) {
 
-                $additionInfo = [];
-                foreach ($consentOption->fields as $field) {
-                    $fieldName = "consents_info.$consentOption->id.{$field['name']}";
-                    $fieldLabel = $field['label'] ?? '';
-                    $columnSpan = $field['column_span'] ?? 1;
-                    $options = array_combine(explode(',',$field['options']), explode(',',$field['options']));
-                    
-
-                    $additionInfo[] = match ($field['type']) {
-                        'text' => $this->prepareField(Forms\Components\TextInput::make($fieldName)->label($fieldLabel)->columnSpan($columnSpan), $field, $consentOption),
-                        'email' => $this->prepareField(Forms\Components\TextInput::make($fieldName)->label($fieldLabel)->email()->columnSpan($columnSpan), $field, $consentOption),
-                        'select' => $this->prepareField(Forms\Components\Select::make($fieldName)->label($fieldLabel)->options($options)->columnSpan($columnSpan), $field, $consentOption),
-                        'textarea' => $this->prepareField(Forms\Components\Textarea::make($fieldName)->label($fieldLabel)->columnSpan($columnSpan), $field, $consentOption),
-                        'number' => $this->prepareField(Forms\Components\TextInput::make($fieldName)->label($fieldLabel)->numeric()->columnSpan($columnSpan), $field, $consentOption),
-                        'check' => $this->prepareField(Forms\Components\Checkbox::make($fieldName)->label($fieldLabel)->columnSpan($columnSpan), $field, $consentOption),
-                        'radio' => $this->prepareField(Forms\Components\Radio::make($fieldName)->label($fieldLabel)->options($options)->columnSpan($columnSpan), $field, $consentOption),
-                        'date' => $this->prepareField(Forms\Components\DatePicker::make($fieldName)->label($fieldLabel)->columnSpan($columnSpan), $field, $consentOption),
-                        'datetime' => $this->prepareField(Forms\Components\DateTimePicker::make($fieldName)->label($fieldLabel)->columnSpan($columnSpan), $field, $consentOption),
+                $formComponents = [];
+                foreach ($consentOption->questions as $question) {
+                    $fieldName = "consents_info.$consentOption->id.$question->id.$question->name";
+                    $options = $question->options;
+                    $options = $question->options ? $question->options->pluck('text', 'id') : [];
+                    $additionalInfoField = null;
+                    if ($options) {
+                        $additionalInfoField = $question->options->where('additional_info', true)->first();
+                    }
+                    $formComponents[] = match ($question->component) {
+                        'placeholder' => Forms\Components\Placeholder::make($fieldName)->label('')->content(new HtmlString($question->content))->columnSpanFull(),
+                        'likert' => Forms\Components\Radio::make($fieldName)->label($question->label ?? '')->options($options)->inline(true)->live()->inlineLabel(false)->required($question->required),
+                        'text' => Forms\Components\TextInput::make($fieldName)->label($question->label ?? '')->required($question->required),
+                        'email' => Forms\Components\TextInput::make($fieldName)->label($question->label ?? '')->email()->required($question->required),
+                        'select' => Forms\Components\Select::make($fieldName)->label($question->label ?? '')->options($options)->live()->required($question->required),
+                        'textarea' => Forms\Components\Textarea::make($fieldName)->label($question->label ?? '')->required($question->required),
+                        'number' => Forms\Components\TextInput::make($fieldName)->label($question->label ?? '')->numeric()->required($question->required),
+                        'check' => Forms\Components\Checkbox::make($fieldName)->label($question->label ?? '')->required($question->required),
+                        'radio' => Forms\Components\Radio::make($fieldName)->label($question->label ?? '')->options($options)->live()->columnSpanFull()->required($question->required),
+                        'date' => Forms\Components\DatePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
+                        'datetime' => Forms\Components\DateTimePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
                     };
+    
+                    if ($additionalInfoField && in_array($question->component, ['radio', 'select', 'likert'])) {
+                        $formComponents[] = Forms\Components\Textarea::make("consents_info.$consentOption->id.$question->id.additional_info")
+                            ->label($additionalInfoField->additional_info_label ?? 'Additional info')
+                            ->visible(function (Get $get) use($fieldName, $additionalInfoField) {
+                                // dump($get($fieldName), $additionalInfo->id);
+                                return $get($fieldName) == $additionalInfoField->id;
+                            })
+                            ->required(fn (Get $get) => $get($fieldName) == $additionalInfoField->id);
+                    }
                 }
-
-                $fields[] = Section::make($consentOption->additional_info_title)->schema($additionInfo)->columns(3);
+                $fields[] = Section::make($consentOption->additional_info_title)->schema($formComponents)->columns(3);
             }
 
             $formFields[] = Section::make("{$consentOption->title} v{$consentOption->version}")
@@ -127,7 +145,8 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
     public function submit(): void
     {
         $formData = $this->form->getState();
-        
+        $consentInfo = $formData['consents_info']??[];
+
         $conentIds = [];
         foreach($formData['consents'] as $key => $value) {
             if((bool)$value === true) {
@@ -143,9 +162,39 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     [
                         'accepted' => in_array($consentOption->id, $conentIds),
                         'key' => $consentOption->key,
-                        'fields' => ((bool)$consentOption->additional_info && isset($formData['consents_info'])) ? $formData['consents_info'][$consentOption->id] : []
                     ]
-                );
+                );            
+
+            if($consentOption->questions->count() > 0) {
+                $consentable = $this->user->consents()->where('consent_option_id', $consentOption->id)->first();
+                $consentable = $consentable->pivot;
+                $consentable = ConsentOptionUser::where('consentable_type', $consentable->consentable_type)
+                    ->where('consentable_id', $consentable->consentable_id)
+                    ->where('consent_option_id', $consentable->consent_option_id)
+                    ->where('accepted', $consentable->accepted)
+                    ->first();
+                
+                foreach ($consentInfo[$consentOption->id] as $id => $question) {
+                    $key = array_keys($question);
+                    $fieldName = $key[0];
+                    $question = ConsentOptionQuestion::find($id);
+                    $questionOption = null;
+                    $additionalInfoQuestion = null;
+                    if ($question->options->count() > 0) {
+                        $questionOption = ConsentOptionQuestionOption::find($question[$fieldName]);
+                        $additionalInfoQuestion = $question->options->where('additional_info', true)->first();
+                    }
+
+                    ConsentableResponse::create([
+                        'consentable_id' => $consentable->id,
+                        'consent_option_id' => $consentOption->id,
+                        'consent_option_question_id' => $id,
+                        'question_field_name' => $fieldName,
+                        'response' => $question->options?->count() === 0 ? $question[$fieldName] : $questionOption?->value,
+                        'additional_info' => ($additionalInfoQuestion && isset($question['additional_info'])) ? $question['additional_info'] : null,
+                    ]);
+                }
+            }
         }
 
         Notification::make()
@@ -156,24 +205,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
             ->send();
 
         // $this->user->notify(new ConsentsUpdatedNotification());
-        
-        if(Session::has('url.saved')) {
-            $this->redirect(request()->session()->get('url.saved'));
-        }
-    } 
 
-    public function prepareField($component, $fieldOption, $consentOption)
-    {
-        if(isset($fieldOption['custom_rules']) && (bool)$fieldOption['custom_rules']) {
-
-            foreach ($fieldOption['rules'] as $key => $value) {
-            
-                if($value['rule_type'] == "require_if_another_field") {
-                    $anotherField = "consents_info.$consentOption->id.{$value['another_field']}";   
-                    $component->requiredIf($anotherField, $fieldOption['value_equals']);
-                }  
-            }
-        }
-        return $component->required((bool)$fieldOption['required']);
+        $this->redirect(request()->session()->get('url.saved'));
     }
 }

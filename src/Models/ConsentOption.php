@@ -5,6 +5,8 @@ namespace Visualbuilder\FilamentUserConsent\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Visualbuilder\FilamentUserConsent\Database\Factories\ConsentOptionFactory;
@@ -19,9 +21,6 @@ use Visualbuilder\FilamentUserConsent\Traits\UserCount;
  * @property string $text
  * @property bool $is_mandatory
  * @property bool $is_current
- * @property string $additional_info
- * @property string $additional_info_title
- * @property array $fields
  * @property bool $enabled
  * @property bool $force_user_update
  * @property int $sort_order
@@ -51,12 +50,13 @@ class ConsentOption extends Model
         'title',
         'label',
         'text',
+        'is_survey',
+        'fields',
         'is_mandatory',
         'force_user_update',
         'is_current',
         'additional_info',
         'additional_info_title',
-        'fields',
         'enabled',
         'sort_order',
         'models',
@@ -71,13 +71,12 @@ class ConsentOption extends Model
     protected $casts = [
         'models' => 'array',
         'published_at' => 'datetime:Y-m-d H:i:s',
-        'fields' => 'array',
-        'additional_info' => 'boolean'
+        'fields' => 'array'
         // 'enabled' => 'boolean',
         // 'is_current' => 'boolean',
         // 'force_user_update' => 'boolean',
         // 'is_mandatory' => 'boolean',
-    ];
+    ];    
 
     /**
      * @return string
@@ -113,6 +112,11 @@ class ConsentOption extends Model
                 '<=',
                 now()
             );
+    }
+
+    public function questions(): HasMany
+    {
+        return $this->hasMany(ConsentOptionQuestion::class);
     }
 
     /**
