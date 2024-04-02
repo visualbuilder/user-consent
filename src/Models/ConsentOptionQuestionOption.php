@@ -5,7 +5,7 @@ namespace Visualbuilder\FilamentUserConsent\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+use Visualbuilder\FilamentUserConsent\Database\Factories\ConsentOptionQuestionOptionFactory;
 
 class ConsentOptionQuestionOption extends Model
 {
@@ -34,6 +34,14 @@ class ConsentOptionQuestionOption extends Model
         'consent_option_question_id' => 'integer',
         'additional_info' => 'bool'
     ];
+
+     /**
+     * @return ConsentOptionQuestionOptionFactory
+     */
+    protected static function newFactory(): ConsentOptionQuestionOptionFactory
+    {
+        return ConsentOptionQuestionOptionFactory::new();
+    }
 
     public function question(): BelongsTo
     {
