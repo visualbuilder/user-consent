@@ -46,7 +46,7 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
                         ->nullable()
                         ->maxLength(255),
                     Forms\Components\Select::make('default_user_column')
-                        ->options(config('coaching-survey.enduser_autofill_columns'))
+                        ->options(config('filament-user-consent.autofill_columns'))
                         ->searchable(),
                     Forms\Components\TextInput::make('sort')
                         ->required()

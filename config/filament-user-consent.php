@@ -64,5 +64,14 @@ return [
         'check' => 'Checkbox',
         'date' => 'Date Picker',
         'datetime' => 'Date & Time Picker',
+    ],
+
+    'autofill_columns' => [
+        'salutation' => 'Title',
+        'full_name' => 'Full Name',
+        'email' => 'Email address',
+        'mobile' => 'Mobile number',
+        'phone_number' => 'Phone number',
+        'full_address' => "Full address"
     ]
 ];

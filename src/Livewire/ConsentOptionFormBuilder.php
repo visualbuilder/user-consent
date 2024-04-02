@@ -61,6 +61,24 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         if ($this->user->collections->count() < 1) {
             abort(403, 'No required consent');
         }
+
+        $this->setDefaultValues();
+    }
+
+    public function setDefaultValues()
+    {
+        $fillData = [];
+        foreach ($this->user->collections as $key => $consentOption) {
+            if($consentOption->questions->count() > 0) {
+
+                foreach ($consentOption->questions as $question) {
+                    if($question->default_user_column) {
+                        $fillData['consents_info'][$consentOption->id][$question->id][$question->name] = $this->user->{$question->default_user_column};
+                    }
+                }
+            }
+        }
+        $this->form->fill($fillData);
     }
 
 
