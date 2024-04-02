@@ -104,14 +104,17 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                         'datetime' => Forms\Components\DateTimePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
                     };
     
-                    if ($additionalInfoField && in_array($question->component, ['radio', 'select', 'likert'])) {
+                    if ($question->options->where('additional_info', true)->count() > 0 && in_array($question->component, ['radio', 'select', 'likert'])) {
                         $formComponents[] = Forms\Components\Textarea::make("consents_info.$consentOption->id.$question->id.additional_info")
-                            ->label($additionalInfoField->additional_info_label ?? 'Additional info')
-                            ->visible(function (Get $get) use($fieldName, $additionalInfoField) {
-                                // dump($get($fieldName), $additionalInfo->id);
-                                return $get($fieldName) == $additionalInfoField->id;
+                            ->label(fn(Get $get) => $question->options->where('id', $get($fieldName))->where('additional_info', true)->first()->additional_info_label ?? 'Additional info')
+                            ->visible(function (Get $get) use($fieldName, $question) {
+                                $isExists = $question->options->where('id', $get($fieldName))->where('additional_info', true)->first();
+                                return ($isExists);
                             })
-                            ->required(fn (Get $get) => $get($fieldName) == $additionalInfoField->id);
+                            ->required(function (Get $get) use($fieldName, $question) {
+                                $isExists = $question->options->where('id', $get($fieldName))->where('additional_info', true)->first();
+                                return $get($fieldName) === $isExists->id;
+                            });
                     }
                 }
                 $fields[] = Section::make($consentOption->additional_info_title)->schema($formComponents)->columns(3);
@@ -172,26 +175,22 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     ->where('consentable_id', $consentable->consentable_id)
                     ->where('consent_option_id', $consentable->consent_option_id)
                     ->where('accepted', $consentable->accepted)
-                    ->first();
-                
-                foreach ($consentInfo[$consentOption->id] as $id => $question) {
+                    ->first();            
+                foreach ($consentInfo[$consentOption->id] as $id => $question) {                    
                     $key = array_keys($question);
                     $fieldName = $key[0];
-                    $question = ConsentOptionQuestion::find($id);
-                    $questionOption = null;
-                    $additionalInfoQuestion = null;
-                    if ($question->options->count() > 0) {
-                        $questionOption = ConsentOptionQuestionOption::find($question[$fieldName]);
-                        $additionalInfoQuestion = $question->options->where('additional_info', true)->first();
+                    $questionModel = ConsentOptionQuestion::find($id);
+                    $questionOptionModel = null;
+                    if ($questionOptionsCount = $questionModel->options->count() > 0) {
+                        $questionOptionModel = ConsentOptionQuestionOption::find($question[$fieldName]);
                     }
-
                     ConsentableResponse::create([
                         'consentable_id' => $consentable->id,
                         'consent_option_id' => $consentOption->id,
                         'consent_option_question_id' => $id,
                         'question_field_name' => $fieldName,
-                        'response' => $question->options?->count() === 0 ? $question[$fieldName] : $questionOption?->value,
-                        'additional_info' => ($additionalInfoQuestion && isset($question['additional_info'])) ? $question['additional_info'] : null,
+                        'response' => $questionOptionsCount ? $questionOptionModel?->value : $question[$fieldName],
+                        'additional_info' => ($questionOptionModel?->additional_info === true && isset($question['additional_info'])) ? $question['additional_info'] : null,
                     ]);
                 }
             }

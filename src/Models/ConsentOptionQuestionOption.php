@@ -32,6 +32,7 @@ class ConsentOptionQuestionOption extends Model
      */
     protected $casts = [
         'consent_option_question_id' => 'integer',
+        'additional_info' => 'bool'
     ];
 
     public function question(): BelongsTo
