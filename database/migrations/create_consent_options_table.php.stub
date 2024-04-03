@@ -20,6 +20,7 @@ return new class extends Migration
                $table->string('title')->nullable();
                $table->string('label')->nullable();
                $table->text('text')->nullable();
+               $table->boolean('is_survey')->default(false);
                $table->string('additional_info_title')->nullable();
                $table->boolean('is_mandatory')->default(0);
                $table->boolean('is_current')->default(0);

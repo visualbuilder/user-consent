@@ -50,6 +50,7 @@ class ConsentOption extends Model
         'title',
         'label',
         'text',
+        'is_survey',
         'fields',
         'is_mandatory',
         'force_user_update',
@@ -143,12 +144,13 @@ class ConsentOption extends Model
         return substr($model, strrpos($model, '\\') + 1);
     }
 
-    public static function getAllActiveKeysbyUserClass($className): array
+    public static function getAllActiveKeysbyUserClass($className, $survey = false): array
     {
         return self::where('models', 'like', "%$className%")
             ->where('is_current', true)
             ->where('enabled', true)
             ->where('published_at', '<=', \Illuminate\Support\Carbon::now())
+            ->where('is_survey', $survey)
             ->pluck('key')
             ->toArray();
     }

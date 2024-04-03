@@ -63,6 +63,9 @@ class ConsentOptionResource extends Resource
                         Forms\Components\Toggle::make('enabled')
                             ->label('Enable this contract')
                             ->required(),
+                        Forms\Components\Toggle::make('is_survey')
+                            ->label('Is this survey consent?')
+                            ->required(),
                         Forms\Components\Toggle::make('is_mandatory')
                             ->required(),
 
@@ -141,6 +144,9 @@ class ConsentOptionResource extends Resource
                 Tables\Columns\TextColumn::make('version')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_mandatory')
+                    ->boolean()
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('is_survey')
                     ->boolean()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_current')
