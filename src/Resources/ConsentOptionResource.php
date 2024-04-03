@@ -63,9 +63,6 @@ class ConsentOptionResource extends Resource
                         Forms\Components\Toggle::make('enabled')
                             ->label('Enable this contract')
                             ->required(),
-                        Forms\Components\Toggle::make('is_survey')
-                            ->label('Is this survey consent?')
-                            ->required(),
                         Forms\Components\Toggle::make('is_mandatory')
                             ->required(),
 

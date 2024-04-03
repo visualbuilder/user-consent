@@ -50,7 +50,6 @@ class ConsentOption extends Model
         'title',
         'label',
         'text',
-        'is_survey',
         'fields',
         'is_mandatory',
         'force_user_update',
@@ -71,7 +70,6 @@ class ConsentOption extends Model
     protected $casts = [
         'models' => 'array',
         'published_at' => 'datetime:Y-m-d H:i:s',
-        'fields' => 'array'
         // 'enabled' => 'boolean',
         // 'is_current' => 'boolean',
         // 'force_user_update' => 'boolean',
