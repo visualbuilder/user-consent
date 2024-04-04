@@ -24,11 +24,6 @@ trait HasConsent
         return ConsentOption::getAllActiveKeysbyUserClass(class_basename($this));
     }
 
-    public function requiredConsentSurveyKeys(): array
-    {
-        return ConsentOption::getAllActiveKeysbyUserClass(class_basename($this), true);
-    }
-
     public function outstandingConsentValidators()
     {
         $consents = $this->outstandingConsents();
@@ -77,50 +72,11 @@ trait HasConsent
             ->orderBy('sort_order')
             ->where('is_survey', false)
             ->get();
-        $allConsents = $consents->merge($this->getSurveyConsents());
-        return $allConsents;
-    }
 
-    public function getSurveyConsents()
-    {
-        $user = auth()->user();
-        return ConsentOption::findbykeys($this->requiredConsentSurveyKeys())
-            ->whereNotIn(
-                'id',
-                $this->consents()
-                    ->pluck('consent_options.id')
-                    ->toArray()
-            )
-            ->whereExists(function ($orgQuery) use ($user) {
-                $orgQuery->from('consent_option_organisation')
-                    ->whereColumn('consent_option_organisation.consent_option_id', 'consent_options.id')
-                    ->whereExists(function($orderQuery) use($user){
-                        $orderQuery->from('orders')
-                            ->where('orders.end_user_id', $user->id)
-                            ->whereColumn('orders.organisation_id', 'consent_option_organisation.organisation_id');
-                    });
-            })
-            ->orWhereExists(function($proQuery) use($user) {
-                $proQuery->from('consent_option_product')
-                ->whereColumn('consent_option_product.consent_option_id', 'consent_options.id')
-                ->whereExists(function($orderQuery) use($user){
-                    $orderQuery->from('orders')->where('orders.end_user_id', $user->id)
-                    ->join('line_items', 'orders.id', 'line_items.order_id')
-                    ->whereColumn('line_items.product_id', 'consent_option_product.product_id');
-                });
-            })
-            ->orWhereExists(function($catQuery) use($user) {
-                $catQuery->from('consent_option_product_category')
-                ->whereColumn('consent_option_product_category.consent_option_id', 'consent_options.id')
-                ->whereExists(function($orderQuery) use($user){
-                    $orderQuery->from('orders')->where('orders.end_user_id', $user->id)
-                    ->join('line_items', 'orders.id', 'line_items.order_id')
-                    ->join('products', 'line_items.product_id', 'products.id')
-                    ->whereColumn('products.product_category_id', 'consent_option_product_category.product_category_id');
-                });
-            })
-            ->orderBy('sort_order')
-            ->get();
+        if(method_exists($user = auth()->user(), 'surveyConsents')) {
+            return $consents->merge($user->surveyConsents());
+        }
+        return $consents;
     }
 
     /**
