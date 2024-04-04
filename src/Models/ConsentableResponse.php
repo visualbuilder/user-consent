@@ -35,4 +35,9 @@ class ConsentableResponse extends Model
     {
         return $this->belongsTo(ConsentOptionUser::class);
     }
+
+    public function question(): BelongsTo
+    {
+        return $this->belongsTo(ConsentOptionQuestion::class, 'consent_option_question_id', 'id');
+    }
 }

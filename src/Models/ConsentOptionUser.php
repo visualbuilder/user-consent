@@ -26,15 +26,19 @@ class ConsentOptionUser extends MorphPivot
         return self::query()->select('consentable_type')->distinct()->pluck('consentable_type')->toArray();
     }
 
+    public function consentable()
+    {
+        return $this->morphTo();
+    }
+
     public function consentOption()
     {
         return $this->belongsTo(ConsentOption::class, 'consent_option_id', 'id');
     }
 
-
     public function responses(): HasMany
     {
-        return $this->hasMany(ConsentableResponse::class);
+        return $this->hasMany(ConsentableResponse::class, 'consentable_id', 'id');
     }
 
     /**

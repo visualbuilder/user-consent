@@ -6,6 +6,7 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionFormBuilder;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
+use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResponseResource;
 
 class FilamentUserConsentPlugin implements Plugin
 {
@@ -23,6 +24,7 @@ class FilamentUserConsentPlugin implements Plugin
     {
         $panel->resources([
             ConsentOptionResource::class,
+            ConsentOptionResponseResource::class
         ]);
         $panel->widgets([
             ConsentOptionFormBuilder::class
