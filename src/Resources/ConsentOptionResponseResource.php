@@ -21,26 +21,38 @@ class ConsentOptionResponseResource extends Resource
 {
     protected static ?string $model = ConsentOptionUser::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard';
 
-    public static ?string $label = 'Consent Response';
+    public static function getNavigationLabel(): string
+    {
+        return config('filament-user-consent.navigation.consent_responses.label');
+    }
+
+    public static function getNavigationIcon(): ?string
+    {
+        return config('filament-user-consent.navigation.consent_responses.icon');
+    }
 
 
     public static function getNavigationGroup(): ?string
     {
-        return config('filament-user-consent.navigation.group');
+        return config('filament-user-consent.navigation.consent_responses.group');
     }
 
     public static function getNavigationSort(): ?int
     {
-        return config('filament-user-consent.navigation.sort');
+        return config('filament-user-consent.navigation.consent_responses.sort');
+    }
+
+    public static function getCluster(): ?string
+    {
+        return config('filament-user-consent.navigation.consent_responses.cluster');
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                
+
             ]);
     }
 
@@ -66,7 +78,7 @@ class ConsentOptionResponseResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Accepted at')
                     ->sortable(),
-                
+
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('consent_option_id')
@@ -110,7 +122,7 @@ class ConsentOptionResponseResource extends Resource
                                     TextEntry::make('response'),
                                     TextEntry::make('additional_info')
                                         ->visible(fn (Model $model) => $model->additional_info),
-                                ])->columns(3)                                
+                                ])->columns(3)
                             ])
                     ]),
             ]);

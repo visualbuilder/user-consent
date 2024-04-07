@@ -27,16 +27,31 @@ class ConsentOptionResource extends Resource
 {
     protected static ?string $model = ConsentOption::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard';
+    protected static ?string $navigationIcon = 'heroicon-o-check-badge';
+
+    public static function getNavigationLabel(): string
+    {
+        return config('filament-user-consent.navigation.consent_options.label');
+    }
+
+    public static function getNavigationIcon(): ?string
+    {
+        return config('filament-user-consent.navigation.consent_options.icon');
+    }
 
     public static function getNavigationGroup(): ?string
     {
-        return config('filament-user-consent.navigation.group');
+        return config('filament-user-consent.navigation.consent_options.group');
     }
 
     public static function getNavigationSort(): ?int
     {
-        return config('filament-user-consent.navigation.sort');
+        return config('filament-user-consent.navigation.consent_options.sort');
+    }
+
+    public static function getCluster(): ?string
+    {
+        return config('filament-user-consent.navigation.consent_options.cluster');
     }
 
     public static function form(Form $form): Form
@@ -95,10 +110,10 @@ class ConsentOptionResource extends Resource
                         ->label('Contract text')
                         ->required()
                         ->columnSpanFull(),
-                    
+
                 ])->columns(3),
                 Section::make('Additional Info')->schema([
-                    
+
                     Repeater::make('fields')->label('')
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -170,7 +185,7 @@ class ConsentOptionResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
-        
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),
