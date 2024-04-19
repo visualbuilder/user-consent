@@ -4,7 +4,6 @@
 return [
     'request-page-title' => 'Your Consent is required',
     'index-page-title' => 'Given Consents',
-    'show-page-title' => 'Your Contracts',
     'print-meta-title' => 'Your Consents',
     'print-description' => 'Your Consent Agreements',
     'print-author' => 'Your Company',
@@ -14,9 +13,7 @@ return [
     'email-subject' => 'Your consent',
     'email-preheader' => 'Your Consent Agreement',
     'email-title' => 'Your Consent Agreement',
-
     'show-page-title' => 'Viewing :title',
-    'index-page-title' => 'Contract Templates',
     'edit-page-title' => 'Edit :title version :version',
     'create-page-title' => 'New Contract Template',
     'users-accepted' => 'One user has already accepted these terms, if you save a new version will be created.|:count users have already accepted these terms, if you save a new version will be created.',

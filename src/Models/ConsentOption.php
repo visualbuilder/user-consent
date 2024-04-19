@@ -3,10 +3,12 @@
 namespace Visualbuilder\FilamentUserConsent\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Visualbuilder\FilamentUserConsent\Database\Factories\ConsentOptionFactory;
@@ -75,7 +77,7 @@ class ConsentOption extends Model
         // 'is_current' => 'boolean',
         // 'force_user_update' => 'boolean',
         // 'is_mandatory' => 'boolean',
-    ];    
+    ];
 
     /**
      * @return string
@@ -88,7 +90,7 @@ class ConsentOption extends Model
     /**
      * @return mixed
      */
-    public static function findbykeys($keys)
+    public static function findbykeys($keys): Builder
     {
         return self::query()
             ->whereIn('key', $keys)
@@ -101,7 +103,7 @@ class ConsentOption extends Model
             );
     }
 
-    public static function allActiveConsents()
+    public static function allActiveConsents():Builder
     {
         return self::query()
             ->where('is_current', true)
@@ -119,9 +121,9 @@ class ConsentOption extends Model
     }
 
     /**
-     * @return mixed
+     * @return \Illuminate\Support\Collection
      */
-    public static function getAllUserTypes()
+    public static function getAllUserTypes(): Collection
     {
         $defaults = config('filament-user-consent.models');
         $models = collect([]);
@@ -139,7 +141,7 @@ class ConsentOption extends Model
     /**
      * @return string
      */
-    public static function modelBasename($model)
+    public static function modelBasename($model):string
     {
         return substr($model, strrpos($model, '\\') + 1);
     }
@@ -179,6 +181,9 @@ class ConsentOption extends Model
         return ConsentOptionFactory::new();
     }
 
+    /**
+     * @return Builder|Model|null
+     */
     public function nextConsentReadyToActivate()
     {
         return ConsentOption::query()
@@ -190,6 +195,8 @@ class ConsentOption extends Model
     }
 
     /**
+     * @param $user
+     *
      * @return mixed
      */
     public function lastVersionUserSeen($user)
@@ -206,7 +213,7 @@ class ConsentOption extends Model
     /**
      * @return int
      */
-    public function usersAcceptedCount()
+    public function usersAcceptedCount():int
     {
         return DB::table('consentables')
             ->where('consent_option_id', $this->id)
@@ -217,7 +224,7 @@ class ConsentOption extends Model
     /**
      * @return int
      */
-    public function getUsersViewedTotalAttribute()
+    public function getUsersViewedTotalAttribute():int
     {
         return DB::table('consentables')
             ->where('key', $this->key)
@@ -227,7 +234,7 @@ class ConsentOption extends Model
     /**
      * @return int
      */
-    public function getUsersViewedThisVersionAttribute()
+    public function getUsersViewedThisVersionAttribute():int
     {
         return DB::table('consentables')
             ->where('consent_option_id', $this->id)
@@ -237,7 +244,7 @@ class ConsentOption extends Model
     /**
      * @return int
      */
-    public function getUsersAcceptedTotalAttribute()
+    public function getUsersAcceptedTotalAttribute():int
     {
         return DB::table('consentables')
             ->where('accepted', true)
@@ -248,7 +255,7 @@ class ConsentOption extends Model
     /**
      * @return int
      */
-    public function getUsersDeclinedTotalAttribute()
+    public function getUsersDeclinedTotalAttribute():int
     {
         return DB::table('consentables')
             ->where('accepted', false)
@@ -296,7 +303,7 @@ class ConsentOption extends Model
     /**
      * @return array
      */
-    private function getAllVersionIds()
+    private function getAllVersionIds():array
     {
         return self::query()
             ->where('key', $this->key)
@@ -307,7 +314,7 @@ class ConsentOption extends Model
     /**
      * @return bool
      */
-    public function getIsActiveAttribute()
+    public function getIsActiveAttribute():bool
     {
         return $this->enabled && $this->is_current;
     }
@@ -315,7 +322,7 @@ class ConsentOption extends Model
     /**
      * @return bool
      */
-    public function getCanPublishAttribute()
+    public function getCanPublishAttribute(): bool
     {
         return $this->published_at ? $this->published_at->lt(Carbon::now()->addMinute()) : false;
     }
@@ -323,7 +330,7 @@ class ConsentOption extends Model
     /**
      * @return int
      */
-    public function getNextVersionNumberAttribute()
+    public function getNextVersionNumberAttribute(): int
     {
         return $this->highestVersionNumber + 1;
     }
@@ -331,7 +338,7 @@ class ConsentOption extends Model
     /**
      * @return int
      */
-    public function getHighestVersionNumberAttribute()
+    public function getHighestVersionNumberAttribute(): int
     {
         return (int) self::query()
             ->where('key', 'like', $this->key . '%')
@@ -343,13 +350,13 @@ class ConsentOption extends Model
     /**
      * @return bool
      */
-    public function getIsHighestVersionAttribute()
+    public function getIsHighestVersionAttribute(): bool
     {
         return $this->version == $this->highestVersionNumber;
     }
 
     /**
-     * @return ConsentOption
+     * @return Builder|Model|object|ConsentOption|null
      */
     public function editableVersion()
     {
@@ -362,7 +369,7 @@ class ConsentOption extends Model
     /**
      * @return string
      */
-    public function getUserTypesBadgesAttribute()
+    public function getUserTypesBadgesAttribute(): string
     {
         $str = '';
         foreach ($this->models as $model) {
@@ -377,7 +384,7 @@ class ConsentOption extends Model
     /**
      * @return string
      */
-    public function getStatusBadgeAttribute()
+    public function getStatusBadgeAttribute(): string
     {
         return $this->is_active ? '<span class="btn btn-sm btn-success"><i class="fa fa-check-circle" aria-hidden="true"></i> Active</span>' : ($this->is_current ? '<span class="btn btn-sm btn-danger"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Disabled</span>' : '<span class="btn btn-sm btn-info">' . ($this->isHighestVersion ? 'draft' : 'locked') . '</span>');
     }
@@ -385,7 +392,7 @@ class ConsentOption extends Model
     /**
      * @return string
      */
-    public function getRequiredBadgeAttribute()
+    public function getRequiredBadgeAttribute(): string
     {
         return $this->is_mandatory ? '<span class="badge rounded-pill badge-success bg-success"><i class="fa fa-check-square" aria-hidden="true"></i> Mandatory</span>' : '<span class="badge rounded-pill badge-info bg-info"><i class="fa fa-question-circle" aria-hidden="true"></i> Optional</span>';
     }
@@ -393,7 +400,7 @@ class ConsentOption extends Model
     /**
      * @return string
      */
-    public function getUsersAcceptedBadgeAttribute()
+    public function getUsersAcceptedBadgeAttribute(): string
     {
         return '<span class="badge rounded-pill badge-success bg-success"><i class="fa fa-thumbs-up"></i> Accepted ' . $this->usersAcceptedTotal . '</span>';
     }
@@ -401,7 +408,7 @@ class ConsentOption extends Model
     /**
      * @return string
      */
-    public function getUsersDeclinedBadgeAttribute()
+    public function getUsersDeclinedBadgeAttribute(): string
     {
         return $this->is_mandatory ? '' : '<span class="badge rounded-pill badge-danger bg-danger ms-2"><i class="fa fa-thumbs-down"></i> Declined ' . $this->usersDeclinedTotal . '</span>';
     }

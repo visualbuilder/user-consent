@@ -9,14 +9,14 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionFormBuilder;
 
 //Routes for users to view and save their consent
-// dd(config('filament-user-consent.auth-guards'));
+
 Route::middleware([
     EncryptCookies::class,
     StartSession::class,
     ShareErrorsFromSession::class,
     VerifyCsrfToken::class,
     AuthenticateSession::class,
-    'auth:admin,practitioner,enduser',
+    'auth:'.config('filament-user-consent.auth-guards'),
 ])->group(function () {
     Route::get('consent-option-request', ConsentOptionFormBuilder::class)->name('consent-option-request');
 });

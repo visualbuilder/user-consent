@@ -2,8 +2,10 @@
 
 namespace Visualbuilder\FilamentUserConsent\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property int $id
@@ -26,12 +28,12 @@ class ConsentOptionUser extends MorphPivot
         return self::query()->select('consentable_type')->distinct()->pluck('consentable_type')->toArray();
     }
 
-    public function consentable()
+    public function consentable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function consentOption()
+    public function consentOption(): BelongsTo
     {
         return $this->belongsTo(ConsentOption::class, 'consent_option_id', 'id');
     }
@@ -42,12 +44,11 @@ class ConsentOptionUser extends MorphPivot
     }
 
     /**
-     * @return $this
+     * @return static
      */
-    public function toggleStatus()
+    public function toggleStatus(): static
     {
-        $this->accepted = ! $this->accepted;
-
+        $this->accepted = !$this->accepted;
         return $this;
     }
 }

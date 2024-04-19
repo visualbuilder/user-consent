@@ -15,8 +15,6 @@ return [
         App\Models\User::class => 'User',
     ],
 
-    'notify' => ['mail'],
-
     'routes' => [
         'prefix' => 'consent-options',
     ],
@@ -35,18 +33,6 @@ return [
             'icon'    => 'heroicon-o-user-circle',
             'group'   => 'Content',
             'cluster' => false,
-        ],
-    ],
-
-    'listeners' => [
-        //Event triggered after a consent updated
-        ConsentUpdated::class          => [
-            // Default listeners for this event
-            // You may want to update mailchump if consent withdrawn for marketing
-        ],
-        //Event triggered after all consents updated
-        ConsentsUpdatedComplete::class => [
-            NotifyConsentsUpdated::class,
         ],
     ],
 
