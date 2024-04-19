@@ -14,7 +14,6 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Visualbuilder\FilamentUserConsent\Commands\FilamentUserConsentCommand;
 use Visualbuilder\FilamentUserConsent\Testing\TestsFilamentUserConsent;
 
 class FilamentUserConsentServiceProvider extends PackageServiceProvider
@@ -123,7 +122,6 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         return [
-            FilamentUserConsentCommand::class,
         ];
     }
 
@@ -157,10 +155,10 @@ class FilamentUserConsentServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_consent_options_table', 
+            'create_consent_options_table',
             'create_user_consent_questions_table',
             'create_user_consent_question_options_table',
-            'create_consentables_table', 
+            'create_consentables_table',
             'create_consentable_responses_table'
         ];
     }
