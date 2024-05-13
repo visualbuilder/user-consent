@@ -64,15 +64,18 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
                                 ->numeric()
                                 ->required(),
                             Forms\Components\TextInput::make('text')
-                                ->required(),
-                            Forms\Components\Toggle::make('additional_info')
-                                ->label('Additional info required?')
-                                ->inline(false)
-                                ->live()
-                                ->required(),
+                                ->required(),                            
                             Forms\Components\TextInput::make('additional_info_label')
                                 ->label('Additional info label')                                
                                 ->required(fn(Get $get) => $get('additional_info')),
+                            Forms\Components\Select::make('additional_info_default_column')
+                                ->options(config('filament-user-consent.autofill_columns'))
+                                ->searchable(),
+                            Forms\Components\Toggle::make('additional_info')
+                                ->label('Additional info required?')
+                                ->inline(true)
+                                ->live()
+                                ->required(),
                         ])
                         ->reorderable(true)
                         ->orderColumn('sort')

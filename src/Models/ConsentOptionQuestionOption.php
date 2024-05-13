@@ -22,7 +22,8 @@ class ConsentOptionQuestionOption extends Model
         'text',
         'sort',
         'additional_info',
-        'additional_info_label'
+        'additional_info_label',
+        'additional_info_default_column'
     ];
 
     /**

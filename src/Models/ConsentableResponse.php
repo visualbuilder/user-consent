@@ -26,6 +26,7 @@ class ConsentableResponse extends Model
         'consentable_id',
         'consent_option_id',
         'consent_option_question_id',
+        'consent_option_question_option_id',
         'question_field_name',
         'response',
         'additional_info'

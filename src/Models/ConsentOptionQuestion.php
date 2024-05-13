@@ -53,6 +53,11 @@ class ConsentOptionQuestion extends Model
         return $this->hasMany(ConsentOptionQuestionOption::class);
     }
 
+    public function additionalInfoOptions(): HasMany
+    {
+        return $this->hasMany(ConsentOptionQuestionOption::class)->where('additional_info', true);
+    }
+
     public function consentOption(): BelongsTo
     {
         return $this->belongsTo(ConsentOption::class);

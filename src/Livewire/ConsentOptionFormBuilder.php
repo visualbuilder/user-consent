@@ -75,6 +75,11 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     if($question->default_user_column) {
                         $fillData['consents_info'][$consentOption->id][$question->id][$question->name] = $this->user->{$question->default_user_column};
                     }
+
+                    foreach ($question->additionalInfoOptions as $option) {
+                        $optionId = $option->where('id', $option->id)->first();
+                        $fillData["consents_info"][$consentOption->id][$question->id][$option->id]["additional_info"] = $this->user->{$optionId->additional_info_default_column};
+                    }
                 }
             }
         }
@@ -104,10 +109,6 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     $fieldName = "consents_info.$consentOption->id.$question->id.$question->name";
                     $options = $question->options;
                     $options = $question->options ? $question->options->pluck('text', 'id') : [];
-                    $additionalInfoField = null;
-                    if ($options) {
-                        $additionalInfoField = $question->options->where('additional_info', true)->first();
-                    }
                     $formComponents[] = match ($question->component) {
                         'placeholder' => Forms\Components\Placeholder::make($fieldName)->label('')->content(new HtmlString($question->content))->columnSpanFull(),
                         'likert' => Forms\Components\Radio::make($fieldName)->label($question->label ?? '')->options($options)->inline(true)->live()->inlineLabel(false)->required($question->required),
@@ -122,17 +123,13 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                         'datetime' => Forms\Components\DateTimePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
                     };
     
-                    if ($question->options->where('additional_info', true)->count() > 0 && in_array($question->component, ['radio', 'select', 'likert'])) {
-                        $formComponents[] = Forms\Components\Textarea::make("consents_info.$consentOption->id.$question->id.additional_info")
-                            ->label(fn(Get $get) => $question->options->where('id', $get($fieldName))->where('additional_info', true)->first()->additional_info_label ?? 'Additional info')
-                            ->visible(function (Get $get) use($fieldName, $question) {
-                                $isExists = $question->options->where('id', $get($fieldName))->where('additional_info', true)->first();
-                                return ($isExists);
-                            })
-                            ->required(function (Get $get) use($fieldName, $question) {
-                                $isExists = $question->options->where('id', $get($fieldName))->where('additional_info', true)->first();
-                                return $get($fieldName) === $isExists->id;
-                            });
+                    if ($question->additionalInfoOptions->count() > 0 && in_array($question->component, ['radio', 'select', 'likert'])) {
+                        foreach ($question->additionalInfoOptions as $option) {
+                            $formComponents[] = Forms\Components\Textarea::make("consents_info.$consentOption->id.$question->id.$option->id.additional_info")
+                                ->label($option->additional_info_label ?? 'Additional info')
+                                ->visible(fn (Get $get) =>  (int)$get($fieldName) === $option->id)
+                                ->required($option->additional_info);
+                        }
                     }
                 }
                 $fields[] = Section::make($consentOption->additional_info_title)->schema($formComponents)->columns(3);
@@ -194,7 +191,8 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     ->where('consent_option_id', $consentable->consent_option_id)
                     ->where('accepted', $consentable->accepted)
                     ->first();            
-                foreach ($consentInfo[$consentOption->id] as $id => $question) {                    
+                    
+                foreach ($consentInfo[$consentOption->id] as $id => $question) {
                     $key = array_keys($question);
                     $fieldName = $key[0];
                     $questionModel = ConsentOptionQuestion::find($id);
@@ -206,6 +204,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                         'consentable_id' => $consentable->id,
                         'consent_option_id' => $consentOption->id,
                         'consent_option_question_id' => $id,
+                        'consent_option_question_option_id' => $questionOptionModel?->id,
                         'question_field_name' => $fieldName,
                         'response' => $questionOptionsCount ? $questionOptionModel?->value : $question[$fieldName],
                         'additional_info' => ($questionOptionModel?->additional_info === true && isset($question['additional_info'])) ? $question['additional_info'] : null,

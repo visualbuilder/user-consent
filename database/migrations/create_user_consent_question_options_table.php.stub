@@ -21,6 +21,7 @@ return new class extends Migration
                 $table->integer('sort')->default(1);
                 $table->boolean('additional_info')->default(false);
                 $table->string('additional_info_label', 150)->nullable();
+                $table->string('additional_info_default_column', 150)->nullable();
                 $table->timestamps();
            });
        }
