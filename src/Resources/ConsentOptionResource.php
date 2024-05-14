@@ -2,6 +2,7 @@
 
 namespace Visualbuilder\FilamentUserConsent\Resources;
 
+use Filament\Forms\Components\Livewire;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Group;
@@ -22,6 +23,7 @@ use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\Crea
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\RelationManagers\ConsentOptionQuestionsRelationManager;
+use Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionPreview;
 
 class ConsentOptionResource extends Resource
 {
@@ -185,7 +187,14 @@ class ConsentOptionResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
-
+                Tables\Actions\Action::make('Preview')
+                ->icon('heroicon-m-viewfinder-circle')
+                    ->modalHeading("")
+                    ->modalSubmitAction(false)
+                    ->modalCancelAction(false)
+                    ->form([
+                        Livewire::make(ConsentOptionPreview::class),
+                    ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),
