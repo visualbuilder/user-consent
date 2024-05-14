@@ -41,7 +41,7 @@ class ConsentOptionPreview extends Component implements HasForms
     {
         $fillData = $this->consentOption->toArray();
         $consentOption = $this->consentOption;
-        if($consentOption->questions->count() > 0) {
+        if($consentOption->questions && $consentOption->questions->count() > 0) {
 
             foreach ($consentOption->questions as $question) {
                 if($question->default_user_column) {
@@ -78,7 +78,7 @@ class ConsentOptionPreview extends Component implements HasForms
             ->required($consentOption->is_mandatory)
         ];
 
-        if($consentOption->questions->count() > 0) {
+        if($consentOption->questions && $consentOption->questions->count() > 0) {
 
             $formComponents = [];
             foreach ($consentOption->questions as $question) {
@@ -99,7 +99,7 @@ class ConsentOptionPreview extends Component implements HasForms
                     'datetime' => DateTimePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
                 };
 
-                if ($question->additionalInfoOptions->count() > 0 && in_array($question->component, ['radio', 'select', 'likert'])) {
+                if ($question->additionalInfoOptions && $question->additionalInfoOptions->count() > 0 && in_array($question->component, ['radio', 'select', 'likert'])) {
                     foreach ($question->additionalInfoOptions as $option) {
                         $formComponents[] = Textarea::make("consents_info.$consentOption->id.$question->id.$option->id.additional_info")
                             ->label($option->additional_info_label ?? 'Additional info')
