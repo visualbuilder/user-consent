@@ -225,6 +225,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
         $this->user->notify(new ConsentsUpdatedNotification());
 
-        $this->redirect(request()->session()->get('url.saved'));
+        $redirectUrl = config('filament-user-consent.redirect-url') ?? request()->session()->get('url.saved');
+        $this->redirect($redirectUrl);
     }
 }

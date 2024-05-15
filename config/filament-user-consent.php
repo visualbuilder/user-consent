@@ -65,5 +65,7 @@ return [
         'mobile'       => 'Mobile number',
         'phone_number' => 'Phone number',
         'full_address' => "Full address"
-    ]
+    ],
+
+    'redirect-url' => ""
 ];
