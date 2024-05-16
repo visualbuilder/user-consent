@@ -54,7 +54,7 @@ class ConsentOptionPreview extends Component implements HasForms
                 }
             }
         }
-        
+
         $this->form->fill($fillData);
     }
 
@@ -70,7 +70,7 @@ class ConsentOptionPreview extends Component implements HasForms
         $consentOption = $this->consentOption;
 
         $formFields = [Placeholder::make('welcome')->label('')->content(new HtmlString("Hi {$this->user->firstname},<br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))];
-            
+
         $fields = [
             Placeholder::make('text')->label('')->content(new HtmlString($consentOption->text)),
             Checkbox::make("consents.$consentOption->id")
@@ -111,7 +111,7 @@ class ConsentOptionPreview extends Component implements HasForms
             $fields[] = Section::make($consentOption->additional_info_title)->schema($formComponents)->columns(3);
         }
 
-        $formFields[] = Section::make("{$consentOption->title} v{$consentOption->version}")
+        $formFields[] = Section::make("{$consentOption->title}")
         ->description(function () use($consentOption) {
             return $consentOption->is_mandatory ? 'Mandatory' : 'Optional';
         })

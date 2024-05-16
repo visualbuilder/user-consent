@@ -136,7 +136,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                 $fields[] = Section::make($consentOption->additional_info_title)->schema($formComponents)->columns(3);
             }
 
-            $formFields[] = Section::make("{$consentOption->title} v{$consentOption->version}")
+            $formFields[] = Section::make("{$consentOption->title}")
                 ->description(function () use($consentOption) {
                     $suffix = $this->previousConsents($consentOption->key);
                     $mandatory = $consentOption->is_mandatory ? 'Mandatory' : 'Optional';
