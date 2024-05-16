@@ -95,7 +95,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         }
         $formFields = [Forms\Components\Placeholder::make('welcome')->label('')->content(new HtmlString("Hi {$this->user->firstname},<br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))];
         foreach($this->user->collections as $consentOption){
-            
+
             $fields = [
                 Forms\Components\Placeholder::make('text')->label('')->content(new HtmlString($consentOption->text)),
                 Forms\Components\Checkbox::make("consents.$consentOption->id")
@@ -123,7 +123,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                         'date' => Forms\Components\DatePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
                         'datetime' => Forms\Components\DateTimePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
                     };
-    
+
                     if ($question->additionalInfoOptions && $question->additionalInfoOptions->count() > 0 && in_array($question->component, ['radio', 'select', 'likert'])) {
                         foreach ($question->additionalInfoOptions as $option) {
                             $formComponents[] = Forms\Components\Textarea::make("consents_info.$consentOption->id.$question->id.additional_info_$option->id")
@@ -182,7 +182,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                         'accepted' => in_array($consentOption->id, $conentIds),
                         'key' => $consentOption->key,
                     ]
-                );            
+                );
 
             if($consentOption->questions->count() > 0) {
                 $consentable = $this->user->consents()->where('consent_option_id', $consentOption->id)->first();
@@ -191,7 +191,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     ->where('consentable_id', $consentable->consentable_id)
                     ->where('consent_option_id', $consentable->consent_option_id)
                     ->where('accepted', $consentable->accepted)
-                    ->first();            
+                    ->first();
                 foreach ($consentInfo[$consentOption->id] as $id => $question) {
                     $key = array_keys($question);
                     $fieldName = $key[0];
@@ -199,10 +199,10 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     $questionOptionModel = ConsentOptionQuestionOption::find($question[$fieldName]);
                     $additionalInfoColumn = "additional_info_".$question[$fieldName];
                     $additionalInfoValue = "";
-                    if(isset($question[$additionalInfoColumn]) && $questionOptionModel) {    
+                    if(isset($question[$additionalInfoColumn]) && $questionOptionModel) {
                         $additionalInfoValue = $question[$additionalInfoColumn];
                     }
-                
+
                     ConsentableResponse::create([
                         'consentable_id' => $consentable->id,
                         'consent_option_id' => $consentOption->id,
@@ -225,7 +225,6 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
         $this->user->notify(new ConsentsUpdatedNotification());
 
-        $redirectUrl = config('filament-user-consent.redirect-url') ? config('filament-user-consent.redirect-url') : request()->session()->get('url.saved');
-        $this->redirect($redirectUrl);
+        $this->redirect(request()->session()->get('url.saved'));
     }
 }

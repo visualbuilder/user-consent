@@ -67,5 +67,4 @@ return [
         'full_address' => "Full address"
     ],
 
-    'redirect-url' => ""
 ];
