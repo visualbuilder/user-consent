@@ -67,7 +67,7 @@ class ConsentOptionResponseResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('consentable.full_name')
                     ->label('Username')
-                    ->searchable(),
+                    ->searchable(['consentable.primary_contact.full_name']),
                 Tables\Columns\TextColumn::make('consentable_type')
                     ->label('User type')
                     ->formatStateUsing(fn (string $state): string => config('filament-user-consent.options')[$state])
