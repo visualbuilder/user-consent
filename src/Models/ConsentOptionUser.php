@@ -2,6 +2,7 @@
 
 namespace Visualbuilder\FilamentUserConsent\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
@@ -14,12 +15,20 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property string $consentable_type
  * @property string $key
  * @property bool $accepted
- * @property string $created_at
- * @property string $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class ConsentOptionUser extends MorphPivot
 {
     public $incrementing = true;
+
+    public $casts = [
+        'consent_option_id' => 'integer',
+        'consentable_id'    => 'integer',
+        'accepted'          => 'boolean',
+        'created_at'        => 'datetime',
+        'updated_at'        => 'datetime',
+    ];
 
     protected $table = 'consentables';
 
