@@ -175,6 +175,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
         $outstandingConsents = $this->user->outstandingConsents();
         foreach ($outstandingConsents as $consentOption) {
+            $consentOption = $consentOption->refresh();
             $this->user->consents()
                 ->save(
                     $consentOption,
