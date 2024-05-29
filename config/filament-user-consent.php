@@ -21,23 +21,26 @@ return [
 
     'navigation' => [
         'consent_options'   => [
-            'sort'    => 50,
-            'label'   => 'Consent Options',
-            'icon'    => 'heroicon-o-check-badge',
-            'group'   => 'Content',
-            'cluster' => false,
+            'sort'     => 30,
+            'label'    => 'Consent Options',
+            'icon'     => 'heroicon-o-check-badge',
+            'group'    => 'Content',
+            'cluster'  => false,
+            'position' => false,
         ],
         'consent_responses' => [
-            'sort'    => 60,
-            'label'   => 'Consent Responses',
-            'icon'    => 'heroicon-o-user-circle',
-            'group'   => 'Content',
-            'cluster' => false,
+            'sort'     => 400,
+            'label'    => 'Consent Responses',
+            'icon'     => 'heroicon-o-check-badge',
+            'group'    => 'Content',
+            'cluster'  => false,
+            'position' => false,
         ],
     ],
 
+
     //send user an email with a copy of the consent after saving.
-    'notify'    => ['mail'],
+    'notify'     => ['mail'],
 
     'email-template' => 'vendor.user-consent.layouts.email',
 
