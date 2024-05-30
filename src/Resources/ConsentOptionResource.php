@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -54,6 +55,11 @@ class ConsentOptionResource extends Resource
     public static function getCluster(): ?string
     {
         return config('filament-user-consent.navigation.consent_options.cluster');
+    }
+
+    public static function getSubNavigationPosition(): SubNavigationPosition
+    {
+        return config('filament-user-consent.navigation.consent_options.position');
     }
 
     public static function form(Form $form): Form

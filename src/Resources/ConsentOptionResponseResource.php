@@ -8,6 +8,7 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -46,6 +47,11 @@ class ConsentOptionResponseResource extends Resource
     public static function getCluster(): ?string
     {
         return config('filament-user-consent.navigation.consent_responses.cluster');
+    }
+
+    public static function getSubNavigationPosition() : SubNavigationPosition
+    {
+        return config('filament-user-consent.navigation.consent_responses.position');
     }
 
     public static function form(Form $form): Form
