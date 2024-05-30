@@ -12,7 +12,12 @@ class ListConsentOptionResponses extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            
+
         ];
+    }
+
+    public function getHeading(): string
+    {
+        return config('filament-user-consent.navigation.consent_responses.page_heading');
     }
 }

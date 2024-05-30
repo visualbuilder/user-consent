@@ -16,4 +16,9 @@ class ListConsentOptions extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    public function getHeading(): string
+    {
+        return config('filament-user-consent.navigation.consent_options.page_heading');
+    }
 }
