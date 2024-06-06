@@ -12,7 +12,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Visualbuilder\FilamentUserConsent\Database\Factories\ConsentOptionFactory;
-use Visualbuilder\FilamentUserConsent\Traits\UserCount;
 
 /**
  * @property int $id
@@ -34,6 +33,7 @@ use Visualbuilder\FilamentUserConsent\Traits\UserCount;
 class ConsentOption extends Model
 {
     use HasFactory;
+
     // use UserCount;
 
     /**
@@ -71,21 +71,13 @@ class ConsentOption extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'models' => 'array',
-        'published_at' => 'datetime:Y-m-d H:i:s',
-        // 'enabled' => 'boolean',
-        // 'is_current' => 'boolean',
-        // 'force_user_update' => 'boolean',
-        // 'is_mandatory' => 'boolean',
+        'models'            => 'array',
+        'published_at'      => 'datetime:Y-m-d H:i:s',
+        'enabled'           => 'boolean',
+        'is_current'        => 'boolean',
+        'force_user_update' => 'boolean',
+        'is_mandatory'      => 'boolean',
     ];
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->title;
-    }
 
     /**
      * @return mixed
@@ -103,7 +95,7 @@ class ConsentOption extends Model
             );
     }
 
-    public static function allActiveConsents():Builder
+    public static function allActiveConsents(): Builder
     {
         return self::query()
             ->where('is_current', true)
@@ -115,11 +107,6 @@ class ConsentOption extends Model
             );
     }
 
-    public function questions(): HasMany
-    {
-        return $this->hasMany(ConsentOptionQuestion::class);
-    }
-
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -129,21 +116,13 @@ class ConsentOption extends Model
         $models = collect([]);
         foreach ($defaults as $model) {
             $models->push([
-                'id' => $model,
-                'name' => self::modelBasename($model),
-                'relation' => strtolower(Str::plural(self::modelBasename($model))),
+                'id'       => $model,
+                'name'     => class_basename($model),
+                'relation' => strtolower(Str::plural(class_basename($model))),
             ]);
         }
 
         return $models;
-    }
-
-    /**
-     * @return string
-     */
-    public static function modelBasename($model):string
-    {
-        return substr($model, strrpos($model, '\\') + 1);
     }
 
     public static function getAllActiveKeysbyUserClass($className, $survey = false): array
@@ -182,6 +161,19 @@ class ConsentOption extends Model
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->title;
+    }
+
+    public function questions(): HasMany
+    {
+        return $this->hasMany(ConsentOptionQuestion::class);
+    }
+
+    /**
      * @return Builder|Model|null
      */
     public function nextConsentReadyToActivate()
@@ -213,7 +205,7 @@ class ConsentOption extends Model
     /**
      * @return int
      */
-    public function usersAcceptedCount():int
+    public function usersAcceptedCount(): int
     {
         return DB::table('consentables')
             ->where('consent_option_id', $this->id)
@@ -224,7 +216,7 @@ class ConsentOption extends Model
     /**
      * @return int
      */
-    public function getUsersViewedTotalAttribute():int
+    public function getUsersViewedTotalAttribute(): int
     {
         return DB::table('consentables')
             ->where('key', $this->key)
@@ -234,7 +226,7 @@ class ConsentOption extends Model
     /**
      * @return int
      */
-    public function getUsersViewedThisVersionAttribute():int
+    public function getUsersViewedThisVersionAttribute(): int
     {
         return DB::table('consentables')
             ->where('consent_option_id', $this->id)
@@ -244,7 +236,7 @@ class ConsentOption extends Model
     /**
      * @return int
      */
-    public function getUsersAcceptedTotalAttribute():int
+    public function getUsersAcceptedTotalAttribute(): int
     {
         return DB::table('consentables')
             ->where('accepted', true)
@@ -255,7 +247,7 @@ class ConsentOption extends Model
     /**
      * @return int
      */
-    public function getUsersDeclinedTotalAttribute():int
+    public function getUsersDeclinedTotalAttribute(): int
     {
         return DB::table('consentables')
             ->where('accepted', false)
@@ -303,7 +295,7 @@ class ConsentOption extends Model
     /**
      * @return array
      */
-    private function getAllVersionIds():array
+    private function getAllVersionIds(): array
     {
         return self::query()
             ->where('key', $this->key)
@@ -314,7 +306,7 @@ class ConsentOption extends Model
     /**
      * @return bool
      */
-    public function getIsActiveAttribute():bool
+    public function getIsActiveAttribute(): bool
     {
         return $this->enabled && $this->is_current;
     }
@@ -341,7 +333,7 @@ class ConsentOption extends Model
     public function getHighestVersionNumberAttribute(): int
     {
         return (int) self::query()
-            ->where('key', 'like', $this->key . '%')
+            ->where('key', 'like', $this->key.'%')
             ->max(
                 'version'
             );
@@ -373,9 +365,7 @@ class ConsentOption extends Model
     {
         $str = '';
         foreach ($this->models as $model) {
-            $str .= "<span class='badge rounded-pill  badge-info bg-info'><i class='fa fa-user'></i> " . self::modelBasename(
-                $model
-            ) . '</span> ';
+            $str .= "<span class='badge rounded-pill  badge-info bg-info'><i class='fa fa-user'></i> ".class_basename($model).'</span> ';
         }
 
         return trim($str);
@@ -386,7 +376,7 @@ class ConsentOption extends Model
      */
     public function getStatusBadgeAttribute(): string
     {
-        return $this->is_active ? '<span class="btn btn-sm btn-success"><i class="fa fa-check-circle" aria-hidden="true"></i> Active</span>' : ($this->is_current ? '<span class="btn btn-sm btn-danger"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Disabled</span>' : '<span class="btn btn-sm btn-info">' . ($this->isHighestVersion ? 'draft' : 'locked') . '</span>');
+        return $this->is_active ? '<span class="btn btn-sm btn-success"><i class="fa fa-check-circle" aria-hidden="true"></i> Active</span>' : ($this->is_current ? '<span class="btn btn-sm btn-danger"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Disabled</span>' : '<span class="btn btn-sm btn-info">'.($this->isHighestVersion ? 'draft' : 'locked').'</span>');
     }
 
     /**
@@ -402,7 +392,7 @@ class ConsentOption extends Model
      */
     public function getUsersAcceptedBadgeAttribute(): string
     {
-        return '<span class="badge rounded-pill badge-success bg-success"><i class="fa fa-thumbs-up"></i> Accepted ' . $this->usersAcceptedTotal . '</span>';
+        return '<span class="badge rounded-pill badge-success bg-success"><i class="fa fa-thumbs-up"></i> Accepted '.$this->usersAcceptedTotal.'</span>';
     }
 
     /**
@@ -410,7 +400,7 @@ class ConsentOption extends Model
      */
     public function getUsersDeclinedBadgeAttribute(): string
     {
-        return $this->is_mandatory ? '' : '<span class="badge rounded-pill badge-danger bg-danger ms-2"><i class="fa fa-thumbs-down"></i> Declined ' . $this->usersDeclinedTotal . '</span>';
+        return $this->is_mandatory ? '' : '<span class="badge rounded-pill badge-danger bg-danger ms-2"><i class="fa fa-thumbs-down"></i> Declined '.$this->usersDeclinedTotal.'</span>';
     }
 
     /**
@@ -418,7 +408,7 @@ class ConsentOption extends Model
      */
     public function toggleStatus()
     {
-        $this->enabled = ! $this->enabled;
+        $this->enabled = !$this->enabled;
 
         return $this;
     }
