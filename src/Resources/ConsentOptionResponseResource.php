@@ -54,6 +54,11 @@ class ConsentOptionResponseResource extends Resource
         return config('filament-user-consent.navigation.consent_responses.position');
     }
 
+    public static function getShouldRegisterNavigation(): bool
+    {
+        return config('filament-user-consent.navigation.consent_responses.register');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

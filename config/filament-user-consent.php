@@ -28,6 +28,7 @@ return [
             'group'        => 'Content',
             'cluster'      => false,
             'position'     => false,
+            'register'     => true,
         ],
         'consent_responses' => [
             'page_heading' => 'User Consents',
@@ -37,6 +38,7 @@ return [
             'group'        => 'Content',
             'cluster'      => false,
             'position'     => false,
+            'register'     => true,
         ],
     ],
 
