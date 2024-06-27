@@ -52,6 +52,10 @@ class ConsentOptionUser extends MorphPivot
         return $this->hasMany(ConsentableResponse::class, 'consentable_id', 'id');
     }
 
+    public function getResponseByField($fieldName) {
+        return $this->responses->where('question_field_name', $fieldName)->first()->response ?? '';
+    }
+
     /**
      * @return static
      */
