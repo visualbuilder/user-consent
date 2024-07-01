@@ -72,7 +72,7 @@ class ConsentOptionPreview extends Component implements HasForms
         $formFields = [Placeholder::make('welcome')->label('')->content(new HtmlString("Hi {$this->user->firstname},<br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))];
 
         $fields = [
-            Placeholder::make('text')->label('')->content(new HtmlString($consentOption->text)),
+            Placeholder::make('text')->label('')->content($this->tipTapEditorContent()),
             Checkbox::make("consents.$consentOption->id")
             ->label($consentOption->label)
             ->required($consentOption->is_mandatory)
@@ -120,6 +120,11 @@ class ConsentOptionPreview extends Component implements HasForms
         ->schema($fields);
 
         return $formFields;
+    }
+
+    public function tipTapEditorContent()
+    {
+        return new HtmlString('<div class="tiptap-editor"><div class="ProseMirror">'.$this->consentOption->text.'</div></div>');
     }
 
     public function render()

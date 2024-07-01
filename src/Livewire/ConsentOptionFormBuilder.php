@@ -97,7 +97,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         foreach($this->user->collections as $consentOption){
 
             $fields = [
-                Forms\Components\Placeholder::make('text')->label('')->content(new HtmlString($consentOption->text)),
+                Forms\Components\Placeholder::make('text')->label('')->content($this->tipTapEditorContent($consentOption)),
                 Forms\Components\Checkbox::make("consents.$consentOption->id")
                 ->label($consentOption->label)
                 ->required($consentOption->is_mandatory)
@@ -227,5 +227,10 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         $this->user->notify(new ConsentsUpdatedNotification());
 
         $this->redirect(request()->session()->get('url.saved'));
+    }
+
+    public function tipTapEditorContent($consentOption)
+    {
+        return new HtmlString('<div class="tiptap-editor"><div class="ProseMirror">'.$consentOption->text.'</div></div>');
     }
 }
