@@ -56,6 +56,10 @@ class ConsentOptionUser extends MorphPivot
         return $this->responses->where('question_field_name', $fieldName)->first()->response ?? '';
     }
 
+    public function getAdditionalInfoByField($fieldName) {
+        return $this->responses->where('question_field_name', $fieldName)->first()->additional_info ?? '';
+    }
+
     /**
      * @return static
      */
