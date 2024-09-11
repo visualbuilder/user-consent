@@ -1,6 +1,5 @@
 <?php
 
-use Visualbuilder\FilamentUserConsent\Listeners\NotifyConsentsUpdated;
 
 return [
 
@@ -49,6 +48,7 @@ return [
     'email-template' => 'vendor.user-consent.layouts.email',
 
     //The mailable class to use for sending consent notification
+    'notification'   => \Visualbuilder\FilamentUserConsent\Notifications\ConsentsUpdatedNotification::class,
     'mailable'       => \Visualbuilder\FilamentUserConsent\Mail\ConsentsUpdatedMail::class,
 
     'components' => [

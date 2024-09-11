@@ -224,7 +224,8 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
             ->color('success')
             ->send();
 
-        $this->user->notify(new ConsentsUpdatedNotification());
+        $this->user->notify(app(config('user-consent.notification')));
+
 
         $this->redirect(request()->session()->get('url.saved'));
     }
