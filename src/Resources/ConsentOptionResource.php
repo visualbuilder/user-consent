@@ -82,38 +82,51 @@ class ConsentOptionResource extends Resource
                         Forms\Components\TextInput::make('key')
                             ->required(),
                         Forms\Components\TextInput::make('label')
-                            ->hint('(For checkbox)')
+                            ->hint('(For the consent accepted checkbox)')
                             ->required(),
                         Forms\Components\TextInput::make('sort_order')
                             ->numeric()
+                            ->hintIcon('heroicon-o-information-circle','To set the order in which they are shown when multiple consents are used.')
+                            ->hintColor('info')
                             ->required(),
 
                         Forms\Components\Toggle::make('enabled')
-                            ->label('Enable this contract')
-                            ->required(),
+                            ->label('Enable this consent')
+                            ->hintIcon('heroicon-o-information-circle','Disabled consents will not be shown to users')
+                            ->hintColor('info'),
 
                         Forms\Components\Toggle::make('is_current')
-                            ->label('Is the current consent')
-                            ->required(),
+                            ->label('Is current consent')
+                            ->hintIcon('heroicon-o-information-circle','If enabled all other consents with the same key will be disabled')
+                            ->hintColor('info'),
 
                         Forms\Components\Toggle::make('is_survey')
-                            ->label('Is this survey consent?')
-                            ->required(),
+                            ->label('Has survey questions?')
+                            ->hintIcon('heroicon-o-information-circle','Enable additional survey questions')
+                            ->hintColor('info'),
+
                         Forms\Components\Toggle::make('is_mandatory')
-                            ->required(),
+                            ->hintIcon('heroicon-o-information-circle','User must accept this consent to proceed')
+                            ->hintColor('info'),
 
                         Forms\Components\Toggle::make('force_user_update')
                             ->label('Require all users to re-confirm after this update')
-                            ->required(),
+                            ->hintIcon('heroicon-o-information-circle','Caution, will ask all users when logging in to reconfirm this consent.')
+                            ->hintColor('info'),
 
                         Forms\Components\Toggle::make('increment_version')
-                            ->label('Do you want to upgrade to next version?')
-                            ->required(),
+                            ->label('Save as a new version?')
+                            ->hintIcon('heroicon-o-information-circle','Enable to keep previous consent history')
+                            ->hintColor('info'),
 
                         Forms\Components\DateTimePicker::make('published_at')
-                            ->hint('(Will not be active until this date)')
+                            ->label('Enable From Date')
+                            ->hintIcon('heroicon-o-information-circle','Enable from this date')
+                            ->hintColor('info')
+                            ->default(now()->subDay())
                             ->native(false)
                             ->required(),
+
                         Forms\Components\Select::make('models')
                             ->options(config('filament-user-consent.options'))
                             ->multiple()

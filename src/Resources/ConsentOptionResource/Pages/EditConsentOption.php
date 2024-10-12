@@ -24,6 +24,15 @@ class EditConsentOption extends EditRecord
         return "Edit {$this->record->title} version {$this->record->version}";
     }
 
+    /**
+     * This will clone the record if user has requested a new version
+     * New version will be set as current version.
+     *
+     * @param  Model  $record
+     * @param  array  $data
+     *
+     * @return Model
+     */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         if ((bool)$data['increment_version']) { //$record->usersViewedThisVersion
@@ -32,7 +41,7 @@ class EditConsentOption extends EditRecord
             $data['key'] = $record->key;
 
             $consentOptionQuestions = $record->questions;
-            
+
             $record = ConsentOption::create($data);
             foreach ($consentOptionQuestions as $key => $question) {
                 $existingOptions = $question->options;
@@ -45,7 +54,7 @@ class EditConsentOption extends EditRecord
                     $newOption->save();
                 }
             }
-            
+
         } else {
             $record->update($data);
         }
