@@ -253,7 +253,7 @@ class ConsentOption extends Model
     {
         return DB::table('consentables')
             ->where('accepted', true)
-            ->where('key', $this->id)
+            ->where('consent_option_id', $this->id)
             ->count();
     }
 
@@ -264,7 +264,7 @@ class ConsentOption extends Model
     {
         return DB::table('consentables')
             ->where('accepted', false)
-            ->where('key', $this->id)
+            ->where('consent_option_id', $this->id)
             ->count();
     }
 
