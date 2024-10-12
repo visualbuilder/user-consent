@@ -83,20 +83,19 @@ class ConsentOptionPreview extends Component implements HasForms
             $formComponents = [];
             foreach ($consentOption->questions as $question) {
                 $fieldName = "consents_info.$consentOption->id.$question->id.$question->name";
-                $options = $question->options;
                 $options = $question->options ? $question->options->pluck('text', 'id') : [];
                 $formComponents[] = match ($question->component) {
                     'placeholder' => Placeholder::make($fieldName)->label('')->content(new HtmlString($question->content))->columnSpanFull(),
-                    'likert' => Radio::make($fieldName)->label($question->label ?? '')->options($options)->inline(true)->live()->inlineLabel(false)->required($question->required),
-                    'text' => TextInput::make($fieldName)->label($question->label ?? '')->required($question->required),
-                    'email' => TextInput::make($fieldName)->label($question->label ?? '')->email()->required($question->required),
-                    'select' => Select::make($fieldName)->label($question->label ?? '')->options($options)->live()->required($question->required),
-                    'textarea' => Textarea::make($fieldName)->label($question->label ?? '')->required($question->required),
-                    'number' => TextInput::make($fieldName)->label($question->label ?? '')->numeric()->required($question->required),
-                    'check' => Checkbox::make($fieldName)->label($question->label ?? '')->required($question->required),
+                    'likert' => Radio::make($fieldName)->label($question->label ?? '')->options($options)->inline(true)->live()->inlineLabel(false)->required($question->required)->columnSpanFull(),
+                    'text' => TextInput::make($fieldName)->label($question->label ?? '')->required($question->required)->columnSpanFull(),
+                    'email' => TextInput::make($fieldName)->label($question->label ?? '')->email()->required($question->required)->columnSpanFull(),
+                    'select' => Select::make($fieldName)->label($question->label ?? '')->options($options)->live()->required($question->required)->columnSpanFull(),
+                    'textarea' => Textarea::make($fieldName)->label($question->label ?? '')->required($question->required)->columnSpanFull(),
+                    'number' => TextInput::make($fieldName)->label($question->label ?? '')->numeric()->required($question->required)->columnSpanFull(),
+                    'check' => Checkbox::make($fieldName)->label($question->label ?? '')->required($question->required)->columnSpanFull(),
                     'radio' => Radio::make($fieldName)->label($question->label ?? '')->options($options)->live()->columnSpanFull()->required($question->required),
-                    'date' => DatePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
-                    'datetime' => DateTimePicker::make($fieldName)->label($question->label ?? '')->required($question->required),
+                    'date' => DatePicker::make($fieldName)->label($question->label ?? '')->required($question->required)->columnSpanFull(),
+                    'datetime' => DateTimePicker::make($fieldName)->label($question->label ?? '')->required($question->required)->columnSpanFull(),
                 };
 
                 if ($question->additionalInfoOptions && $question->additionalInfoOptions->count() > 0 && in_array($question->component, ['radio', 'select', 'likert'])) {
