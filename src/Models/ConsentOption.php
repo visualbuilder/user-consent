@@ -79,6 +79,19 @@ class ConsentOption extends Model
         'is_mandatory'      => 'boolean',
     ];
 
+    protected static function booted()
+    {
+        /**
+         * When setting as current version ensure all other consents with the same key are disabled
+         */
+        static::saved(function ($consentOption) {
+            // Check if 'is_current' is dirty and true
+            if ($consentOption->isDirty('is_current') && $consentOption->is_current) {
+                $consentOption->setCurrentVersion();
+            }
+        });
+    }
+
     /**
      * @return mixed
      */
@@ -272,35 +285,21 @@ class ConsentOption extends Model
      */
     public function setCurrentVersion()
     {
-        $this->disableAllVersions()
-            ->fresh()
-            ->update(['is_current' => true, 'enabled' => true]);
+        DB::transaction(function () {
+            // Disable all other versions with the same key
+            self::where('key', $this->key)
+                ->where('id', '!=', $this->id)  // Exclude this record from update
+                ->update(['is_current' => false, 'enabled' => false]);
+
+            // Ensure this record is marked as current and enabled if not already set
+            if (!$this->is_current || !$this->enabled) {
+                $this->is_current = true;
+                $this->enabled = true;
+                $this->save();
+            }
+        });
 
         return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    protected function disableAllVersions()
-    {
-        self::query()
-            ->where('is_current', '=', 1)
-            ->whereIn('id', $this->getAllVersionIds())
-            ->update(['is_current' => false, 'enabled' => false]);
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    private function getAllVersionIds(): array
-    {
-        return self::query()
-            ->where('key', $this->key)
-            ->pluck('id')
-            ->toArray();
     }
 
     /**
