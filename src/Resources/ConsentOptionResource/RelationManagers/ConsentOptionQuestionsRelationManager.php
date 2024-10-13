@@ -50,7 +50,7 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
                         ->searchable(),
                     Forms\Components\TextInput::make('sort')
                         ->required()
-                        ->numeric(),               
+                        ->numeric(),
                     Forms\Components\Toggle::make('required')
                         ->inlineLabel(false)
                         ->inline(false)
@@ -64,9 +64,9 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
                                 ->numeric()
                                 ->required(),
                             Forms\Components\TextInput::make('text')
-                                ->required(),                            
+                                ->required(),
                             Forms\Components\TextInput::make('additional_info_label')
-                                ->label('Additional info label')                                
+                                ->label('Additional info label')
                                 ->required(fn(Get $get) => $get('additional_info')),
                             Forms\Components\Select::make('additional_info_default_column')
                                 ->options(config('filament-user-consent.autofill_columns'))
@@ -99,7 +99,7 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
             ->reorderable('sort')
             ->columns([
                 Tables\Columns\TextColumn::make('component'),
-                Tables\Columns\TextColumn::make('label')->words(5),
+                Tables\Columns\TextColumn::make('label')->wrap(),
                 Tables\Columns\TextColumn::make('sort'),
                 Tables\Columns\IconColumn::make('required'),
             ])

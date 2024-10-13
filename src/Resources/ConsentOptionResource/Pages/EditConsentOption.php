@@ -12,6 +12,8 @@ class EditConsentOption extends EditRecord
 {
     protected static string $resource = ConsentOptionResource::class;
 
+    protected ?ConsentOption $newConsentOption = null;
+
     protected function getHeaderActions(): array
     {
         return [
@@ -55,6 +57,8 @@ class EditConsentOption extends EditRecord
                 }
             }
 
+            $this->newConsentOption = $record;
+
         } else {
             $record->update($data);
         }
@@ -63,5 +67,18 @@ class EditConsentOption extends EditRecord
         }
 
         return $record;
+    }
+
+    /**
+     * If creating a new version redirect to it
+     * @return string|null
+     */
+    protected function getRedirectUrl(): ?string
+    {
+
+        if( $this->newConsentOption){
+            return ConsentOptionResource::getUrl('edit',['record'=>$this->newConsentOption]);
+        }
+        return null;
     }
 }
