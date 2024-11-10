@@ -93,14 +93,22 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         if(!$this->user->collections) {
             $this->user->collections = $this->user->outstandingConsents();
         }
-        $formFields = [Forms\Components\Placeholder::make('welcome')->label('')->content(new HtmlString("Hi {$this->user->firstname},<br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))];
-        foreach($this->user->collections as $consentOption){
-
+        $formFields = [
+            Forms\Components\Placeholder::make('welcome')
+                ->label('')
+                ->content(new HtmlString("<p class='text-lg'>Hi {$this->user->firstname},</p><p class='text-lg'>Please read this carefully and accept the terms below. We will email a copy to {$this->user->email}.</p>"))
+        ];
+        foreach ($this->user->collections as $consentOption) {
             $fields = [
-                Forms\Components\Placeholder::make('text')->label('')->content(new HtmlString($consentOption->text)),
-                Forms\Components\Checkbox::make("consents.$consentOption->id")
-                ->label($consentOption->label)
-                ->required($consentOption->is_mandatory)
+
+                Forms\Components\Placeholder::make('text')
+                    ->label(false)
+                    ->view('user-consent::partials.placeholder')
+                    ->content(new HtmlString($consentOption->text)),
+
+                Forms\Components\Toggle::make("consents.$consentOption->id")
+                    ->label($consentOption->label)
+                    ->required($consentOption->is_mandatory)
             ];
 
             if($consentOption->questions->count() > 0) {
