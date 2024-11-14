@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use FilamentTiptapEditor\Extensions\Nodes\Grid;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOptionUser;
@@ -77,8 +78,8 @@ class ConsentOptionResponseResource extends Resource
                     ->label('Published at')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('consentable.full_name')
-                    ->label('Username')
-                    ->searchable(['consentable.primary_contact.full_name']),
+                    ->label('Name')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('consentable_type')
                     ->label('User type')
                     ->formatStateUsing(fn (string $state): string => config('filament-user-consent.options')[$state])
@@ -89,7 +90,6 @@ class ConsentOptionResponseResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Accepted at')
                     ->sortable(),
-
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('consent_option_id')
