@@ -5,6 +5,7 @@ namespace Visualbuilder\FilamentUserConsent\Livewire;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -28,6 +29,8 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
     protected static string $view = 'user-consent::livewire.consent-option-form-builder';
 
     public Model $user;
+
+    public ?array $data = [];
 
     public array $consents = [];
 
@@ -56,9 +59,9 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
             abort(403, 'Forbidden User');
         }
 
-        $this->user->collections = $this->user->outstandingConsents();
+        $this->user->collection = $this->user->outstandingConsents();
 
-        if ($this->user->collections->count() < 1) {
+        if ($this->user->collection->count() < 1) {
             abort(403, 'No required consent');
         }
 
@@ -68,7 +71,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
     public function setDefaultValues()
     {
         $fillData = [];
-        foreach ($this->user->collections as $key => $consentOption) {
+        foreach ($this->user->collection as $key => $consentOption) {
             if($consentOption->questions->count() > 0) {
 
                 foreach ($consentOption->questions as $question) {
@@ -87,18 +90,25 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         $this->form->fill($fillData);
     }
 
-
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema($this->getFormSchema())
+            ->model($this->getFormModel())
+            ->statePath('data')
+            ->operation($this->getFormContext());
+    }
     protected function getFormSchema(): array
     {
-        if(!$this->user->collections) {
-            $this->user->collections = $this->user->outstandingConsents();
+        if(!$this->user->collection) {
+            $this->user->collection = $this->user->outstandingConsents();
         }
         $formFields = [
             Forms\Components\Placeholder::make('welcome')
                 ->label('')
                 ->content(new HtmlString("<p class='text-lg'>Hi {$this->user->firstname},</p><p class='text-lg'>Please read this carefully and accept the terms below. We will email a copy to {$this->user->email}.</p>"))
         ];
-        foreach ($this->user->collections as $consentOption) {
+        foreach ($this->user->collection as $consentOption) {
             $fields = [
 
                 Forms\Components\Placeholder::make('text')
@@ -108,7 +118,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
                 Forms\Components\Toggle::make("consents.$consentOption->id")
                     ->label($consentOption->label)
-                    ->required($consentOption->is_mandatory)
+                    ->accepted($consentOption->is_mandatory)
             ];
 
             if($consentOption->questions->count() > 0) {
