@@ -184,10 +184,14 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         $formData = $this->form->getState();
         $consentInfo = $formData['consents_info']??[];
 
-        $conentIds = [];
+        $consentIds = [];
+        if(!array_key_exists('consents', $formData)) {
+            $this->redirect(request()->session()->get('url.saved'));
+        }
+
         foreach($formData['consents'] as $key => $value) {
             if((bool)$value === true) {
-                $conentIds[] = $key;
+                $consentIds[] = $key;
             }
         }
 
@@ -198,7 +202,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                 ->save(
                     $consentOption,
                     [
-                        'accepted' => in_array($consentOption->id, $conentIds),
+                        'accepted' => in_array($consentOption->id, $consentIds),
                         'key' => $consentOption->key,
                     ]
                 );
