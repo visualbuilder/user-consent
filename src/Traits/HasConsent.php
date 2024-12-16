@@ -125,7 +125,7 @@ trait HasConsent
     public function hasRequiredConsents()
     {
         // Define a unique cache key based on identifiable attributes including the model class
-        $cacheKey = 'user_consent_'.class_basename($this).'-'.$this->getKey();
+        $cacheKey = 'user_consent_'.class_basename($this).'_'.$this->getKey();
 
         // Retrieve from cache or calculate if not cached
         return Cache::tags(['user-consents'])->rememberForever($cacheKey, function () {
