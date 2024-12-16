@@ -18,12 +18,11 @@ trait HasConsent
     {
         return ConsentOption::findbykeys($this->requiredConsentKeys())->get();
     }
-
     public function requiredConsentKeys(): array
     {
-        return ConsentOption::getAllActiveKeysbyUserClass(class_basename($this));
+        return ConsentOption::activeKeysForUser($this);
     }
-
+    
     public function outstandingConsentValidators()
     {
         $consents = $this->outstandingConsents();

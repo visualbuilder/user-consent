@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Visualbuilder\FilamentUserConsent\Database\Factories\ConsentOptionFactory;
@@ -138,6 +139,23 @@ class ConsentOption extends Model
         return $models;
     }
 
+    public static function activeKeysForUser($user): array
+    {
+        $className = class_basename($user);
+        $cacheKey = 'consent_option_active_keys_for_'.$className.'_'.$user->id;
+        return Cache::tags(['user-consents'])->rememberForever($cacheKey, function () use ($user, $className) {
+            return self::where('models', 'like', "%$className%")
+                ->where('is_current', true)
+                ->where('enabled', true)
+                ->where('published_at', '<=', now())
+                ->filterByOrganisations(self::getOrganisationIdsForUser($user))
+                ->filterByProducts(self::getProductIdsForUser($user))
+                ->filterByProductCategories(self::getProductCategoryIdsForUser($user))
+                ->pluck('key')
+                ->toArray();
+        });
+    }
+
     public static function getAllActiveKeysbyUserClass($className, $survey = false): array
     {
         return self::where('models', 'like', "%$className%")
@@ -148,6 +166,7 @@ class ConsentOption extends Model
             ->pluck('key')
             ->toArray();
     }
+
 
     public static function getAllKeys(): array
     {

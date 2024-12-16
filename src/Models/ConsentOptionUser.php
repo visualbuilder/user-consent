@@ -2,11 +2,14 @@
 
 namespace Visualbuilder\FilamentUserConsent\Models;
 
+use App\Models\Scopes\AssociateConsentScope;
+use App\Models\Scopes\EndUserConsentScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int $id
@@ -31,6 +34,38 @@ class ConsentOptionUser extends MorphPivot
     ];
 
     protected $table = 'consentables';
+
+
+    protected static function booted()
+    {
+
+        static::saved(function ($consentOptionUser) {
+            self::clearCache($consentOptionUser);
+        });
+
+        static::deleted(function ($consentOptionUser) {
+            self::clearCache($consentOptionUser);
+        });
+    }
+
+    public static function clearCache($consentOptionUser)
+    {
+        $userKey = class_basename($consentOptionUser->consentable_type).'_'.$consentOptionUser->consentable_id;
+        $cacheKey1 = 'consent_option_active_keys_for_'.$userKey;
+        $cacheKey2 = 'user_consent_'.$userKey;
+
+        // Similarly, flush the cache when a consent option user relationship is deleted
+        // Flush the cache for the specific user involved using a simplified class name
+        Cache::tags([
+            'user-consents',
+            $cacheKey1
+        ])->flush();
+
+        Cache::tags([
+            'user-consents',
+            $cacheKey2
+        ])->flush();
+    }
 
     public static function getAllSavedUserTypes(): array
     {

@@ -206,6 +206,13 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                         'key' => $consentOption->key,
                     ]
                 );
+            $pivotModel = ConsentOptionUser::query()
+                ->where('consentable_type', $this->user->getMorphClass())
+                ->where('consentable_id', $this->user->id)
+                ->where('consent_option_id', $consentOption->id)
+                ->first();
+
+            $pivotModel::clearCache($pivotModel);
 
             if($consentOption->questions->count() > 0) {
                 $consentable = $this->user->consents()->where('consent_option_id', $consentOption->id)->first();
@@ -238,6 +245,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                 }
             }
         }
+
 
 
         Notification::make()
