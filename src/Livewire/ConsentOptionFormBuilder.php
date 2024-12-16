@@ -62,7 +62,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         $this->user->collection = $this->user->outstandingConsents();
 
         if ($this->user->collection->count() < 1) {
-            $this->redirect(request()->session()->get('url.saved'));
+            abort(403, 'No required consent');
         }
 
         $this->setDefaultValues();

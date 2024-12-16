@@ -2,6 +2,7 @@
 
 namespace Visualbuilder\FilamentUserConsent\Traits;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOptionUser;
@@ -22,7 +23,7 @@ trait HasConsent
     {
         return ConsentOption::activeKeysForUser($this);
     }
-    
+
     public function outstandingConsentValidators()
     {
         $consents = $this->outstandingConsents();
@@ -123,14 +124,20 @@ trait HasConsent
      */
     public function hasRequiredConsents()
     {
-        $requiredConsents = ConsentOption::findbykeys($this->requiredConsentKeys())
-            ->where('force_user_update', true)
-            ->pluck('id')
-            ->toArray();
-        $givenConsents = $this->consents()
-            ->pluck('consent_options.id')
-            ->toArray();
+        // Define a unique cache key based on identifiable attributes including the model class
+        $cacheKey = 'user_consent_'.class_basename($this).'-'.$this->getKey();
 
-        return ! array_diff($requiredConsents, $givenConsents);
+        // Retrieve from cache or calculate if not cached
+        return Cache::tags(['user-consents'])->rememberForever($cacheKey, function () {
+            $requiredConsents = ConsentOption::findbykeys($this->requiredConsentKeys())
+                ->where('force_user_update', true)
+                ->pluck('id')
+                ->toArray();
+            $givenConsents = $this->consents()
+                ->pluck('consent_options.id')
+                ->toArray();
+
+            return !array_diff($requiredConsents, $givenConsents);
+        });
     }
 }
