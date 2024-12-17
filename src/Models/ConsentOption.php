@@ -148,9 +148,6 @@ class ConsentOption extends Model
                 ->where('is_current', true)
                 ->where('enabled', true)
                 ->where('published_at', '<=', now())
-                ->filterByOrganisations(self::getOrganisationIdsForUser($user))
-                ->filterByProducts(self::getProductIdsForUser($user))
-                ->filterByProductCategories(self::getProductCategoryIdsForUser($user))
                 ->pluck('key')
                 ->toArray();
         });
