@@ -1,8 +1,5 @@
 <?php
 
-
-use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
-
 return [
 
     //To which authenticatable models consents should be applied?

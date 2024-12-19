@@ -90,12 +90,12 @@ class ConsentOption extends Model
             if ($consentOption->isDirty('is_current') && $consentOption->is_current) {
                 $consentOption->setCurrentVersion();
             }
-            Cache::tags(['user-consents'])->flush();
+            Cache::flush();
         });
 
         // Handle the deleted event
         static::deleted(function ($consentOption) {
-            Cache::tags(['user-consents'])->flush();
+            Cache::flush();
         });
     }
 
@@ -149,7 +149,7 @@ class ConsentOption extends Model
     {
         $className = class_basename($user);
         $cacheKey = 'consent_option_active_keys_for_'.$className.'_'.$user->id;
-        return Cache::tags(['user-consents'])->rememberForever($cacheKey, function () use ($user, $className) {
+        return Cache::rememberForever($cacheKey, function () use ($user, $className) {
             return self::where('models', 'like', "%$className%")
                 ->where('is_current', true)
                 ->where('enabled', true)

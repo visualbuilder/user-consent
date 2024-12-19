@@ -53,18 +53,8 @@ class ConsentOptionUser extends MorphPivot
         $userKey = class_basename($consentOptionUser->consentable_type).'_'.$consentOptionUser->consentable_id;
         $cacheKey1 = 'consent_option_active_keys_for_'.$userKey;
         $cacheKey2 = 'user_consent_'.$userKey;
-
-        // Similarly, flush the cache when a consent option user relationship is deleted
-        // Flush the cache for the specific user involved using a simplified class name
-        Cache::tags([
-            'user-consents',
-            $cacheKey1
-        ])->flush();
-
-        Cache::tags([
-            'user-consents',
-            $cacheKey2
-        ])->flush();
+        Cache::forget($cacheKey1);
+        Cache::forget($cacheKey2);
     }
 
     public static function getAllSavedUserTypes(): array

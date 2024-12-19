@@ -132,7 +132,7 @@ trait HasConsent
         $cacheKey = 'user_consent_'.class_basename($this).'_'.$this->getKey();
 
         // Retrieve from cache or calculate if not cached
-        return Cache::tags(['user-consents'])->rememberForever($cacheKey, function () {
+        return Cache::rememberForever($cacheKey, function () {
             $consentOptionModel =  config('filament-user-consent.models.consent_option');
             $requiredConsents = $consentOptionModel::findbykeys($this->requiredConsentKeys())
                 ->where('force_user_update', true)
