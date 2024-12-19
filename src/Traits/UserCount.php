@@ -11,7 +11,8 @@ trait UserCount
 {
     public function initializeUserCount()
     {
-        $this->withCount = ConsentOption::getAllUserTypes()
+        $consentOptionModel =  config('filament-user-consent.models.consent_option');
+        $this->withCount = $consentOptionModel::getAllUserTypes()
             ->pluck('relation')
             ->toArray();
     }

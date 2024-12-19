@@ -37,14 +37,16 @@ class EditConsentOption extends EditRecord
      */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
+
         if ((bool)$data['increment_version']) { //$record->usersViewedThisVersion
             //create a new version
             $data['version'] = $record->nextVersionNumber;
             $data['key'] = $record->key;
 
             $consentOptionQuestions = $record->questions;
+            $consentOptionModel = config('filament-user-consent.models.consent_option');
+            $record = $consentOptionModel::create($data);
 
-            $record = ConsentOption::create($data);
             foreach ($consentOptionQuestions as $key => $question) {
                 $existingOptions = $question->options;
                 $newQuestion = $question->replicate();

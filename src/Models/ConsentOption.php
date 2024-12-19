@@ -90,6 +90,12 @@ class ConsentOption extends Model
             if ($consentOption->isDirty('is_current') && $consentOption->is_current) {
                 $consentOption->setCurrentVersion();
             }
+            Cache::tags(['user-consents'])->flush();
+        });
+
+        // Handle the deleted event
+        static::deleted(function ($consentOption) {
+            Cache::tags(['user-consents'])->flush();
         });
     }
 
@@ -126,7 +132,7 @@ class ConsentOption extends Model
      */
     public static function getAllUserTypes(): Collection
     {
-        $defaults = config('filament-user-consent.models');
+        $defaults = config('filament-user-consent.user_models');
         $models = collect([]);
         foreach ($defaults as $model) {
             $models->push([
@@ -151,17 +157,6 @@ class ConsentOption extends Model
                 ->pluck('key')
                 ->toArray();
         });
-    }
-
-    public static function getAllActiveKeysbyUserClass($className, $survey = false): array
-    {
-        return self::where('models', 'like', "%$className%")
-            ->where('is_current', true)
-            ->where('enabled', true)
-            ->where('published_at', '<=', \Illuminate\Support\Carbon::now())
-            ->where('is_survey', $survey)
-            ->pluck('key')
-            ->toArray();
     }
 
 

@@ -79,7 +79,7 @@ class ConsentOptionUser extends MorphPivot
 
     public function consentOption(): BelongsTo
     {
-        return $this->belongsTo(ConsentOption::class, 'consent_option_id', 'id');
+        return $this->belongsTo(config('filament-user-consent.models.consent_option'), 'consent_option_id', 'id');
     }
 
     public function responses(): HasMany

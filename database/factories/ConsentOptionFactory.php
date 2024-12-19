@@ -4,11 +4,10 @@ namespace Visualbuilder\FilamentUserConsent\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 
 class ConsentOptionFactory extends Factory
 {
-    protected $model = ConsentOption::class;
+    protected $model;
 
     public function definition(): array
     {
@@ -26,8 +25,17 @@ class ConsentOptionFactory extends Factory
             'is_current'        => 1,
             'force_user_update' => 1,
             'enabled'           => 1,
-            'models'            => config('filament-user-consent.models'),
+            'models'            => config('filament-user-consent.user_models'),
             'published_at'      => now(),
         ];
+    }
+
+    public static function newFactory()
+    {
+        $instance = new static();
+
+        // Retrieve the configured model class from the package config
+        $instance->model = config('filament-user-consent.models.consent_option');
+        return $instance;
     }
 }

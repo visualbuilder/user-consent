@@ -60,6 +60,6 @@ class ConsentOptionQuestion extends Model
 
     public function consentOption(): BelongsTo
     {
-        return $this->belongsTo(ConsentOption::class);
+        return $this->belongsTo(config('filament-user-consent.models.consent_option'));
     }
 }

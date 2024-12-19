@@ -1,10 +1,12 @@
 <?php
 
 
+use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
+
 return [
 
     //To which authenticatable models consents should be applied?
-    'models' => [
+    'user_models' => [
         App\Models\User::class,
     ],
 
@@ -13,6 +15,11 @@ return [
     'options' => [
         App\Models\User::class => 'User',
     ],
+
+    'models' => [
+        'consent_option' => \Visualbuilder\FilamentUserConsent\Models\ConsentOption::class,
+    ],
+
 
     'routes' => [
         'prefix' => 'consent-options',

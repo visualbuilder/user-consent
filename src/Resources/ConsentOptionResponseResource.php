@@ -70,6 +70,8 @@ class ConsentOptionResponseResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $consentOptionModel = config('filament-user-consent.models.consent_option');
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('consentOption.title')
@@ -95,7 +97,7 @@ class ConsentOptionResponseResource extends Resource
                 Tables\Filters\SelectFilter::make('consent_option_id')
                     ->label('Consent option')
                     ->searchable()
-                    ->options(ConsentOption::pluck('title', 'id')),
+                    ->options($consentOptionModel::pluck('title', 'id')),
                 Tables\Filters\SelectFilter::make('consentable_type')
                     ->searchable()
                     ->options(config('filament-user-consent.options'))

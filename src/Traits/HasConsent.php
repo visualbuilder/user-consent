@@ -17,11 +17,13 @@ trait HasConsent
      */
     public function requiredConsents()
     {
-        return ConsentOption::findbykeys($this->requiredConsentKeys())->get();
+        $consentOptionModel = config('filament-user-consent.models.consent_option');
+        return $consentOptionModel::findbykeys($this->requiredConsentKeys())->get();
     }
     public function requiredConsentKeys(): array
     {
-        return ConsentOption::activeKeysForUser($this);
+        $consentOptionModel = config('filament-user-consent.models.consent_option');
+        return $consentOptionModel::activeKeysForUser($this);
     }
 
     public function outstandingConsentValidators()
@@ -62,7 +64,9 @@ trait HasConsent
      */
     public function outstandingConsents()
     {
-        $consents =  ConsentOption::findbykeys($this->requiredConsentKeys())
+        $consentOptionModel = config('filament-user-consent.models.consent_option');
+
+        $consents =  $consentOptionModel::findbykeys($this->requiredConsentKeys())
             ->whereNotIn(
                 'id',
                 $this->consents()
@@ -84,7 +88,7 @@ trait HasConsent
      */
     public function consents()
     {
-        return $this->morphToMany(ConsentOption::class, 'consentable')
+        return $this->morphToMany( config('filament-user-consent.models.consent_option'), 'consentable')
             ->withTimestamps()
             ->withPivot('accepted')
             ->using(ConsentOptionUser::class);
@@ -129,7 +133,8 @@ trait HasConsent
 
         // Retrieve from cache or calculate if not cached
         return Cache::tags(['user-consents'])->rememberForever($cacheKey, function () {
-            $requiredConsents = ConsentOption::findbykeys($this->requiredConsentKeys())
+            $consentOptionModel =  config('filament-user-consent.models.consent_option');
+            $requiredConsents = $consentOptionModel::findbykeys($this->requiredConsentKeys())
                 ->where('force_user_update', true)
                 ->pluck('id')
                 ->toArray();
