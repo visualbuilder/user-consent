@@ -11,14 +11,12 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Visualbuilder\FilamentTinyEditor\TinyEditor;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
@@ -137,7 +135,7 @@ class ConsentOptionResource extends Resource
                             ->maxLength(150),
                     ])->columns(2)->columnSpanFull(),
 
-                    TiptapEditor::make('text')
+                    TinyEditor::make('text')
                         ->label('Contract text')
                         ->required()
                         ->columnSpanFull(),

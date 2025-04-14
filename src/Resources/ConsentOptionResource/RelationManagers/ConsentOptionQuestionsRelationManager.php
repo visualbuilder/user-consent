@@ -12,9 +12,9 @@ use Filament\Forms\Get;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use FilamentTiptapEditor\TiptapEditor;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Illuminate\Support\Str;
+use Visualbuilder\FilamentTinyEditor\TinyEditor;
 
 class ConsentOptionQuestionsRelationManager extends RelationManager
 {
@@ -82,7 +82,7 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
                         ->columns(2)
                 ])->visible(fn (Get $get) => in_array($get('component'), ['likert', 'select', 'radio', 'check'])),
                 Section::make()->schema([
-                    TiptapEditor::make('content')
+                    TinyEditor::make('content')
                         ->label("HTML Content")
                         ->tools([])
                         ->profile('default')

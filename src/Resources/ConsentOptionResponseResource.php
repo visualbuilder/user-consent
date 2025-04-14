@@ -12,10 +12,7 @@ use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use FilamentTiptapEditor\Extensions\Nodes\Grid;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOptionUser;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResponseResource\Pages\ListConsentOptionResponses;
 
