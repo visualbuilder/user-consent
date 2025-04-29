@@ -84,7 +84,6 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
                 Section::make()->schema([
                     TinyEditor::make('content')
                         ->label("HTML Content")
-                        ->tools([])
                         ->profile('default')
                         ->columnSpanFull()
                 ])->visible(fn (Get $get) => in_array($get('component'), ['placeholder']))
