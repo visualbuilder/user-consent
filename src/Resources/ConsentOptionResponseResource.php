@@ -2,12 +2,12 @@
 
 namespace Visualbuilder\FilamentUserConsent\Resources;
 
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\ViewAction;
 use Filament\Schemas\Schema;
-use Filament\Infolists\Components\Grid as ComponentsGrid;
+use Filament\Schemas\Components\Grid as GridSchema;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -101,18 +101,18 @@ class ConsentOptionResponseResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
-                Tables\Actions\ViewAction::make()
+                ViewAction::make()
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([]),
+                BulkActionGroup::make([]),
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist( Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
-                Section::make('Consent option response')
+                \Filament\Schemas\Components\Section::make('Consent option response')
                     ->schema([
                         TextEntry::make('consentOption.title'),
                         TextEntry::make('consentOption.published_at')->label('Published at'),
@@ -122,11 +122,11 @@ class ConsentOptionResponseResource extends Resource
                             ->label('User type'),
                         TextEntry::make('created_at')->label('Accepted at'),
                     ])->columns(3),
-                Section::make('Quesion & Reponses')
+                \Filament\Schemas\Components\Section::make('Quesion & Reponses')
                     ->schema([
                         RepeatableEntry::make('responses')
                             ->schema([
-                                ComponentsGrid::make()->schema([
+                                GridSchema::make()->schema([
                                     TextEntry::make('question.label')
                                         ->label('Question'),
                                     TextEntry::make('response'),

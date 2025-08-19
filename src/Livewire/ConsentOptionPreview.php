@@ -5,8 +5,8 @@ namespace Visualbuilder\FilamentUserConsent\Livewire;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -69,10 +69,10 @@ class ConsentOptionPreview extends Component implements HasForms
     {
         $consentOption = $this->consentOption;
 
-        $formFields = [Placeholder::make('welcome')->label('')->content(new HtmlString("Hi {$this->user->firstname},<br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))];
+        $formFields = [TextEntry::make('welcome')->label('')->state(new HtmlString("Hi {$this->user->firstname},<br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))];
 
         $fields = [
-            Placeholder::make('text')->label('')->content(new HtmlString($consentOption->text)),
+            TextEntry::make('text')->label('')->state(new HtmlString($consentOption->text)),
             Checkbox::make("consents.$consentOption->id")
             ->label($consentOption->label)
             ->required($consentOption->is_mandatory)
@@ -85,7 +85,7 @@ class ConsentOptionPreview extends Component implements HasForms
                 $fieldName = "consents_info.$consentOption->id.$question->id.$question->name";
                 $options = $question->options ? $question->options->pluck('text', 'id') : [];
                 $formComponents[] = match ($question->component) {
-                    'placeholder' => Placeholder::make($fieldName)->label('')->content(new HtmlString($question->content))->columnSpanFull(),
+                    'placeholder' => TextEntry::make($fieldName)->label('')->state(new HtmlString($question->content))->columnSpanFull(),
                     'likert' => Radio::make($fieldName)->label($question->label ?? '')->options($options)->inline(true)->live()->inlineLabel(false)->required($question->required)->columnSpanFull(),
                     'text' => TextInput::make($fieldName)->label($question->label ?? '')->required($question->required)->columnSpanFull(),
                     'email' => TextInput::make($fieldName)->label($question->label ?? '')->email()->required($question->required)->columnSpanFull(),

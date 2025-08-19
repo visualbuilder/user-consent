@@ -3,6 +3,7 @@
 namespace Visualbuilder\FilamentUserConsent\Livewire;
 
 use Filament\Forms;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Schemas\Schema;
@@ -109,10 +110,10 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
         foreach ($this->user->collection as $consentOption) {
             $fields = [
-                Forms\Components\Placeholder::make('text')
+                TextEntry::make('text')
                     ->label(false)
                     ->view('user-consent::partials.placeholder')
-                    ->content(new HtmlString($consentOption->text)),
+                    ->state(new HtmlString($consentOption->text)),
 
                 Forms\Components\Toggle::make("consents.$consentOption->id")
                     ->label($consentOption->label)
