@@ -3,10 +3,10 @@
 namespace Visualbuilder\FilamentUserConsent\Livewire;
 
 use Filament\Forms;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
@@ -86,10 +86,10 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         $this->form->fill($fillData);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema($this->getFormSchema())
+        return $schema
+            ->components($this->getFormSchema())
             ->model($this->getFormModel())
             ->statePath('data')
             ->operation($this->getFormContext());

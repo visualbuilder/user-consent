@@ -6,9 +6,9 @@ use App\Models\SurveyQuestionType;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -20,11 +20,11 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'questions';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Section::make()->schema([
+        return $schema
+            ->components([
+                Section::make()->components([
                     Forms\Components\Select::make('component')
                         ->required()
                         ->options(config('filament-user-consent.components'))
@@ -56,7 +56,7 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
                         ->inline(false)
                         ->visible(fn(Get $get) => $get('component') !== 'placeholder'),
                 ])->columns(3),
-                Section::make()->schema([
+                Section::make()->components([
                     Repeater::make('options')
                         ->relationship()
                         ->schema([
@@ -81,7 +81,7 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
                         ->orderColumn('sort')
                         ->columns(2)
                 ])->visible(fn (Get $get) => in_array($get('component'), ['likert', 'select', 'radio', 'check'])),
-                Section::make()->schema([
+                Section::make()->components([
                     TinyEditor::make('content')
                         ->label("HTML Content")
                         ->profile('default')

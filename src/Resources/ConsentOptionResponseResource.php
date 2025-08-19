@@ -2,7 +2,7 @@
 
 namespace Visualbuilder\FilamentUserConsent\Resources;
 
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Infolists\Components\Grid as ComponentsGrid;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -57,10 +57,10 @@ class ConsentOptionResponseResource extends Resource
         return config('filament-user-consent.navigation.consent_responses.register');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
             ]);
     }
