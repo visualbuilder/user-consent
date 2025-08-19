@@ -2,15 +2,15 @@
 
 namespace Visualbuilder\FilamentUserConsent\Resources;
 
-use Filament\Forms\Components\Livewire;
+use Filament\Schemas\Components\Livewire;
 use Closure;
 use Filament\Forms;
-use Filament\Forms\Components\Group;
+use Filament\Schemas\Components\Group;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -66,12 +66,12 @@ class ConsentOptionResource extends Resource
         return config('filament-user-consent.navigation.consent_options.register');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Section::make('')->schema([
-                    Group::make()->schema([
+        return $schema
+            ->components([
+                Section::make('')->components([
+                    Group::make()->components([
                         Forms\Components\TextInput::make('title')
                             ->live()
                             ->afterStateUpdated(
@@ -142,7 +142,7 @@ class ConsentOptionResource extends Resource
                         ->columnSpanFull(),
 
                 ])->columns(3),
-                Section::make('Additional Info')->schema([
+                Section::make('Additional Info')->components([
 
                     Repeater::make('fields')->label('')
                     ->schema([

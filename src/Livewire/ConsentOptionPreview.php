@@ -7,15 +7,15 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
@@ -58,10 +58,10 @@ class ConsentOptionPreview extends Component implements HasForms
         $this->form->fill($fillData);
     }
 
-    public function form(Form $form)
+    public function form(Schema $schema): Schema
     {
         $formInputs = $this->getFormSchema();
-        return $form->schema($formInputs)
+        return $schema->components($formInputs)
         ->statePath('data');
     }
 
