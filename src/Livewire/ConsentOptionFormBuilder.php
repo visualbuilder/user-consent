@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Visualbuilder\FilamentUserConsent\Models\ConsentableResponse;
-use Visualbuilder\FilamentUserConsent\Models\ConsentOptionQuestion;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOptionQuestionOption;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOptionUser;
 use Visualbuilder\FilamentUserConsent\Notifications\ConsentsUpdatedNotification;
@@ -53,9 +52,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
     public function mount(): void
     {
-        $this->user = auth()->user();
-
-        if(!$this->user) {
+        if (!$this->user = auth()->user()) {
             abort(403, 'Forbidden User');
         }
 
@@ -72,13 +69,12 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
     {
         $fillData = [];
         foreach ($this->user->collection as $key => $consentOption) {
-            if($consentOption->questions->count() > 0) {
-
+            if ($consentOption->questions->count() > 0) {
                 foreach ($consentOption->questions as $question) {
-                    if($question->default_user_column) {
+                    if ($question->default_user_column) {
                         $fillData['consents_info'][$consentOption->id][$question->id][$question->name] = $this->user->{$question->default_user_column};
                     }
-                    if($question->additionalInfoOptions && $question->additionalInfoOptions->count() > 0) {
+                    if ($question->additionalInfoOptions && $question->additionalInfoOptions->count() > 0) {
                         foreach ($question->additionalInfoOptions as $option) {
                             $optionId = $option->where('id', $option->id)->first();
                             $fillData["consents_info"][$consentOption->id][$question->id]["additional_info_$option->id"] = $this->user->{$optionId->additional_info_default_column};
@@ -98,19 +94,21 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
             ->statePath('data')
             ->operation($this->getFormContext());
     }
+
     protected function getFormSchema(): array
     {
-        if(!$this->user->collection) {
+        if (!$this->user->collection) {
             $this->user->collection = $this->user->outstandingConsents();
         }
+
         $formFields = [
             Forms\Components\Placeholder::make('welcome')
                 ->label('')
                 ->content(new HtmlString("<p class='text-lg'>Hi {$this->user->firstname},</p><p class='text-lg'>Please read this carefully and accept the terms below. We will email a copy to {$this->user->email}.</p>"))
         ];
+
         foreach ($this->user->collection as $consentOption) {
             $fields = [
-
                 Forms\Components\Placeholder::make('text')
                     ->label(false)
                     ->view('user-consent::partials.placeholder')
@@ -121,7 +119,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     ->accepted($consentOption->is_mandatory)
             ];
 
-            if($consentOption->questions->count() > 0) {
+            if ($consentOption->questions->count() > 0) {
 
                 $formComponents = [];
                 foreach ($consentOption->questions as $question) {
@@ -146,7 +144,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                         foreach ($question->additionalInfoOptions as $option) {
                             $formComponents[] = Forms\Components\Textarea::make("consents_info.$consentOption->id.$question->id.additional_info_$option->id")
                                 ->label($option->additional_info_label ?? 'Additional info')
-                                ->visible(fn (Get $get) =>  (int)$get($fieldName) === $option->id)
+                                ->visible(fn(Get $get) => (int)$get($fieldName) === $option->id)
                                 ->required($option->additional_info);
                         }
                     }
@@ -155,7 +153,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
             }
 
             $formFields[] = Section::make("{$consentOption->title}")
-                ->description(function () use($consentOption) {
+                ->description(function () use ($consentOption) {
                     $suffix = $this->previousConsents($consentOption->key);
                     $mandatory = $consentOption->is_mandatory ? 'Mandatory' : 'Optional';
                     if ($suffix) {
@@ -181,16 +179,18 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
     public function submit(): void
     {
-        $formData = $this->form->getState();
-        $consentInfo = $formData['consents_info']??[];
+        $this->redirect(request()->session()->get('url.saved'));
 
-        $consentIds = [];
-        if(!array_key_exists('consents', $formData)) {
-            $this->redirect(request()->session()->get('url.saved'));
+        $formData = $this->form->getState();
+        if (!array_key_exists('consents', $formData)) {
+            return;
         }
 
-        foreach($formData['consents'] as $key => $value) {
-            if((bool)$value === true) {
+        $consentIds = [];
+        $consentInfo = $formData['consents_info'] ?? [];
+
+        foreach ($formData['consents'] as $key => $value) {
+            if ((bool)$value === true) {
                 $consentIds[] = $key;
             }
         }
@@ -203,7 +203,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     $consentOption,
                     [
                         'accepted' => in_array($consentOption->id, $consentIds),
-                        'key' => $consentOption->key,
+                        'key'      => $consentOption->key,
                     ]
                 );
             $pivotModel = ConsentOptionUser::query()
@@ -214,7 +214,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
             $pivotModel::clearCache($pivotModel);
 
-            if($consentOption->questions->count() > 0) {
+            if ($consentOption->questions->count() > 0) {
                 $consentable = $this->user->consents()->where('consent_option_id', $consentOption->id)->first();
                 $consentable = $consentable->pivot;
                 $consentable = ConsentOptionUser::where('consentable_type', $consentable->consentable_type)
@@ -225,28 +225,25 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                 foreach ($consentInfo[$consentOption->id] as $id => $question) {
                     $key = array_keys($question);
                     $fieldName = $key[0];
-                    $questionModel = ConsentOptionQuestion::find($id);
                     $questionOptionModel = ConsentOptionQuestionOption::find($question[$fieldName]);
-                    $additionalInfoColumn = "additional_info_".$question[$fieldName];
+                    $additionalInfoColumn = "additional_info_" . $question[$fieldName];
                     $additionalInfoValue = "";
-                    if(isset($question[$additionalInfoColumn]) && $questionOptionModel) {
+                    if (isset($question[$additionalInfoColumn]) && $questionOptionModel) {
                         $additionalInfoValue = $question[$additionalInfoColumn];
                     }
 
                     ConsentableResponse::create([
-                        'consentable_id' => $consentable->id,
-                        'consent_option_id' => $consentOption->id,
-                        'consent_option_question_id' => $id,
+                        'consentable_id'                    => $consentable->id,
+                        'consent_option_id'                 => $consentOption->id,
+                        'consent_option_question_id'        => $id,
                         'consent_option_question_option_id' => $questionOptionModel?->id,
-                        'question_field_name' => $fieldName,
-                        'response' => $questionOptionModel ? $questionOptionModel->value : $question[$fieldName],
-                        'additional_info' => $additionalInfoValue,
+                        'question_field_name'               => $fieldName,
+                        'response'                          => $questionOptionModel ? $questionOptionModel->value : $question[$fieldName],
+                        'additional_info'                   => $additionalInfoValue,
                     ]);
                 }
             }
         }
-
-
 
         Notification::make()
             ->title('Success')
@@ -255,9 +252,6 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
             ->color('success')
             ->send();
 
-        $this->user->notify(app(config('filament-user-consent.notification',\Visualbuilder\FilamentUserConsent\Notifications\ConsentsUpdatedNotification::class)));
-
-
-        $this->redirect(request()->session()->get('url.saved'));
+        $this->user->notify(app(config('filament-user-consent.notification', ConsentsUpdatedNotification::class)));
     }
 }
