@@ -10,7 +10,7 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
@@ -45,9 +45,9 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         return false;
     }
 
-    public function getMaxWidth(): MaxWidth
+    public function getMaxWidth(): Width|string|null
     {
-        return MaxWidth::FiveExtraLarge;
+        return Width::FiveExtraLarge;
     }
 
     public function mount(): void
