@@ -23,12 +23,13 @@ use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\Edit
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\RelationManagers\ConsentOptionQuestionsRelationManager;
 use Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionPreview;
+use BackedEnum;
 
 class ConsentOptionResource extends Resource
 {
     protected static ?string $model = ConsentOption::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-check-badge';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-check-badge';
 
     public static function getNavigationLabel(): string
     {
