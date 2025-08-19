@@ -25,7 +25,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
     public static ?string $title = 'Your consent is required';
 
-    protected static string $view = 'user-consent::livewire.consent-option-form-builder';
+    protected string $view = 'user-consent::livewire.consent-option-form-builder';
 
     public Model $user;
 
