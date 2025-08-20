@@ -120,7 +120,9 @@ class ConsentOptionResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('')->components([
+                Section::make('')
+                    ->columnSpanFull()
+                    ->components([
                     Group::make()->components([
                         Forms\Components\TextInput::make('title')
                             ->live()
