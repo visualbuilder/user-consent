@@ -2,28 +2,29 @@
 
 namespace Visualbuilder\FilamentUserConsent\Resources;
 
-use Filament\Schemas\Components\Livewire;
-use Closure;
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
 use Filament\Forms;
-use Filament\Schemas\Components\Group;
 use Filament\Forms\Components\Repeater;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Livewire;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Visualbuilder\FilamentTinyEditor\TinyEditor;
+use Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionPreview;
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\RelationManagers\ConsentOptionQuestionsRelationManager;
-use Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionPreview;
-use BackedEnum;
 
 class ConsentOptionResource extends Resource
 {
@@ -66,120 +67,6 @@ class ConsentOptionResource extends Resource
         return config('filament-user-consent.navigation.consent_options.register');
     }
 
-    public static function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                Section::make('')->components([
-                    Group::make()->components([
-                        Forms\Components\TextInput::make('title')
-                            ->live()
-                            ->afterStateUpdated(
-                                fn (Set $set, ?string $state) => $set('key', Str::slug($state))
-                            )
-                            ->required(),
-                        Forms\Components\TextInput::make('key')
-                            ->required(),
-                        Forms\Components\TextInput::make('label')
-                            ->hint('(For the consent accepted checkbox)')
-                            ->required(),
-                        Forms\Components\TextInput::make('sort_order')
-                            ->numeric()
-                            ->hintIcon('heroicon-o-information-circle','To set the order in which they are shown when multiple consents are used.')
-                            ->hintColor('info')
-                            ->required(),
-
-                        Forms\Components\Toggle::make('enabled')
-                            ->label('Enable this consent')
-                            ->hintIcon('heroicon-o-information-circle','Disabled consents will not be shown to users')
-                            ->hintColor('info'),
-
-                        Forms\Components\Toggle::make('is_current')
-                            ->label('Is current consent')
-                            ->hintIcon('heroicon-o-information-circle','If enabled all other consents with the same key will be disabled')
-                            ->hintColor('info'),
-
-                        Forms\Components\Toggle::make('is_survey')
-                            ->label('Has survey questions?')
-                            ->hintIcon('heroicon-o-information-circle','Enable additional survey questions')
-                            ->hintColor('info'),
-
-                        Forms\Components\Toggle::make('is_mandatory')
-                            ->hintIcon('heroicon-o-information-circle','User must accept this consent to proceed')
-                            ->hintColor('info'),
-
-                        Forms\Components\Toggle::make('force_user_update')
-                            ->label('Require all users to re-confirm after this update')
-                            ->hintIcon('heroicon-o-information-circle','Caution, will ask all users when logging in to reconfirm this consent.')
-                            ->hintColor('info'),
-
-                        Forms\Components\Toggle::make('increment_version')
-                            ->label('Save as a new version?')
-                            ->hintIcon('heroicon-o-information-circle','Enable to keep previous consent history')
-                            ->hintColor('info'),
-
-                        Forms\Components\DateTimePicker::make('published_at')
-                            ->label('Enable From Date')
-                            ->hintIcon('heroicon-o-information-circle','Enable from this date')
-                            ->hintColor('info')
-                            ->default(now()->subDay())
-                            ->native(false)
-                            ->required(),
-
-                        Forms\Components\Select::make('models')
-                            ->options(config('filament-user-consent.options'))
-                            ->multiple()
-                            ->searchable()
-                            ->required(),
-                        Forms\Components\TextInput::make('additional_info_title')
-                            ->nullable()
-                            ->maxLength(150),
-                    ])->columns(2)->columnSpanFull(),
-
-                    TinyEditor::make('text')
-                        ->label('Contract text')
-                        ->required()
-                        ->columnSpanFull(),
-
-                ])->columns(3),
-                Section::make('Additional Info')->components([
-
-                    Repeater::make('fields')->label('')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                        ->regex('/^[a-z_]+$/')
-                        ->required(),
-                        Forms\Components\Select::make('component')
-                            ->options(config('filament-user-consent.components'))
-                            ->searchable()
-                            ->live()
-                            ->required(),
-                        Forms\Components\TextInput::make('label')
-                            ->visible(fn(Get $get) => $get('component') !== 'placeholder'),
-                        Forms\Components\Toggle::make('required')
-                            ->inline(false)
-                            ->required(fn(Get $get) => $get('component') !== 'placeholder')
-                            ->visible(fn(Get $get) => $get('component') !== 'placeholder'),
-                        Forms\Components\RichEditor::make('content')
-                            ->required(fn(Get $get) => $get('component') === 'placeholder')
-                            ->visible(fn(Get $get) => $get('component') === 'placeholder')
-                            ->columnSpanFull(),
-                        Forms\Components\KeyValue::make('options')
-                            ->addActionLabel('Add Option')
-                            ->keyLabel('Value')
-                            ->valueLabel('Label')
-                            ->columnSpanFull()
-                            ->required(fn(Get $get) => in_array($get('component'), ['select', 'radio', 'likert']))
-                            ->visible(fn(Get $get) => in_array($get('component'), ['select', 'radio', 'likert'])),
-                    ])
-                    ->defaultItems(1)
-                    ->columns(2)
-                    ->addActionLabel('Add Field')
-                    ->collapsed()
-                ])->visible(fn(Get $get) => (bool)$get('additional_info'))
-            ]);
-    }
-
     public static function table(Table $table): Table
     {
         return $table
@@ -214,9 +101,9 @@ class ConsentOptionResource extends Resource
                 //
             ])
             ->defaultSort('created_at', 'desc')
-            ->actions([
-                Tables\Actions\Action::make('Preview')
-                ->icon('heroicon-m-viewfinder-circle')
+            ->recordActions([
+                Action::make('Preview')
+                    ->icon('heroicon-m-viewfinder-circle')
                     ->modalHeading("")
                     ->modalSubmitAction(false)
                     ->modalCancelAction(false)
@@ -224,8 +111,122 @@ class ConsentOptionResource extends Resource
                         Livewire::make(ConsentOptionPreview::class),
                     ])
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([]),
+            ->headerActions([
+                BulkActionGroup::make([]),
+            ]);
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make('')->components([
+                    Group::make()->components([
+                        Forms\Components\TextInput::make('title')
+                            ->live()
+                            ->afterStateUpdated(
+                                fn(Set $set, ?string $state) => $set('key', Str::slug($state))
+                            )
+                            ->required(),
+                        Forms\Components\TextInput::make('key')
+                            ->required(),
+                        Forms\Components\TextInput::make('label')
+                            ->hint('(For the consent accepted checkbox)')
+                            ->required(),
+                        Forms\Components\TextInput::make('sort_order')
+                            ->numeric()
+                            ->hintIcon('heroicon-o-information-circle', 'To set the order in which they are shown when multiple consents are used.')
+                            ->hintColor('info')
+                            ->required(),
+
+                        Forms\Components\Toggle::make('enabled')
+                            ->label('Enable this consent')
+                            ->hintIcon('heroicon-o-information-circle', 'Disabled consents will not be shown to users')
+                            ->hintColor('info'),
+
+                        Forms\Components\Toggle::make('is_current')
+                            ->label('Is current consent')
+                            ->hintIcon('heroicon-o-information-circle', 'If enabled all other consents with the same key will be disabled')
+                            ->hintColor('info'),
+
+                        Forms\Components\Toggle::make('is_survey')
+                            ->label('Has survey questions?')
+                            ->hintIcon('heroicon-o-information-circle', 'Enable additional survey questions')
+                            ->hintColor('info'),
+
+                        Forms\Components\Toggle::make('is_mandatory')
+                            ->hintIcon('heroicon-o-information-circle', 'User must accept this consent to proceed')
+                            ->hintColor('info'),
+
+                        Forms\Components\Toggle::make('force_user_update')
+                            ->label('Require all users to re-confirm after this update')
+                            ->hintIcon('heroicon-o-information-circle', 'Caution, will ask all users when logging in to reconfirm this consent.')
+                            ->hintColor('info'),
+
+                        Forms\Components\Toggle::make('increment_version')
+                            ->label('Save as a new version?')
+                            ->hintIcon('heroicon-o-information-circle', 'Enable to keep previous consent history')
+                            ->hintColor('info'),
+
+                        Forms\Components\DateTimePicker::make('published_at')
+                            ->label('Enable From Date')
+                            ->hintIcon('heroicon-o-information-circle', 'Enable from this date')
+                            ->hintColor('info')
+                            ->default(now()->subDay())
+                            ->native(false)
+                            ->required(),
+
+                        Forms\Components\Select::make('models')
+                            ->options(config('filament-user-consent.options'))
+                            ->multiple()
+                            ->searchable()
+                            ->required(),
+                        Forms\Components\TextInput::make('additional_info_title')
+                            ->nullable()
+                            ->maxLength(150),
+                    ])->columns(2)->columnSpanFull(),
+
+                    TinyEditor::make('text')
+                        ->label('Contract text')
+                        ->required()
+                        ->columnSpanFull(),
+
+                ])->columns(3),
+                Section::make('Additional Info')->components([
+
+                    Repeater::make('fields')->label('')
+                        ->schema([
+                            Forms\Components\TextInput::make('name')
+                                ->regex('/^[a-z_]+$/')
+                                ->required(),
+                            Forms\Components\Select::make('component')
+                                ->options(config('filament-user-consent.components'))
+                                ->searchable()
+                                ->live()
+                                ->required(),
+                            Forms\Components\TextInput::make('label')
+                                ->visible(fn(Get $get) => $get('component') !== 'placeholder'),
+                            Forms\Components\Toggle::make('required')
+                                ->inline(false)
+                                ->required(fn(Get $get) => $get('component') !== 'placeholder')
+                                ->visible(fn(Get $get) => $get('component') !== 'placeholder'),
+                            Forms\Components\RichEditor::make('content')
+                                ->required(fn(Get $get) => $get('component') === 'placeholder')
+                                ->visible(fn(Get $get) => $get('component') === 'placeholder')
+                                ->columnSpanFull(),
+                            Forms\Components\KeyValue::make('options')
+                                ->addActionLabel('Add Option')
+                                ->keyLabel('Value')
+                                ->valueLabel('Label')
+                                ->columnSpanFull()
+                                ->required(fn(Get $get) => in_array($get('component'), ['select', 'radio', 'likert']))
+                                ->visible(fn(Get $get) => in_array($get('component'), ['select', 'radio', 'likert'])),
+                        ])
+                        ->defaultItems(1)
+                        ->columns(2)
+                        ->addActionLabel('Add Field')
+                        ->collapsed()
+                ])->visible(fn(Get $get) => (bool) $get('additional_info'))
             ]);
     }
 
@@ -239,9 +240,9 @@ class ConsentOptionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListConsentOptions::route('/'),
+            'index'  => ListConsentOptions::route('/'),
             'create' => CreateConsentOption::route('/create'),
-            'edit' => EditConsentOption::route('/{record}/edit'),
+            'edit'   => EditConsentOption::route('/{record}/edit'),
         ];
     }
 }

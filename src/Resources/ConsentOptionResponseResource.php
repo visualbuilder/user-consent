@@ -100,10 +100,10 @@ class ConsentOptionResponseResource extends Resource
                     ->options(config('filament-user-consent.options'))
             ])
             ->defaultSort('created_at', 'desc')
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
             ])
-            ->bulkActions([
+            ->headerActions([
                 BulkActionGroup::make([]),
             ]);
     }
