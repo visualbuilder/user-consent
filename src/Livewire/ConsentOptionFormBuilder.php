@@ -26,6 +26,8 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
     public static ?string $title = 'Your consent is required';
 
+    public Width | string | null $maxContentWidth = Width::SevenExtraLarge;
+
     protected string $view = 'user-consent::livewire.consent-option-form-builder';
 
     public Model $user;
@@ -180,10 +182,14 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
     public function submit(): void
     {
-        $this->redirect(request()->session()->get('url.saved'));
-
         $formData = $this->form->getState();
         if (!array_key_exists('consents', $formData)) {
+            Notification::make()
+                ->title('Error')
+                ->body('No consent preferences were selected.')
+                ->icon('heroicon-o-x-circle')
+                ->color('danger')
+                ->send();
             return;
         }
 
@@ -254,5 +260,9 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
             ->send();
 
         $this->user->notify(app(config('filament-user-consent.notification', ConsentsUpdatedNotification::class)));
+        
+        // Redirect after successfully saving the consent
+        $redirectUrl = request()->session()->get('url.saved') ?? '/';
+        $this->redirect($redirectUrl);
     }
 }
