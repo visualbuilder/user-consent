@@ -105,15 +105,16 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         }
 
         $formFields = [
-            Forms\Components\Placeholder::make('welcome')
-                ->label('')
-                ->content(new HtmlString("<p class='text-lg'>Hi {$this->user->firstname},</p><p class='text-lg'>Please read this carefully and accept the terms below. We will email a copy to {$this->user->email}.</p>"))
+            TextEntry::make('welcome')
+                ->hiddenLabel()
+                ->state(new HtmlString("<p class='text-lg'>Hi {$this->user->firstname},</p><p class='text-lg'>Please read this carefully and accept the terms below. We will email a copy to {$this->user->email}.</p>"))
+
         ];
 
         foreach ($this->user->collection as $consentOption) {
             $fields = [
                 TextEntry::make('text')
-                    ->label(false)
+                    ->hiddenLabel()
                     ->view('user-consent::partials.placeholder')
                     ->state(new HtmlString($consentOption->text)),
 
@@ -130,7 +131,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     $options = $question->options;
                     $options = $question->options ? $question->options->pluck('text', 'id') : [];
                     $formComponents[] = match ($question->component) {
-                        'placeholder' => Forms\Components\Placeholder::make($fieldName)->label('')->content(new HtmlString($question->content))->columnSpanFull(),
+                        'placeholder' => Forms\Components\Placeholder::make($fieldName)->hiddenLabel()->content(new HtmlString($question->content))->columnSpanFull(),
                         'likert' => Forms\Components\Radio::make($fieldName)->label($question->label ?? '')->options($options)->inline(true)->live()->inlineLabel(false)->required($question->required),
                         'text' => Forms\Components\TextInput::make($fieldName)->label($question->label ?? '')->required($question->required),
                         'email' => Forms\Components\TextInput::make($fieldName)->label($question->label ?? '')->email()->required($question->required),
@@ -260,7 +261,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
             ->send();
 
         $this->user->notify(app(config('filament-user-consent.notification', ConsentsUpdatedNotification::class)));
-        
+
         // Redirect after successfully saving the consent
         $redirectUrl = request()->session()->get('url.saved') ?? '/';
         $this->redirect($redirectUrl);

@@ -69,10 +69,10 @@ class ConsentOptionPreview extends Component implements HasForms
     {
         $consentOption = $this->consentOption;
 
-        $formFields = [TextEntry::make('welcome')->label('')->state(new HtmlString("Hi {$this->user->firstname},<br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))];
+        $formFields = [TextEntry::make('welcome')->hiddenLabel()->state(new HtmlString("Hi {$this->user->firstname},<br>Please read these terms and conditions carefully, we will email a copy to {$this->user->email}"))];
 
         $fields = [
-            TextEntry::make('text')->label('')->state(new HtmlString($consentOption->text)),
+            TextEntry::make('text')->hiddenLabel()->state(new HtmlString($consentOption->text)),
             Checkbox::make("consents.$consentOption->id")
             ->label($consentOption->label)
             ->required($consentOption->is_mandatory)
@@ -85,7 +85,7 @@ class ConsentOptionPreview extends Component implements HasForms
                 $fieldName = "consents_info.$consentOption->id.$question->id.$question->name";
                 $options = $question->options ? $question->options->pluck('text', 'id') : [];
                 $formComponents[] = match ($question->component) {
-                    'placeholder' => TextEntry::make($fieldName)->label('')->state(new HtmlString($question->content))->columnSpanFull(),
+                    'placeholder' => TextEntry::make($fieldName)->hiddenLabel()->state(new HtmlString($question->content))->columnSpanFull(),
                     'likert' => Radio::make($fieldName)->label($question->label ?? '')->options($options)->inline(true)->live()->inlineLabel(false)->required($question->required)->columnSpanFull(),
                     'text' => TextInput::make($fieldName)->label($question->label ?? '')->required($question->required)->columnSpanFull(),
                     'email' => TextInput::make($fieldName)->label($question->label ?? '')->email()->required($question->required)->columnSpanFull(),

@@ -196,7 +196,7 @@ class ConsentOptionResource extends Resource
                 ])->columns(3),
                 Section::make('Additional Info')->components([
 
-                    Repeater::make('fields')->label('')
+                    Repeater::make('fields')->hiddenLabel()
                         ->schema([
                             Forms\Components\TextInput::make('name')
                                 ->regex('/^[a-z_]+$/')
