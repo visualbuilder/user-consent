@@ -119,7 +119,8 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
                 Forms\Components\Toggle::make("consents.$consentOption->id")
                     ->label($consentOption->label)
-                    ->accepted($consentOption->is_mandatory),
+                    ->accepted($consentOption->is_mandatory)
+                    ->visible($consentOption->show_accept_checkbox ?? true),
             ];
 
             if ($consentOption->questions->count() > 0) {
@@ -209,11 +210,30 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         $outstandingConsents = $this->user->outstandingConsents();
         foreach ($outstandingConsents as $consentOption) {
             $consentOption = $consentOption->refresh();
+
+            // Determine accepted status
+            $accepted = in_array($consentOption->id, $consentIds);
+
+            // For radio-based consents (show_accept_checkbox = false), derive accepted from radio option
+            if (! ($consentOption->show_accept_checkbox ?? true) && isset($consentInfo[$consentOption->id])) {
+                // Get the first question's response to determine consent
+                $firstQuestion = array_values($consentInfo[$consentOption->id])[0] ?? null;
+                if ($firstQuestion) {
+                    $fieldName = array_keys($firstQuestion)[0];
+                    $optionId = $firstQuestion[$fieldName] ?? null;
+                    if ($optionId) {
+                        $option = ConsentOptionQuestionOption::find($optionId);
+                        // Option value 1 means consent given, anything else means declined
+                        $accepted = $option && $option->value == 1;
+                    }
+                }
+            }
+
             $this->user->consents()
                 ->save(
                     $consentOption,
                     [
-                        'accepted' => in_array($consentOption->id, $consentIds),
+                        'accepted' => $accepted,
                         'key' => $consentOption->key,
                     ]
                 );
