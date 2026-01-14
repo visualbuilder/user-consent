@@ -32,7 +32,7 @@ class ConsentsUpdatedMail extends Mailable
     {
         $consentOptions = $this->user->activeConsents()->get();
 
-        $content = view('vendor.user-consent.mails.accept-notification', ['consentOptions' => $consentOptions])->render();
+        $content = view('user-consent::mails.accept-notification', ['consentOptions' => $consentOptions])->render();
 
         return $this->from(
             config('mail.from.address'),

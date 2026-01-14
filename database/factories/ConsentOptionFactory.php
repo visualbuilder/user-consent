@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 class ConsentOptionFactory extends Factory
 {
-    protected $model;
+    protected $model = \Visualbuilder\FilamentUserConsent\Models\ConsentOption::class;
 
     public function definition(): array
     {

@@ -73,6 +73,7 @@ class ConsentOption extends Model
      */
     protected $casts = [
         'models'            => 'array',
+        'fields'            => 'array',
         'published_at'      => 'datetime:Y-m-d H:i:s',
         'enabled'           => 'boolean',
         'is_current'        => 'boolean',

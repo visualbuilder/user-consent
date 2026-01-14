@@ -1,0 +1,1 @@
+../../database/migrations/create_consentable_responses_table.php.stub

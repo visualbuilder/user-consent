@@ -26,6 +26,7 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
         return $schema
             ->components([
                 Section::make()
+                    ->columnSpanFull()
                     ->columns(3)
                     ->components([
                         Forms\Components\Select::make('component')
@@ -60,6 +61,7 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
                             ->visible(fn(Get $get) => $get('component') !== 'placeholder')
                     ]),
                 Section::make()
+                    ->columnSpanFull()
                     ->visible(fn (Get $get) => in_array($get('component'), ['likert', 'select', 'radio', 'check']))
                     ->components([
                         Repeater::make('options')
@@ -87,6 +89,7 @@ class ConsentOptionQuestionsRelationManager extends RelationManager
                             ->columns(2)
                     ]),
                 Section::make()
+                    ->columnSpanFull()
                     ->visible(fn (Get $get) => in_array($get('component'), ['placeholder']))
                     ->components([
                         TinyEditor::make('content')

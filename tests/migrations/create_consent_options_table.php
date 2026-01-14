@@ -1,0 +1,1 @@
+../../database/migrations/create_consent_options_table.php.stub

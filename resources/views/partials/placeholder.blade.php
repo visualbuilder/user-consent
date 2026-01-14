@@ -1,16 +1,15 @@
 <x-dynamic-component
     :component="$getFieldWrapperView()"
-    :has-inline-label="$hasInlineLabel()"
+    :has-inline-label="method_exists($this, 'hasInlineLabel') ? $hasInlineLabel() : false"
     :id="$getId()"
-    :label="$getLabel()"
-    :label-sr-only="$isLabelHidden()"
-    :helper-text="$getHelperText()"
-    :hint="$getHint()"
-    :hint-actions="$getHintActions()"
-    :hint-color="$getHintColor()"
-    :hint-icon="$getHintIcon()"
-    :hint-icon-tooltip="$getHintIconTooltip()"
-    :state-path="$getStatePath()"
+    :label="method_exists($this, 'getLabel') ? $getLabel() : ''"
+    :label-sr-only="method_exists($this, 'isLabelHidden') ? $isLabelHidden() : false"
+    :helper-text="method_exists($this, 'getHelperText') ? $getHelperText() : null"
+    :hint="method_exists($this, 'getHint') ? $getHint() : null"
+    :hint-color="method_exists($this, 'getHintColor') ? $getHintColor() : null"
+    :hint-icon="method_exists($this, 'getHintIcon') ? $getHintIcon() : null"
+    :hint-icon-tooltip="method_exists($this, 'getHintIconTooltip') ? $getHintIconTooltip() : null"
+    :state-path="method_exists($this, 'getStatePath') ? $getStatePath() : ''"
 >
     <div
         {{
@@ -19,6 +18,6 @@
                 ->class(['fi-fo-placeholder text-base leading-6'])
         }}
     >
-        {{ $getContent() }}
+        {{ method_exists($this, 'getContent') ? $getContent() : ($getState() ?? '') }}
     </div>
 </x-dynamic-component>

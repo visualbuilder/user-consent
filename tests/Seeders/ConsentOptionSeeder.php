@@ -16,125 +16,129 @@ class ConsentOptionSeeder extends Seeder
   {
     ConsentOption::factory()
       ->createMany([
-        [
-          'key'          => 'terms-and-conditions',
-          'version'      => 1,
-          'title'        => 'Terms and conditions',
-          'label'        => 'Click here to accept the terms.',
-          'sort_order'   => 1,
-          'enabled'    => 1,
-          'text'         => '<p>To receive services from Neurobox you must consent to our data collection and sharing terms:</p>
+          [
+              'key'          => 'terms-and-conditions',
+              'version'      => 1,
+              'title'        => 'Terms and conditions',
+              'label'        => 'Click here to accept the terms.',
+              'sort_order'   => 1,
+              'enabled'    => 1,
+              'is_survey'    => false,
+              'published_at' => now(),
+              'text'         => '<p>To receive services from Neurobox you must consent to our data collection and sharing terms:</p>
 <ul class="fa-ul">
 <li><i class="fa-li fa fa-check-square"></i> I agree to Neurobox collecting personal data to be able to deliver my service as per my order. </li>
 <li><i class="fa-li fa fa-check-square"></i> I agree to sharing my details &amp; outputs of services with my designated coach.</li>
 <li><i class="fa-li fa fa-check-square"></i> I agree to any digitally delivered sessions being recorded for internal quality control, training, &amp; monitoring purposes.</li>
 <li><i class="fa-li fa fa-check-square"></i> I have read the <a href="https://neurobox.co.uk/privacy-policy/" title="Neurobox Privacy Policy" target="_blank" rel="noopener noreferrer">Neurobox Privacy Policy</a></li>
 </ul>',
-          'is_mandatory' => true,
-          'is_current'   => true,
-          'additional_info' => true,
-          'additional_info_title' => "Contract additional info",
-          'fields' => [
-            [
-              "name" => "name",
-              "type" => "text",
-              "label" => "Emergency Contact Name",
-              "rules" => "",
-              "options" => "",
-              "required" => true,
-              "column_span" => 1
-            ],
-            [
-              "name" => "position",
-              "type" => "email",
-              "label" => "Emergency Contact email",
-              "rules" => "",
-              "options" => "",
-              "required" => false,
-              "column_span" => 1
-            ],
-            [
-              "name" => "phone",
-              "type" => "number",
-              "label" => "Emergency Contact Telephone",
-              "rules" => "",
-              "options" => "",
-              "required" => true,
-              "column_span" => 1
-            ],
-            [
-              "name" => "addres",
-              "type" => "textarea",
-              "label" => "Address",
-              "rules" => "",
-              "options" => "",
-              "required" => true,
-              "column_span" => 1
-            ],
-            [
-              "name" => "language",
-              "type" => "select",
-              "label" => "Language",
-              "rules" => "",
-              "options" => "en,fr,tk",
-              "required" => true,
-              "column_span" => 1
-            ],
-            [
-              "name" => "gender",
-              "type" => "radio",
-              "label" => "Gender",
-              "rules" => "",
-              "options" => "Male,Female,Others",
-              "required" => true,
-              "column_span" => 1
-            ],
-            [
-              "name" => "dob",
-              "type" => "date",
-              "label" => "Date of Birth",
-              "rules" => "",
-              "options" => "",
-              "required" => true,
-              "column_span" => 1
-            ],
+              'is_mandatory' => true,
+              'is_current'   => true,
+              'additional_info' => true,
+              'additional_info_title' => "Contract additional info",
+              'fields' => [
+                  [
+                      "name" => "name",
+                      "type" => "text",
+                      "label" => "Emergency Contact Name",
+                      "rules" => "",
+                      "options" => "",
+                      "required" => true,
+                      "column_span" => 1
+                  ],
+                  [
+                      "name" => "position",
+                      "type" => "email",
+                      "label" => "Emergency Contact email",
+                      "rules" => "",
+                      "options" => "",
+                      "required" => false,
+                      "column_span" => 1
+                  ],
+                  [
+                      "name" => "phone",
+                      "type" => "number",
+                      "label" => "Emergency Contact Telephone",
+                      "rules" => "",
+                      "options" => "",
+                      "required" => true,
+                      "column_span" => 1
+                  ],
+                  [
+                      "name" => "addres",
+                      "type" => "textarea",
+                      "label" => "Address",
+                      "rules" => "",
+                      "options" => "",
+                      "required" => true,
+                      "column_span" => 1
+                  ],
+                  [
+                      "name" => "language",
+                      "type" => "select",
+                      "label" => "Language",
+                      "rules" => "",
+                      "options" => "en,fr,tk",
+                      "required" => true,
+                      "column_span" => 1
+                  ],
+                  [
+                      "name" => "gender",
+                      "type" => "radio",
+                      "label" => "Gender",
+                      "rules" => "",
+                      "options" => "Male,Female,Others",
+                      "required" => true,
+                      "column_span" => 1
+                  ],
+                  [
+                      "name" => "dob",
+                      "type" => "date",
+                      "label" => "Date of Birth",
+                      "rules" => "",
+                      "options" => "",
+                      "required" => true,
+                      "column_span" => 1
+                  ],
+              ],
+              'models'       => [
+                  [
+                      'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
+                  ]
+              ]
           ],
-          'models'       => [
-            [
-              'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
-            ]
-          ]
-        ],
-        [
-          'key'          => 'data-sharing',
-          'version'      => 1,
-          'title'        => 'Workplace Needs Assessment - Consent to Share',
-          'label'        => 'I consent to sharing the report, as sent to me, with my employer',
-          'sort_order'   => 2,
-          'enabled'    => 1,
-          'text'         => '<p>Your workplace needs assessment enables your assessor to gain an understanding of your role, difficulties, and strengths so that they can make suggestions for adjustments that may benefit you. Suggestions may cover areas such as your working environment, working practices, assistive technology, and support.</p>
+          [
+              'key'          => 'data-sharing',
+              'version'      => 1,
+              'title'        => 'Workplace Needs Assessment - Consent to Share',
+              'label'        => 'I consent to sharing the report, as sent to me, with my employer',
+              'sort_order'   => 2,
+              'enabled'    => 1,
+              'is_survey'    => false,
+              'published_at' => now(),
+              'text'         => '<p>Your workplace needs assessment enables your assessor to gain an understanding of your role, difficulties, and strengths so that they can make suggestions for adjustments that may benefit you. Suggestions may cover areas such as your working environment, working practices, assistive technology, and support.</p>
 <p>These suggestions, the rationale behind them, and how they may be of benefit to you, will be presented as a written report to your employer so that they can consider them and implement them as they deem practicable.</p>
 <p>Before we can submit your report to your employer, we require your consent to do so. Please tick the box below, to provide your consent.</p>',
-          'is_mandatory' => false,
-          'is_current'   => true,
-          'additional_info' => false,
-          'fields' => [],
-          'models'       => [
-            [
-              'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
-            ]
-          ]
-        ],
-
-
-        [
-          'key'          => 'coaching-contract',
-          'version'      => 1,
-          'title'        => 'Coaching Contract',
-          'label'        => 'Click here to accept the coaching contract terms',
-          'sort_order'   => 3,
-          'enabled'    => 1,
-          'text'         => '<p>We have discussed and agreed the following:</p>
+              'is_mandatory' => false,
+              'is_current'   => true,
+              'additional_info' => false,
+              'fields' => [],
+              'models'       => [
+                  [
+                      'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
+                  ]
+              ]
+          ],
+          [
+              'key'          => 'coaching-contract',
+              'version'      => 1,
+              'title'        => 'Coaching Contract',
+              'label'        => 'Click here to accept the coaching contract terms',
+              'sort_order'   => 3,
+              'enabled'    => 1,
+              'is_survey'    => false,
+              'published_at' => now(),
+              'text'         => '<p>We have discussed and agreed the following:</p>
 <div>The coach will provide {{ total_hours_coaching }} hours of coaching over approximately {{ expected_months }} months.</div>
 <p>The purpose of workplace strategy coaching is to enable the client to explore and implement strategies to enhance their effectiveness and wellbeing at work in response to their specific challenges, strengths and situation. These strategies are designed to complement any reasonable adjustments already in place. Specific topics that may be explored include communication and presentations, time management, organisation, project planning, self-advocacy, effective reading and writing techniques, stress management and developing confidence. </p>
 <p>
@@ -179,52 +183,55 @@ class ConsentOptionSeeder extends Seeder
 </ul>
 <p>Date:
 </p>',
-          'is_mandatory' => true,
-          'is_current'   => true,
-          'additional_info' => true,
-          'additional_info_title' => "Contract additional info",
-          'fields' => [
-            [
-              "name" => "name",
-              "type" => "text",
-              "label" => "Emergency Contact Name",
-              "rules" => "",
-              "options" => "",
-              "required" => true,
-              "column_span" => 1
-            ],
-            [
-              "name" => "position",
-              "type" => "text",
-              "label" => "Emergency Contact Position",
-              "rules" => "",
-              "options" => "",
-              "required" => false,
-              "column_span" => 1
-            ],
-            [
-              "name" => "phone",
-              "type" => "text",
-              "label" => "Emergency Contact Telephone",
-              "rules" => "",
-              "options" => "",
-              "required" => true,
-              "column_span" => 1
-            ]
+              'is_mandatory' => true,
+              'is_current'   => true,
+              'additional_info' => true,
+              'additional_info_title' => "Contract additional info",
+              'fields' => [
+                  [
+                      "name" => "name",
+                      "type" => "text",
+                      "label" => "Emergency Contact Name",
+                      "rules" => "",
+                      "options" => "",
+                      "required" => true,
+                      "column_span" => 1
+                  ],
+                  [
+                      "name" => "position",
+                      "type" => "text",
+                      "label" => "Emergency Contact Position",
+                      "rules" => "",
+                      "options" => "",
+                      "required" => false,
+                      "column_span" => 1
+                  ],
+                  [
+                      "name" => "phone",
+                      "type" => "text",
+                      "label" => "Emergency Contact Telephone",
+                      "rules" => "",
+                      "options" => "",
+                      "required" => true,
+                      "column_span" => 1
+                  ]
+              ],
+              'models'       => [
+                  [
+                      'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
+                  ]
+              ]
           ],
-          'models'       => [
-            [
-              'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
-            ]
-          ]
-        ],       [
-          'key'          => 'health-partners-coaching-contract',
-          'version'      => 1,
-          'title'        => 'Health Partners Coaching Contract',
-          'label'        => 'Click here to accept the Health Partners coaching contract terms',
-          'sort_order'   => 3,
-          'enabled'    => 1,
-          'text'         => '
+          [
+              'key'          => 'health-partners-coaching-contract',
+              'version'      => 1,
+              'title'        => 'Health Partners Coaching Contract',
+              'label'        => 'Click here to accept the Health Partners coaching contract terms',
+              'sort_order'   => 3,
+              'enabled'    => 1,
+              'is_survey'    => false,
+              'published_at' => now(),
+              'text'         => '
 <p>
     <img src="/media/logos/health-partners.png" alt="Health Partners Logo" style="display: block; margin-left: auto; margin-right: 0; height: 60px">
 </p>
@@ -248,17 +255,16 @@ class ConsentOptionSeeder extends Seeder
   <li>You consent to the OH Service managing and maintaining your medical records in compliance with all ethical requirements and data protection legislation.</li>
   <li>You consent to us possibly auditing your file to ensure that we provide a quality service to all parties</li>
 </ol>',
-          'is_mandatory' => true,
-          'is_current'   => true,
-          'additional_info' => false,
-          'fields' => [],
-          'models'       => [
-            [
-              'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
-            ]
-          ]
-        ],
-
+              'is_mandatory' => true,
+              'is_current'   => true,
+              'additional_info' => false,
+              'fields' => [],
+              'models'       => [
+                  [
+                      'Visualbuilder\FilamentUserConsent\Tests\Models\User' => 'User'
+                  ]
+              ]
+          ],
       ]);
 
     //This code is to automatically approve consents for a user, to save time when manually testing.

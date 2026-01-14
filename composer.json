@@ -48,7 +48,10 @@
     "autoload-dev": {
         "psr-4": {
             "Visualbuilder\\FilamentUserConsent\\Tests\\": "tests/"
-        }
+        },
+        "classmap": [
+            "tests/Livewire/Features/"
+        ]
     },
     "scripts": {
         "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",

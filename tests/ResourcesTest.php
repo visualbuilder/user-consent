@@ -6,6 +6,7 @@ use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\Crea
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;
 
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
@@ -47,7 +48,8 @@ it('can create user consent', function () {
         ->assertHasNoFormErrors();
 
     $formData['models'] = json_encode($newData->models);
-    $this->assertDatabaseHas(ConsentOption::class, $formData);
+
+    assertDatabaseHas(ConsentOption::class, $formData);
 });
 
 it('can access user consent edit page', function () {
@@ -81,5 +83,6 @@ it('can update user consent', function () {
         ->assertHasNoFormErrors();
 
     $formData['models'] = json_encode($newData->models);
-    $this->assertDatabaseHas(ConsentOption::class, $formData);
+
+    assertDatabaseHas(ConsentOption::class, $formData);
 });

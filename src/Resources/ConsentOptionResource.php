@@ -59,7 +59,17 @@ class ConsentOptionResource extends Resource
 
     public static function getSubNavigationPosition(): SubNavigationPosition
     {
-        return config('filament-user-consent.navigation.consent_options.position');
+        $position = config('filament-user-consent.navigation.consent_options.position');
+
+        if ($position instanceof SubNavigationPosition) {
+            return $position;
+        }
+
+        if (is_string($position)) {
+            return SubNavigationPosition::tryFrom($position) ?? SubNavigationPosition::Start;
+        }
+
+        return SubNavigationPosition::Start;
     }
 
     public static function shouldRegisterNavigation(): bool

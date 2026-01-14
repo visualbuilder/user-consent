@@ -20,6 +20,7 @@ return new class extends Migration
                 $table->string('consentable_type');
                 $table->string('key')->default(NULL)->nullable();
                 $table->boolean('accepted')->default(0);
+                $table->json('fields')->nullable();
                 $table->timestamps();
             });
         }

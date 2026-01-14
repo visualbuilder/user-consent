@@ -30,7 +30,7 @@ return [
             'icon'         => 'heroicon-o-check-badge',
             'group'        => 'Content',
             'cluster'      => false,
-            'position'     => false,
+            'position'     => \Filament\Pages\Enums\SubNavigationPosition::Start,
             'register'     => true,
         ],
         'consent_responses' => [
@@ -40,7 +40,7 @@ return [
             'icon'         => 'heroicon-o-check-badge',
             'group'        => 'Content',
             'cluster'      => false,
-            'position'     => false,
+            'position'     => \Filament\Pages\Enums\SubNavigationPosition::Start,
             'register'     => true,
         ],
     ],
@@ -49,7 +49,7 @@ return [
     //send user an email with a copy of the consent after saving.
     'notify'     => ['mail'],
 
-    'email-template' => 'vendor.user-consent.layouts.email',
+    'email-template' => 'user-consent::layouts.email',
 
     //The mailable class to use for sending consent notification
     'notification'   => \Visualbuilder\FilamentUserConsent\Notifications\ConsentsUpdatedNotification::class,

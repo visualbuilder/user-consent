@@ -1,0 +1,1 @@
+../../database/migrations/create_user_consent_question_options_table.php.stub

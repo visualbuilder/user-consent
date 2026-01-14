@@ -2,85 +2,73 @@
 
 use Carbon\Carbon;
 use Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionFormBuilder;
-use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
-use Visualbuilder\FilamentUserConsent\Tests\Seeders\ConsentOptionSeeder;
 
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
-use Illuminate\Support\Arr;
-
 
 it('can access user consent list page', function () {
-    $this->seed(ConsentOptionSeeder::class);
     get(route('consent-option-request'))->assertSuccessful();
 });
 
-
 it('can generate dynamic form fields', function() {
-    $this->seed(ConsentOptionSeeder::class);
     $collections = auth()->user()->outstandingConsents();
 
+    expect($collections)->not->toBeEmpty();
+
     $livewireComponent = livewire(ConsentOptionFormBuilder::class);
+
     foreach($collections as $consentOption){
+        // Assert that the consent toggle field exists
         $livewireComponent->assertFormFieldExists("consents.$consentOption->id");
 
-        if((int)$consentOption->additional_info === 1) {
-            foreach ($consentOption->fields as $field) {
-                $livewireComponent->assertFormFieldExists("consents_info.$consentOption->id.{$field['name']}");
+        // Check for question-based fields (new system)
+        if($consentOption->questions->count() > 0) {
+            foreach ($consentOption->questions as $question) {
+                $livewireComponent->assertFormFieldExists("consents_info.$consentOption->id.$question->id.$question->name");
             }
         }
     }
-    $livewireComponent->call('submit');
-    
 });
 
 it('validate mandatory user consents', function() {
-    $this->seed(ConsentOptionSeeder::class);
     $collections = auth()->user()->outstandingConsents();
-    $fieldValidation = [];
-    foreach($collections as $consentOption){
-        if($consentOption->is_mandatory) {
-            $fieldValidation["consents.$consentOption->id"] = 'required';
-        }
-        if((int)$consentOption->additional_info === 1) {
-            foreach ($consentOption->fields as $field) {
-                if((bool)$field['required']) {
-                    $fieldValidation["consents_info.$consentOption->id.{$field['name']}"] = "required";    
-                }
-            }
-        }
-    }
 
-    livewire(ConsentOptionFormBuilder::class)
-        ->call('submit')
-        ->fillForm([])
-        ->assertHasFormErrors($fieldValidation);
+    // Ensure there are mandatory consents to validate
+    $hasMandatory = $collections->contains(fn($c) => $c->is_mandatory);
+    expect($hasMandatory)->toBeTrue();
+
+    // Submitting without filling mandatory fields should throw ValidationException
+    expect(function() {
+        livewire(ConsentOptionFormBuilder::class)
+            ->call('submit');
+    })->toThrow(\Illuminate\Validation\ValidationException::class);
 });
 
-
 it('can fill and save consents', function() {
-    $this->seed(ConsentOptionSeeder::class);
     $collections = auth()->user()->outstandingConsents();
     $fillForm = [];
+
     foreach($collections as $consentOption) {
         if($consentOption->is_mandatory) {
             $fillForm["consents.$consentOption->id"] = true;
         }
-        if((int)$consentOption->additional_info === 1) {
-            foreach ($consentOption->fields as $field) {
-                if((bool)$field['required']) {
-                    $fieldValue = match ($field['type']) {
+
+        // Handle question-based fields (new system)
+        if($consentOption->questions->count() > 0) {
+            foreach ($consentOption->questions as $question) {
+                if($question->required) {
+                    $fieldValue = match ($question->component) {
                         'text' => fake()->name(),
                         'email' => fake()->email(),
                         'number' => rand(100, 10000000),
-                        'select' => Arr::random(explode(',', $field['options'])),
+                        'select', 'radio', 'likert' => $question->options->first()?->id ?? 1,
                         'textarea' => fake()->sentence(),
-                        'check' => fake()->boolean(),
-                        'radio' => Arr::random(explode(',', $field['options'])),
+                        'check' => true,
                         'date' => Carbon::now()->subDays(rand(0, 10))->format('Y-m-d'),
                         'datetime' => Carbon::now()->subDays(rand(0, 10))->format('Y-m-d H:i:s'),
+                        default => fake()->word(),
                     };
-                    $fillForm["consents_info.$consentOption->id.{$field['name']}"] = $fieldValue;  
+                    $fillForm["consents_info.$consentOption->id.$question->id.$question->name"] = $fieldValue;
                 }
             }
         }

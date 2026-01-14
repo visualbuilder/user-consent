@@ -118,7 +118,7 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
                     ->state(new HtmlString($consentOption->text)),
 
                 Forms\Components\Toggle::make("consents.$consentOption->id")
-                    ->label($consentOption->label)
+                    ->label($consentOption->label ?? ' ')
                     ->accepted($consentOption->is_mandatory)
                     ->visible($consentOption->show_accept_checkbox ?? true),
             ];

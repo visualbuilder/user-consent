@@ -4,23 +4,20 @@ namespace Visualbuilder\FilamentUserConsent\Tests;
 
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
-use Filament\Actions\ActionsServiceProvider;
 use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Schemas\SchemasServiceProvider;
-use Filament\Infolists\InfolistsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
-use Filament\SpatieLaravelSettingsPluginServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
-use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
-use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
+use Visualbuilder\FilamentTinyEditor\TinyeditorServiceProvider;
 use Visualbuilder\FilamentUserConsent\FilamentUserConsentServiceProvider;
 use Visualbuilder\FilamentUserConsent\Tests\Models\User;
+use Visualbuilder\FilamentUserConsent\Tests\Seeders\ConsentOptionSeeder;
 
 class TestCase extends Orchestra
 {
@@ -31,6 +28,8 @@ class TestCase extends Orchestra
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->seed(ConsentOptionSeeder::class);
 
         $this->actingAs(
             User::create(['email' => 'admin@domain.com', 'name' => 'Admin', 'password' => 'password'])
@@ -44,20 +43,16 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
-            ActionsServiceProvider::class,
-            BladeCaptureDirectiveServiceProvider::class,
             BladeHeroiconsServiceProvider::class,
             BladeIconsServiceProvider::class,
             FilamentServiceProvider::class,
             FormsServiceProvider::class,
             SchemasServiceProvider::class,
-            InfolistsServiceProvider::class,
             LivewireServiceProvider::class,
             NotificationsServiceProvider::class,
-            SpatieLaravelSettingsPluginServiceProvider::class,
             SupportServiceProvider::class,
             TablesServiceProvider::class,
-            WidgetsServiceProvider::class,
+            TinyeditorServiceProvider::class,
             FilamentUserConsentServiceProvider::class,
             AdminPanelProvider::class,
         ];
@@ -66,14 +61,6 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
-
-        $migrations = [
-            include __DIR__ . '/../database/migrations/create_user_consent_table.php.stub',
-            include __DIR__ . '/../database/migrations/create_consentables_table.php.stub',
-        ];
-        foreach ($migrations as $migration) {
-            $migration->up();
-        }
     }
 
     protected function defineDatabaseMigrations()
