@@ -4,6 +4,7 @@ namespace Visualbuilder\FilamentUserConsent\Tests;
 
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
+use Filament\Actions\ActionsServiceProvider;
 use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Schemas\SchemasServiceProvider;
@@ -43,6 +44,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
+            ActionsServiceProvider::class,
             BladeHeroiconsServiceProvider::class,
             BladeIconsServiceProvider::class,
             FilamentServiceProvider::class,

@@ -1,12 +1,15 @@
 <?php
 
 use Visualbuilder\FilamentUserConsent\Models\ConsentOption;
+use Visualbuilder\FilamentUserConsent\Models\ConsentOptionQuestion;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\CreateConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\EditConsentOption;
 use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\Pages\ListConsentOptions;
+use Visualbuilder\FilamentUserConsent\Resources\ConsentOptionResource\RelationManagers\ConsentOptionQuestionsRelationManager;
 
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
@@ -85,4 +88,142 @@ it('can update user consent', function () {
     $formData['models'] = json_encode($newData->models);
 
     assertDatabaseHas(ConsentOption::class, $formData);
+});
+
+it('can load the questions relation manager in consents', function () {
+    $consentOption = ConsentOption::factory()->create();
+
+    livewire(ConsentOptionQuestionsRelationManager::class, [
+        'ownerRecord' => $consentOption,
+        'pageClass' => EditConsentOption::class,
+    ])
+        ->assertSuccessful();
+});
+
+it('can list questions in consents', function () {
+    $consentOption = ConsentOption::factory()->create();
+    $question = ConsentOptionQuestion::create([
+        'consent_option_id' => $consentOption->id,
+        'component' => 'text',
+        'name' => 'old_name',
+        'label' => 'Old Label',
+        'required' => false,
+        'sort' => 1,
+    ]);
+    livewire(ConsentOptionQuestionsRelationManager::class, [
+        'ownerRecord' => $consentOption,
+        'pageClass' => EditConsentOption::class,
+    ])
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([$question]);
+});
+
+it('can create question in consents', function () {
+    $consentOption = ConsentOption::factory()->create();
+    $consentQuestionData = [
+        'component' => 'text',
+        'name' => 'test_question',
+        'label' => 'Test Question Label',
+        'required' => true,
+        'sort' => 1,
+    ];
+
+    assertDatabaseMissing(
+        table: ConsentOptionQuestion::class,
+        data: $consentQuestionData + [
+            'consent_option_id' => $consentOption->id,
+        ]
+    );
+
+    livewire(ConsentOptionQuestionsRelationManager::class, [
+        'ownerRecord' => $consentOption,
+        'pageClass' => EditConsentOption::class,
+    ])
+        ->assertSuccessful()
+        ->callTableAction('create', data: $consentQuestionData)
+        ->assertHasNoTableActionErrors();
+
+    assertDatabaseHas(
+        table: ConsentOptionQuestion::class,
+        data: $consentQuestionData + [
+            'consent_option_id' => $consentOption->id,
+        ]
+    );
+});
+
+it('can update question in consents', function () {
+    $consentOption = ConsentOption::factory()->create();
+    $consentQuestionData = [
+        'component' => 'text',
+        'name' => 'old_name',
+        'label' => 'Old Label',
+        'required' => false,
+        'sort' => 1,
+    ];
+    $consentQuestion = ConsentOptionQuestion::create(
+        $consentQuestionData + [
+            'consent_option_id' => $consentOption->id
+        ]
+    );
+
+    $updatedQuestionData = [
+        'component' => 'email',
+        'name' => 'new_name',
+        'label' => 'New Label',
+        'required' => true,
+        'sort' => 2,
+    ];
+
+    assertDatabaseHas(
+        table: ConsentOptionQuestion::class,
+        data: $consentQuestionData + [
+            'consent_option_id' => $consentOption->id,
+        ]
+    );
+
+    assertDatabaseMissing(
+        table: ConsentOptionQuestion::class,
+        data: $updatedQuestionData + [
+            'consent_option_id' => $consentOption->id,
+        ]
+    );
+
+    livewire(ConsentOptionQuestionsRelationManager::class, [
+        'ownerRecord' => $consentOption,
+        'pageClass' => EditConsentOption::class,
+    ])
+        ->assertSuccessful()
+        ->callTableAction('edit', $consentQuestion, data: $updatedQuestionData)
+        ->assertHasNoTableActionErrors();
+
+    assertDatabaseHas(
+        table: ConsentOptionQuestion::class,
+        data: $updatedQuestionData + [
+            'consent_option_id' => $consentOption->id,
+        ]
+    );
+});
+
+it('can delete question in consents', function () {
+    $consentOption = ConsentOption::factory()->create();
+    $question = ConsentOptionQuestion::create([
+        'consent_option_id' => $consentOption->id,
+        'component' => 'text',
+        'name' => 'to_delete',
+        'label' => 'Question to Delete',
+        'required' => false,
+        'sort' => 1,
+    ]);
+
+    $questionId = $question->id;
+
+    livewire(ConsentOptionQuestionsRelationManager::class, [
+        'ownerRecord' => $consentOption,
+        'pageClass' => EditConsentOption::class,
+    ])
+        ->assertSuccessful()
+        ->callTableAction('delete', $question)
+        ->assertHasNoTableActionErrors();
+
+    expect(ConsentOptionQuestion::find($questionId))->toBeNull();
 });
