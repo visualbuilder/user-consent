@@ -15,12 +15,24 @@
 - Provide admin panel users with a list of consents provided by all users
 
 
+## Version Compatibility
+
+| Package Version | Filament | Laravel | PHP |
+|-----------------|----------|---------|-----|
+| 5.x | 5.x | 11.x, 12.x | 8.2+ |
+| 4.x | 4.x | 11.x | 8.2+ |
+| 3.x | 3.x | 10.x, 11.x | 8.1+ |
+
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require visualbuilder/user-consent
+# For Filament 5.x
+composer require visualbuilder/user-consent:^5.0
+
+# For Filament 4.x
+composer require visualbuilder/user-consent:^4.0
 ```
 
 You can publish and run the migrations with:
@@ -42,18 +54,56 @@ Optionally, you can publish the views using
 php artisan vendor:publish --tag="user-consent-views"
 ```
 
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
 ## Usage
 
+### 1. Register the Plugin
+
+Add the plugin to your Filament panel provider:
+
 ```php
-$filamentUserConsent = new Visualbuilder\FilamentUserConsent();
-echo $filamentUserConsent->echoPhrase('Hello, Visualbuilder!');
+use Visualbuilder\FilamentUserConsent\FilamentUserConsentPlugin;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        ->plugins([
+            FilamentUserConsentPlugin::make(),
+        ]);
+}
+```
+
+### 2. Add the Trait to Your User Model
+
+```php
+use Visualbuilder\FilamentUserConsent\Traits\HasConsents;
+
+class User extends Authenticatable
+{
+    use HasConsents;
+}
+```
+
+### 3. Create Consent Options
+
+Use the admin panel to create consent options (e.g., Terms of Service, Privacy Policy, Marketing Communications).
+
+### 4. Display Consent Form
+
+The package provides a Livewire component for displaying consent forms:
+
+```php
+// In your registration or profile page
+<livewire:consent-option-form-builder />
+```
+
+### 5. Check User Consents
+
+```php
+// Get outstanding consents for a user
+$outstandingConsents = $user->outstandingConsents();
+
+// Check if user has accepted a specific consent
+$hasAccepted = $user->hasAcceptedConsent('terms-of-service');
 ```
 
 ## Testing
