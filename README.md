@@ -1,11 +1,16 @@
 # Provides User Consent options for Filament applications
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/visualbuilder/user-consent.svg?style=flat-square)](https://packagist.org/packages/visualbuilder/user-consent)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/visualbuilder/user-consent/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/visualbuilder/user-consent/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/visualbuilder/user-consent/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/visualbuilder/user-consent/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/visualbuilder/user-consent/run-tests.yml?branch=5.x&label=tests&style=flat-square)](https://github.com/visualbuilder/user-consent/actions?query=workflow%3Arun-tests+branch%3A5.x)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/visualbuilder/user-consent/fix-php-code-style-issues.yml?branch=5.x&label=code%20style&style=flat-square)](https://github.com/visualbuilder/user-consent/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3A5.x)
 [![Total Downloads](https://img.shields.io/packagist/dt/visualbuilder/user-consent.svg?style=flat-square)](https://packagist.org/packages/visualbuilder/user-consent)
 
-**Compatible with Filament 5.x and Livewire 4**
+## Version Compatibility
+
+| Package Version | Filament | Laravel | PHP |
+|-----------------|----------|---------|-----|
+| 5.x | 5.x | 11.x, 12.x | 8.2+ |
+| 4.x | 4.x | 11.x | 8.2+ |
 
 
 - Create and edit consent options
@@ -22,7 +27,11 @@
 You can install the package via composer:
 
 ```bash
-composer require visualbuilder/user-consent
+# For Filament 5.x
+composer require visualbuilder/user-consent:^5.0
+
+# For Filament 4.x
+composer require visualbuilder/user-consent:^4.0
 ```
 
 You can publish and run the migrations with:
@@ -49,13 +58,6 @@ This is the contents of the published config file:
 ```php
 return [
 ];
-```
-
-## Usage
-
-```php
-$filamentUserConsent = new Visualbuilder\FilamentUserConsent();
-echo $filamentUserConsent->echoPhrase('Hello, Visualbuilder!');
 ```
 
 ## Testing
