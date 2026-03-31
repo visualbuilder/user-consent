@@ -5,6 +5,8 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/visualbuilder/user-consent/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/visualbuilder/user-consent/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/visualbuilder/user-consent.svg?style=flat-square)](https://packagist.org/packages/visualbuilder/user-consent)
 
+**Compatible with Filament 5.x and Livewire 4**
+
 
 - Create and edit consent options
 - Apply them to user models
