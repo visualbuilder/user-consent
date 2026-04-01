@@ -13,7 +13,10 @@ use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ViewErrorBag;
 use Livewire\LivewireServiceProvider;
+use Livewire\Mechanisms\DataStore;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Visualbuilder\FilamentTinyEditor\TinyeditorServiceProvider;
 use Visualbuilder\FilamentUserConsent\FilamentUserConsentServiceProvider;
@@ -35,6 +38,10 @@ class TestCase extends Orchestra
         $this->actingAs(
             User::create(['email' => 'admin@domain.com', 'name' => 'Admin', 'password' => 'password'])
         );
+
+        View::share('errors', new ViewErrorBag);
+        $dataStore = app(DataStore::class);
+        app()->instance(DataStore::class, $dataStore);
 
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Visualbuilder\\FilamentUserConsent\\Database\\Factories\\' . class_basename($modelName) . 'Factory'

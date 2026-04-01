@@ -65,6 +65,12 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "phpstan/extension-installer": true
+        },
+        "audit": {
+            "ignore": [
+                "PKSA-5bdf-2x61-v43c"
+            ],
+            "block-insecure": false
         }
     },
     "extra": {
@@ -80,15 +86,6 @@
             "5.x-dev": "5.0.x-dev"
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../filament-tinyeditor",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
     "minimum-stability": "dev",
     "prefer-stable": true
 }
