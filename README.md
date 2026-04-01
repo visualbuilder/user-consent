@@ -10,7 +10,7 @@
 | Package Version | Filament | Laravel | PHP |
 |-----------------|----------|---------|-----|
 | 5.x | 5.x | 11.x, 12.x | 8.2+ |
-| 4.x | 4.x | 11.x | 8.2+ |
+| 4.x | 4.x | 10.x, 11.x | 8.2+ |
 
 
 - Create and edit consent options
