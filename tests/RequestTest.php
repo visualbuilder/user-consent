@@ -272,3 +272,26 @@ it('validates individual required question fields', function() {
             ->call('submit');
     })->toThrow(\Illuminate\Validation\ValidationException::class);
 });
+
+it('resolves the consent-option-request route to the default page component', function () {
+    $route = app('router')->getRoutes()->getByName('consent-option-request');
+
+    expect($route)->not->toBeNull()
+        ->and($route->getActionName())->toContain(ConsentOptionFormBuilder::class);
+});
+
+it('lets host apps override the consent page component via config', function () {
+    // A host app can point the route at its own subclass without redefining the
+    // route. Here we reuse an existing package page as a stand-in subclass.
+    config()->set('filament-user-consent.pages.consent_option_form_builder', \Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionPreview::class);
+
+    // Re-run the package route definitions so they pick up the overridden config.
+    // Re-registering overwrites the existing GET route for this URI.
+    require dirname(__DIR__) . '/routes/web.php';
+
+    $route = collect(app('router')->getRoutes()->getRoutesByMethod()['GET'] ?? [])
+        ->first(fn ($r) => $r->uri() === 'consent-option-request');
+
+    expect($route)->not->toBeNull()
+        ->and($route->getActionName())->toContain(\Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionPreview::class);
+});

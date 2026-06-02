@@ -17,6 +17,13 @@ return [
         'consent_option' => \Visualbuilder\FilamentUserConsent\Models\ConsentOption::class,
     ],
 
+    // Page components used by the package's routes. Override with your own
+    // subclass to customise the consent page (e.g. its chrome / layout) without
+    // having to redefine the route.
+    'pages' => [
+        'consent_option_form_builder' => \Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionFormBuilder::class,
+    ],
+
 
     'routes' => [
         'prefix' => 'consent-options',

@@ -60,6 +60,33 @@ return [
 ];
 ```
 
+## Customising the consent page
+
+The page that users are sent to when consent is required (`consent-option-request`)
+is resolved from config, so you can register your own subclass without having to
+redefine the route — useful when you want to customise the page chrome, layout or
+behaviour:
+
+```php
+// config/filament-user-consent.php
+'pages' => [
+    'consent_option_form_builder' => \App\Livewire\ConsentOptionFormBuilder::class,
+],
+```
+
+```php
+// app/Livewire/ConsentOptionFormBuilder.php
+use Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionFormBuilder as BaseConsentOptionFormBuilder;
+
+class ConsentOptionFormBuilder extends BaseConsentOptionFormBuilder
+{
+    // e.g. expose a logo + theme switcher, tweak the max width, etc.
+}
+```
+
+When the option is omitted it defaults to the package's own
+`Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionFormBuilder`.
+
 ## Testing
 
 ```bash
