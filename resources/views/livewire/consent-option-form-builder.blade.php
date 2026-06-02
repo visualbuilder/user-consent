@@ -2,12 +2,18 @@
     <form wire:submit.prevent="submit">
         {{ $this->form }}
 
+        @php($consentCount = $this->user->outstandingConsents()->count())
         <div class="mt-3 text-end">
-            <x-filament::button type="submit" wire:loading>
-                <div class="flex"><x-filament::loading-indicator class="h-5 w-5 mx-3"/> Submitting consents...</div>
-            </x-filament::button>
-            <x-filament::button icon="heroicon-m-sparkles" type="submit" wire:loading.remove>
-                Submit Consents
+            {{-- Single button: Filament swaps the icon for a spinner in place while
+                 submitting, so the button keeps its size instead of jumping to a
+                 separate, wider "Submitting…" button. --}}
+            <x-filament::button
+                type="submit"
+                icon="heroicon-m-sparkles"
+                wire:target="submit"
+                wire:loading.attr="disabled"
+            >
+                {{ $consentCount === 1 ? 'Submit Consent' : 'Submit Consents' }}
             </x-filament::button>
         </div>
     </form>
