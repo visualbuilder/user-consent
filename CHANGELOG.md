@@ -2,6 +2,10 @@
 
 All notable changes to `user-consent` will be documented in this file.
 
+## 5.0.6 - 2026-06-03
+
+- Reaching the consent page with nothing left to consent to (e.g. pressing back after submitting) no longer shows a `403 No required consent` error — it now follows the same redirect as a successful submission, letting the host app's normal flow decide where the user goes next
+
 ## 5.0.5 - 2026-06-02
 
 - Fixed the submit button jumping size while saving: replaced the two-button (idle / "Submitting consents…") markup with a single button that uses Filament's built-in in-place loading spinner

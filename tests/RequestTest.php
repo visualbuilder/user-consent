@@ -79,7 +79,9 @@ it('can fill and save consents', function() {
         ->call('submit')
         ->assertHasNoFormErrors();
 
-    get(route('consent-option-request'))->assertForbidden();
+    // With nothing left to consent to, revisiting now redirects (normal flow)
+    // rather than returning a 403.
+    get(route('consent-option-request'))->assertRedirect();
 });
 
 it('can skip optional consents', function() {
@@ -294,4 +296,19 @@ it('lets host apps override the consent page component via config', function () 
 
     expect($route)->not->toBeNull()
         ->and($route->getActionName())->toContain(\Visualbuilder\FilamentUserConsent\Livewire\ConsentOptionPreview::class);
+});
+
+it('redirects rather than aborting when there are no outstanding consents', function () {
+    // Accept everything currently outstanding so nothing remains.
+    $user = auth()->user();
+    foreach ($user->outstandingConsents() as $consent) {
+        $user->consents()->save($consent, ['accepted' => true, 'key' => $consent->key]);
+    }
+    \Illuminate\Support\Facades\Cache::flush();
+
+    expect($user->outstandingConsents()->count())->toBe(0);
+
+    // Previously this aborted with a 403 "No required consent"; it should now
+    // redirect (e.g. when a user navigates back after submitting).
+    livewire(ConsentOptionFormBuilder::class)->assertRedirect();
 });

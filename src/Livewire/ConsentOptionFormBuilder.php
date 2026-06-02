@@ -61,7 +61,13 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
         $this->user->collection = $this->user->outstandingConsents();
 
         if ($this->user->collection->count() < 1) {
-            abort(403, 'No required consent');
+            // Nothing left to consent to — e.g. the user pressed back after
+            // submitting, or reached this page directly. Follow the same redirect
+            // as a successful submission so the host app's normal flow decides
+            // where they go next, rather than showing an error page.
+            $this->redirect($this->getRedirectUrl());
+
+            return;
         }
 
         $this->setDefaultValues();
@@ -285,17 +291,28 @@ class ConsentOptionFormBuilder extends SimplePage implements Forms\Contracts\Has
 
         $this->user->notify(app(config('filament-user-consent.notification', ConsentsUpdatedNotification::class)));
 
-        // Redirect after successfully saving the consent
-        // Handle cases where session is not available (e.g., during testing)
-        $redirectUrl = '/';
+        // Redirect after successfully saving the consent, following the host
+        // app's normal flow (the page the user was originally heading to).
+        $this->redirect($this->getRedirectUrl());
+    }
+
+    /**
+     * The page to send the user to once there is nothing to consent to — the
+     * destination they were originally heading to, falling back to the site root
+     * so the host app's own routing/middleware decides where they land.
+     */
+    protected function getRedirectUrl(): string
+    {
+        // Handle cases where the session is not available (e.g. during testing).
         try {
             $session = request()->session();
             if ($session && $session->has('url.saved')) {
-                $redirectUrl = $session->get('url.saved', '/');
+                return $session->get('url.saved', '/');
             }
         } catch (\Exception|\RuntimeException $e) {
-            // Session not available (e.g., during Livewire testing), use default redirect
+            // Session not available (e.g. during Livewire testing).
         }
-        $this->redirect($redirectUrl);
+
+        return '/';
     }
 }
